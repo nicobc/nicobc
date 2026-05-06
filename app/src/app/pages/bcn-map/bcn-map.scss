@@ -1,0 +1,44 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  // Fill exactly the space inside main's padding: viewport minus fixed navbar, footer, and main's vertical padding
+  height: calc(100vh - var(--nav-height) * 2 - 8rem);
+  // Escape main's horizontal padding only
+  margin: 0 -3rem;
+
+  @media (max-width: 768px) {
+    margin: 0 -1.5rem;
+    height: calc(100vh - var(--nav-height) * 2 - 5rem);
+  }
+}
+
+.map-header {
+  padding: 0 3rem 1.25rem;
+  flex-shrink: 0;
+  @media (max-width: 768px) {
+    padding: 0 1.5rem 1rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+
+  .subtitle {
+    font-size: 0.8rem;
+    opacity: 0.4;
+    letter-spacing: 0.02em;
+  }
+}
+
+.deck-container {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  margin: 0 0.75rem 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bg);
+  border: 1px solid var(--separator);
+}

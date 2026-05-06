@@ -1,0 +1,9 @@
+<div class="services-grid">
+  @for (service of services; track service.slug) {
+    <a class="service-card" [routerLink]="['/services', service.slug]">
+      <h2>{{ service.title }}</h2>
+      <p>{{ service.description }}</p>
+      <span class="cta">Explore &rarr;</span>
+    </a>
+  }
+</div>

@@ -1,0 +1,15 @@
+[project]
+name = "bcn-map"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "pyproj>=3.6",
+    "shapely>=2.0",
+]
+
+[project.scripts]
+build-admin-geo = "bcn_map.geo.admin_boundaries:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

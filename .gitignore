@@ -1,0 +1,5 @@
+_private/
+.claude/
+.DS_Store
+**/.venv/
+data/bcn/raw/

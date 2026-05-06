@@ -1,0 +1,10 @@
+@if (showIntro()) {
+  <app-intro-overlay (done)="onIntroDone()" />
+}
+<div class="app-content" [class.ready]="contentReady()">
+  <app-navbar />
+  <main>
+    <router-outlet />
+  </main>
+  <app-footer />
+</div>

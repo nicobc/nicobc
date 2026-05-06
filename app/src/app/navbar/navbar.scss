@@ -1,0 +1,93 @@
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--nav-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 3rem;
+  background: var(--bg);
+  border-bottom: 1px solid var(--separator);
+  z-index: 1000;
+}
+
+.nav-links,
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+}
+
+.nav-links a {
+  font-size: 1rem;
+}
+
+.first-name {
+  font-weight: 300;
+  margin-right: .33rem;
+}
+
+.last-name {
+  font-weight: 700;
+}
+
+.nav-hamburger {
+  display: none;
+  position: relative;
+}
+
+.nav-hamburger button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.4rem;
+  position: relative;
+  width: 1.4rem;
+  height: 1.4rem;
+  padding: 0;
+}
+
+.nav-hamburger button fa-icon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.nav-hamburger button fa-icon.icon-xmark {
+  opacity: 0;
+  transform: rotate(-45deg);
+}
+
+.nav-hamburger button.is-open fa-icon.icon-bars {
+  opacity: 0;
+  transform: rotate(45deg);
+}
+
+.nav-hamburger button.is-open fa-icon.icon-xmark {
+  opacity: 1;
+  transform: rotate(0deg);
+}
+
+@media (max-width: 768px) {
+  nav {
+    padding: 0 1.5rem;
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .nav-hamburger {
+    display: block;
+  }
+
+  .nav-right {
+    flex: 1;
+    justify-content: space-between;
+  }
+}

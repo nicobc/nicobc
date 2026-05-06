@@ -1,0 +1,57 @@
+:host {
+  display: block;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.service-card {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  border: 1px solid var(--separator);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--fg);
+  opacity: 1;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    border-color: color-mix(in srgb, var(--fg) 30%, transparent);
+    transform: translateY(-3px);
+  }
+
+  h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+
+  p {
+    font-weight: 300;
+    opacity: 0.6;
+    flex: 1;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+
+  .cta {
+    font-size: 0.875rem;
+    font-weight: 500;
+    opacity: 0.4;
+    transition: opacity 0.2s ease;
+  }
+
+  &:hover .cta {
+    opacity: 0.8;
+  }
+}
+
+@media (max-width: 768px) {
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
+}
