@@ -1,0 +1,63 @@
+:host {
+  display: block;
+}
+
+.lab-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.project-card {
+  display: flex;
+  flex-direction: column;
+  padding: 1.75rem;
+  border: 1px solid var(--separator);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--fg);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    border-color: var(--separator-hover);
+    transform: translateY(-3px);
+  }
+
+  .category {
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.35;
+    margin-bottom: 0.75rem;
+  }
+
+  h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+  }
+
+  p {
+    font-weight: 300;
+    font-size: 0.9rem;
+    opacity: 0.6;
+    flex: 1;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+
+  .cta {
+    font-size: 0.875rem;
+    font-weight: 500;
+    opacity: 0.4;
+    transition: opacity 0.2s ease;
+  }
+
+  &:hover .cta {
+    opacity: 0.8;
+  }
+}

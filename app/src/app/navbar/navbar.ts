@@ -24,7 +24,7 @@ export class Navbar {
     { label: 'Home', route: '/home' },
     { label: 'About', route: '/about' },
     { label: 'Blog', route: '/blog' },
-    { label: 'Lab', route: '/bcn-map' },
+    { label: 'Lab', route: '/lab' },
     { label: 'Contact', route: '/contact' },
   ];
 }

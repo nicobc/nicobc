@@ -1,0 +1,52 @@
+.editor-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.editor-host {
+  border-radius: 6px;
+  overflow: hidden;
+  min-height: 160px;
+
+  .cm-editor {
+    min-height: 160px;
+  }
+
+  .cm-scroller {
+    min-height: 160px;
+  }
+}
+
+.editor-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.btn-run {
+  padding: 0.5rem 1.25rem;
+  background: #fff;
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+
+  &:hover { opacity: 0.85; }
+}
+
+.btn-reveal {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 0.8rem;
+  opacity: 0.35;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.15s;
+
+  &:hover { opacity: 0.6; }
+}

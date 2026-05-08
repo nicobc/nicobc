@@ -1,0 +1,11 @@
+id: EPIC-006
+title: Copy Audit
+category: project
+priority: 2
+status: IDEATION
+description: All site copy reads like a person wrote it.
+notes:
+  - Review all markdown + HTML copy across project
+  - Apply CLAUDE.md copy rule: no "not just X but Y", no triple enumerations, no dash punchlines
+  - Reference register: about page + BCN map copy
+stories: []

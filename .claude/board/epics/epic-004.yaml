@@ -1,0 +1,14 @@
+id: EPIC-004
+title: Unit Testing for Data Engineers Lab
+category: workshop
+priority: 2
+status: IDEATION
+description: Learner refactors poorly tested pipeline function step by step; builds intuition for pytest best practices and I/O isolation.
+notes:
+  - Pyodide + DuckDB Python (duckdb-pyodide, available Oct 2024+)
+  - Shared dataset: fct_orders + dim_customers, KPI avg order value per customer name top 5 in 2026
+  - Concept progression: fixtures → factory fixtures → side-effect fixtures → monkeypatching → parametrization → testability via isolation
+  - Isolation arc: commit .duckdb file (dumb) → side-effect fixture (less dumb) → isolate logic from I/O (right)
+  - Per concept: before/after on simple unrelated snippet, then free-form exercise building on prev solution; reveal button as escape hatch
+  - pytest stdout rendered as styled pre block
+stories: []

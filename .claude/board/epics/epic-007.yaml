@@ -1,0 +1,22 @@
+id: EPIC-007
+title: UI Polish + Tech Debt
+category: project
+priority: 2
+status: IDEATION
+description: Cross-cutting UI fixes and small tech debt items that don't belong to a specific feature epic.
+notes:
+  - catch-all for global style fixes, minor UX improvements, and cleanup tasks
+
+stories:
+
+  - id: STR-013
+    title: Scrollbar + padding scroll fix
+    priority: 1
+    status: READY
+    description: Full viewport width is scrollable; scrollbar sits at far right of window.
+    acceptance_criteria:
+      - overflow-y on html/body, not on a child container
+      - page scrolls when cursor hovers over left/right padding areas
+      - applies to all pages
+    notes:
+      - CSS-only fix in global styles

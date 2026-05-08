@@ -1,0 +1,255 @@
+.lab-page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 6rem;
+}
+
+.lab-header {
+  margin-bottom: 2.5rem;
+
+  .category {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.4;
+    margin-bottom: 0.75rem;
+  }
+
+  h1 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    line-height: 1.15;
+  }
+}
+
+.db-loading {
+  opacity: 0.4;
+  font-size: 0.875rem;
+}
+
+// ── step shell ────────────────────────────────────────────────────────────────
+
+.step-shell {
+  position: relative;
+  padding-top: 2rem;
+}
+
+.step-indicator {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  opacity: 0.3;
+  margin-bottom: 2rem;
+}
+
+.btn-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 1.1rem;
+  opacity: 0.35;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.15s;
+
+  &:hover { opacity: 0.7; }
+}
+
+.btn-next {
+  display: inline-block;
+  margin-top: 2.5rem;
+  padding: 0.5rem 1.5rem;
+  background: #fff;
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+
+  &:hover { opacity: 0.85; }
+}
+
+// ── step content ──────────────────────────────────────────────────────────────
+
+.step-content {
+  p {
+    line-height: 1.75;
+    opacity: 0.75;
+    margin-bottom: 1.25rem;
+    max-width: 680px;
+
+    code {
+      font-family: 'Fira Code', 'Courier New', monospace;
+      font-size: 0.875em;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 0.1em 0.35em;
+      border-radius: 3px;
+    }
+  }
+}
+
+.step-intro {
+  font-size: 1.05rem;
+  margin-bottom: 2rem !important;
+}
+
+.step-task {
+  margin-top: 2rem !important;
+  margin-bottom: 1.25rem !important;
+}
+
+// ── pipeline DAG ──────────────────────────────────────────────────────────────
+
+.pipeline-dag {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 2rem 0;
+}
+
+.dag-node {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  font-size: 0.8rem;
+  opacity: 0.6;
+
+  &--tables {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    font-size: 0.75rem;
+    font-family: 'Fira Code', 'Courier New', monospace;
+  }
+
+  &--highlight {
+    border-color: rgba(255, 255, 255, 0.5);
+    opacity: 1;
+    font-weight: 600;
+  }
+
+  &--dashboard {
+    border-color: rgba(255, 255, 255, 0.3);
+    opacity: 0.8;
+  }
+}
+
+.dag-arrow {
+  opacity: 0.3;
+  font-size: 0.9rem;
+}
+
+// ── chart ─────────────────────────────────────────────────────────────────────
+
+.chart-wrap {
+  margin-top: 2rem;
+
+  &--spaced {
+    margin-bottom: 2.5rem;
+  }
+}
+
+// ── step 2 ────────────────────────────────────────────────────────────────────
+
+.sql-readonly {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  font-family: 'Fira Code', 'Courier New', monospace;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  overflow-x: auto;
+  margin-bottom: 1rem;
+  white-space: pre;
+}
+
+.btn-run-again {
+  padding: 0.5rem 1.25rem;
+  background: #fff;
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+
+  &:hover { opacity: 0.85; }
+}
+
+// ── errors + hints ────────────────────────────────────────────────────────────
+
+.error-sql {
+  color: #f87171;
+  font-size: 0.8rem;
+  font-family: 'Fira Code', 'Courier New', monospace;
+  margin-top: 0.75rem;
+  opacity: 1 !important;
+}
+
+.hint-output {
+  color: #fbbf24;
+  font-size: 0.875rem;
+  margin-top: 0.75rem;
+  opacity: 1 !important;
+}
+
+// ── step 3 ────────────────────────────────────────────────────────────────────
+
+.violation-block {
+  border-left: 3px solid #f87171;
+  padding: 0.875rem 1.25rem;
+  background: rgba(248, 113, 113, 0.06);
+  border-radius: 0 4px 4px 0;
+  margin: 1.5rem 0;
+
+  &__title {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #f87171;
+    margin-bottom: 0.35rem;
+    opacity: 1 !important;
+  }
+
+  &__detail {
+    font-size: 0.825rem;
+    font-family: 'Fira Code', 'Courier New', monospace;
+    opacity: 1 !important;
+
+    code {
+      font-family: inherit;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 0.1em 0.3em;
+      border-radius: 3px;
+    }
+  }
+}
+
+.contract-block {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 1.25rem;
+  font-family: 'Fira Code', 'Courier New', monospace;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+.meta-reveal {
+  margin-top: 2.5rem !important;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-style: italic;
+}

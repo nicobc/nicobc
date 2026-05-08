@@ -1,5 +1,111 @@
 <div class="map-header">
   <h1>Barcelona</h1>
-  <p class="subtitle">H3 hexagonal grid · Administrative boundaries</p>
+  <p class="subtitle">Rental price · Neighborhoods · 2014–2025</p>
+  <div class="timeline">
+    <button class="play-btn" (click)="togglePlay()" [title]="isPlaying() ? 'Pause' : 'Play'">
+      @if (isPlaying()) {
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+          <rect x="2" y="1" width="3" height="10" rx="1"/>
+          <rect x="7" y="1" width="3" height="10" rx="1"/>
+        </svg>
+      } @else {
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+          <path d="M3 1.5L10.5 6 3 10.5V1.5Z"/>
+        </svg>
+      }
+    </button>
+    <span class="year-label">{{ selectedYear() }}</span>
+    <input
+      type="range"
+      class="year-slider"
+      [min]="minYear"
+      [max]="maxYear"
+      [value]="selectedYear()"
+      (input)="onSliderInput($event)"
+    />
+  </div>
 </div>
-<div class="deck-container" #container></div>
+<div class="deck-container" #container>
+  <button class="info-btn" (click)="showInfo.set(!showInfo())" [class.active]="showInfo()" title="About this map">i</button>
+  <button class="fit-btn" (click)="fitToFrame()" title="Fit to frame">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+      <path d="M1 5V1H5"/>
+      <path d="M9 1H13V5"/>
+      <path d="M13 9V13H9"/>
+      <path d="M5 13H1V9"/>
+    </svg>
+  </button>
+  <a class="attribution" href="https://habitatge.gencat.cat/ca/dades/indicadors_estadistiques/estadistiques_de_construccio_i_mercat_immobiliari/mercat_de_lloguer/lloguers-barcelona-per-districtes-i-barris/" target="_blank" rel="noopener">Source: Ajuntament de Barcelona · INCASÒL</a>
+  <div class="legend">
+    <p class="legend-title">€/m²/month</p>
+    <div class="legend-bar"></div>
+    <div class="legend-ticks">
+      <span>{{ legendTicks()[0] }}</span>
+      <span>{{ legendTicks()[1] }}</span>
+      <span>{{ legendTicks()[2] }}</span>
+    </div>
+  </div>
+  @if (showInfo() && insights) {
+    <div class="info-panel">
+      <div class="info-panel-header">
+        <h3>About this map</h3>
+        <button class="info-close" (click)="showInfo.set(false)" title="Close">&times;</button>
+      </div>
+      <div class="info-panel-body">
+        <p>
+          Average annual rental price across Barcelona's 73 neighborhoods, sourced from registered
+          rental contracts deposited with INCASÒL. Figures are in €/m²/month.
+        </p>
+        <div class="info-insights">
+          <div class="info-insight">
+            <span class="info-insight-label">Priciest in {{ insights.priciest.year }}</span>
+            <span class="info-insight-value">€{{ insights.priciest.price_per_sqm.toFixed(2) }}/m²</span>
+            <span class="info-insight-sub">{{ insights.priciest.neighborhood }}</span>
+          </div>
+          <div class="info-insight">
+            <span class="info-insight-label">Biggest surge since {{ insights.biggest_surge.pre_covid_year }}</span>
+            <span class="info-insight-value">+€{{ insights.biggest_surge.delta_monthly_80sqm.toLocaleString('en-GB') }}/month</span>
+            <span class="info-insight-sub">{{ insights.biggest_surge.neighborhood }} · 80m²</span>
+          </div>
+          <div class="info-insight">
+            <span class="info-insight-label">City-wide average in {{ insights.city_avg.year }}</span>
+            <span class="info-insight-value">€{{ insights.city_avg.price_per_sqm.toFixed(2) }}/m²</span>
+            <span class="info-insight-sub">+{{ insights.city_avg.pct_change }}% since {{ insights.city_avg.pre_covid_year }}</span>
+          </div>
+        </div>
+        <p class="info-caveat">
+          Neighborhoods with fewer than 6 registered contracts in a given year are suppressed by the
+          source. A small number of additional neighborhoods are suppressed because their year-on-year
+          price swings exceed 40% — a signal of thin, unreliable coverage rather than genuine market
+          movement. Both are shown in gray on the map.
+        </p>
+      </div>
+    </div>
+  }
+
+  @if (tooltip(); as t) {
+    <div class="tooltip" [style.left.px]="t.x + 14" [style.top.px]="t.y">
+      <div class="tooltip-location">
+        <span class="tooltip-neighborhood">{{ t.neighborhood }}</span>
+        <span class="tooltip-district">{{ t.district }}</span>
+      </div>
+      <div class="tooltip-year">{{ t.year }}</div>
+      <div class="tooltip-price">{{ t.pricePerSqm }} <span class="tooltip-unit">/m²/month</span></div>
+      <div class="tooltip-total">{{ t.priceFor80sqm }} <span class="tooltip-unit">/month · 80 m²</span></div>
+      @if (t.yoy || t.vsPreCovid) {
+        <div class="tooltip-deltas">
+          @if (t.yoy) {
+            <div class="tooltip-delta" [class.up]="t.yoyUp" [class.down]="!t.yoyUp">
+              {{ t.yoyUp ? '▲' : '▼' }} {{ t.yoy }}
+            </div>
+          }
+          @if (t.vsPreCovid) {
+            <div class="tooltip-delta" [class.up]="t.vsPreCovidUp" [class.down]="!t.vsPreCovidUp">
+              {{ t.vsPreCovidUp ? '▲' : '▼' }} {{ t.vsPreCovid }}
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

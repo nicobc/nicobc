@@ -1,0 +1,15 @@
+# board index
+
+## IN PROGRESS
+epics: EPIC-001
+
+## READY
+stories: STR-001, STR-013
+
+## IDEATION
+epics: EPIC-002, EPIC-004, EPIC-005, EPIC-006, EPIC-007
+stories: STR-002
+
+## DONE
+epics: EPIC-003
+stories: STR-003, STR-004, STR-005, STR-006, STR-007, STR-008, STR-009, STR-010, STR-011

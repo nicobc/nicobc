@@ -1,0 +1,163 @@
+<div class="lab-page">
+
+  <header class="lab-header">
+    <span class="category">Data Engineering · Contracts</span>
+    <h1>When good queries go wrong</h1>
+  </header>
+
+  @if (!dbReady()) {
+    <div class="db-loading">Loading DuckDB...</div>
+  } @else {
+
+    <div class="step-shell">
+
+      <!-- back arrow -->
+      @if (step() > 1) {
+        <button class="btn-back" (click)="goBack()">&#8592;</button>
+      }
+
+      <!-- step indicator -->
+      <span class="step-indicator">{{ step() }} / 3</span>
+
+      <!-- ── step 1 ─────────────────────────────────────────────── -->
+      @if (step() === 1) {
+        <div class="step-content">
+
+          <p class="step-intro">
+            There is a pipeline that runs every night. It pulls raw orders from
+            a source database, loads them into a Kimball model, then runs a mart
+            job that feeds a dashboard. Someone senior watches that dashboard.
+            Wrong numbers erode trust quickly.
+          </p>
+
+          <div class="pipeline-dag">
+            <div class="dag-node">Source DB</div>
+            <div class="dag-arrow">→</div>
+            <div class="dag-node">Upstream job</div>
+            <div class="dag-arrow">→</div>
+            <div class="dag-node dag-node--tables">
+              <span>fct_orders</span>
+              <span>dim_customers</span>
+            </div>
+            <div class="dag-arrow">→</div>
+            <div class="dag-node dag-node--highlight">Mart job</div>
+            <div class="dag-arrow">→</div>
+            <div class="dag-node dag-node--dashboard">Dashboard</div>
+          </div>
+
+          <p class="step-task">
+            You are writing the mart job. Write a CTE that computes the average
+            order amount per customer name for 2026 and returns the top 5.
+          </p>
+
+          <app-sql-editor
+            [initialValue]="skeleton"
+            [solution]="solution"
+            (run)="onRunStep1($event)"
+          />
+
+          @if (sqlError()) {
+            <p class="error-sql">{{ sqlError() }}</p>
+          }
+          @if (outputHint()) {
+            <p class="hint-output">{{ outputHint() }}</p>
+          }
+
+          @if (step1Rows().length > 0) {
+            <div class="chart-wrap">
+              <app-bar-chart [rows]="step1Rows()" />
+            </div>
+          }
+
+        </div>
+      }
+
+      <!-- ── step 2 ─────────────────────────────────────────────── -->
+      @if (step() === 2) {
+        <div class="step-content">
+
+          <p class="step-intro">
+            The pipeline ran again overnight. The upstream team pushed new data.
+            Run your query on the refreshed table and see what comes back.
+          </p>
+
+          <pre class="sql-readonly">{{ lastSql() }}</pre>
+
+          <button class="btn-run-again" (click)="onRunStep2()">Run</button>
+
+          @if (sqlError()) {
+            <p class="error-sql">{{ sqlError() }}</p>
+          }
+
+          @if (step2Rows().length >= 0 && step2Done()) {
+            <div class="chart-wrap">
+              <app-bar-chart [rows]="step2Rows()" />
+            </div>
+          }
+
+        </div>
+      }
+
+      <!-- ── step 3 ─────────────────────────────────────────────── -->
+      @if (step() === 3) {
+        <div class="step-content">
+
+          <p class="step-intro">
+            The query did not throw. DuckDB returned rows and the chart rendered.
+            But look at who is in the top 5.
+          </p>
+
+          @if (step1Rows().length > 0 && step2Rows().length > 0) {
+            <div class="chart-wrap chart-wrap--spaced">
+              <app-comparison-chart [batch1]="step1Rows()" [batch2]="step2Rows()" />
+            </div>
+          }
+
+          <p>
+            The upstream team made <code>amount</code> nullable. A batch came
+            through with no amounts for the top customers — DuckDB's
+            <code>AVG</code> silently ignored them, and they dropped out of
+            the ranking entirely.
+          </p>
+
+          <p>
+            A stakeholder looking at that dashboard would see their top customers disappear overnight.
+          </p>
+
+          <p>
+            A contract on <code>fct_orders</code> would have caught this at
+            ingestion, before the mart job ran and faulty data reached the dashboard.
+          </p>
+
+          @if (inputViolation()) {
+            <div class="violation-block">
+              <p class="violation-block__title">What the contract would have surfaced</p>
+              <p class="violation-block__detail">
+                Field <code>{{ inputViolation()!.field }}</code> —
+                {{ inputViolation()!.constraint }},
+                received {{ inputViolation()!.received }}
+              </p>
+            </div>
+          }
+
+          <pre class="contract-block">{{ schemaDisplay }}</pre>
+
+          <p class="meta-reveal">
+            One more thing: this lab validated your query output against a contract
+            before rendering the chart in step 1. That is why a query with wrong
+            column names or types returned a hint instead of a broken chart.
+            The same principle, applied one step earlier in the pipeline.
+          </p>
+
+        </div>
+      }
+
+      <!-- next button -->
+      @if (canGoNext()) {
+        <button class="btn-next" (click)="goNext()">Next</button>
+      }
+
+    </div>
+  }
+
+</div>

@@ -19,12 +19,18 @@ import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons';
   `,
   styles: `
     footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
       display: flex;
       align-items: center;
       justify-content: space-between;
       height: var(--nav-height);
       padding: 0 3rem;
       border-top: 1px solid var(--separator);
+      background: var(--bg);
     }
     .footer-social {
       display: flex;

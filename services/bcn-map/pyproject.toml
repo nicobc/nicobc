@@ -3,12 +3,17 @@ name = "bcn-map"
 version = "0.1.0"
 requires-python = ">=3.11"
 dependencies = [
+    "openpyxl>=3.1.5",
+    "pandas>=2.0",
     "pyproj>=3.6",
     "shapely>=2.0",
+    "topojson>=1.10",
 ]
 
 [project.scripts]
-build-admin-geo = "bcn_map.geo.admin_boundaries:main"
+build-admin-geo = "bcn_map.admin_geo.main:main"
+build-cadastral-metrics = "bcn_map.metrics.main:main"
+build-rental-prices = "bcn_map.rental_prices.main:main"
 
 [build-system]
 requires = ["hatchling"]

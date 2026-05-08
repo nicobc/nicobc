@@ -1,0 +1,138 @@
+id: EPIC-003
+title: Data Contracts Lab
+category: workshop
+priority: 1
+status: DONE
+description: Learner experiences silent schema drift breaking a pipeline; understands why data contracts matter and how to implement them.
+notes:
+  - DuckDB WASM (JS), no backend
+  - Free-form SQL editor, discrete reveal solution button
+  - Narrative arc: pipeline context → write CTE → good chart → pipeline re-runs → broken chart → contract as solution
+  - No retro-compat migration angle
+  - Shared dataset: fct_orders + dim_customers, KPI avg order amount per customer name top 5 in 2026
+  - 3-step navigation: condition-gated Next button, discrete back arrow, no vertical scroll flow
+
+stories:
+
+  - id: STR-003
+    title: DC lab page scaffold + routing
+    priority: 1
+    status: DONE
+    description: Learner navigates to DC lab and sees page structure.
+    acceptance_criteria:
+      - /lab/data-contracts route renders DC lab component
+      - DC lab card added to /lab landing page
+    notes:
+      - implemented
+
+  - id: STR-004
+    title: Seed data wiring into DC lab
+    priority: 1
+    status: DONE
+    description: DC lab loads fct_orders + dim_customers into DuckDB on init.
+    acceptance_criteria:
+      - batch1 loaded on lab init via read_json_auto (single operation per table)
+      - batch2 replaces fct_orders in-place, no page reload
+    notes:
+      - implemented; uses registerFileText + read_json_auto pattern
+
+  - id: STR-005
+    title: SQL editor + reveal solution button
+    priority: 1
+    status: DONE
+    description: Learner writes CTE in syntax-highlighted editor.
+    acceptance_criteria:
+      - CodeMirror editor, SQL syntax highlighting
+      - Run button executes against DuckDB
+      - Editor pre-populated with comment skeleton
+      - Discrete reveal solution button pre-fills expected CTE
+      - Empty/comment-only query shows a hint instead of running silently
+    notes:
+      - empty query silent failure needs to be fixed
+
+  - id: STR-006
+    title: Query results horizontal bar chart
+    priority: 1
+    status: DONE
+    description: Learner sees KPI as bar chart.
+    acceptance_criteria:
+      - horizontal bars: customer_name on y-axis, avg_order_amount on x-axis
+      - chart updates on each query run
+      - NULL values → absent bars, not zeros
+      - adequate spacing between run/reveal buttons and chart
+    notes:
+      - spacing fix needed
+
+  - id: STR-007
+    title: Schema drift scenario — batch2 broken chart
+    priority: 1
+    status: DONE
+    description: Learner loads refreshed data and re-runs the same query; chart silently breaks.
+    acceptance_criteria:
+      - step 2 loads batch2 into DuckDB (no contract validation at this point)
+      - learner re-runs their query unchanged
+      - chart renders with different top 5 (lower-spend customers) — no error thrown
+      - copy names what happened without revealing the solution yet
+    notes:
+      - broken chart IS the teaching moment here; do not block or intercept the load
+      - contract reveal comes in step 3, not here
+      - DuckDB WASM uses NULLS LAST on DESC; batch2 top customers drop out, replaced by lower-spend ones
+      - seed+query run in one DuckDB connection to avoid cross-conn DDL lag in WASM
+
+  - id: STR-008
+    title: Data contract reveal + JSON Schema validation
+    priority: 1
+    status: DONE
+    description: Step 3 reveals the contract as the solution to what the learner just saw.
+    acceptance_criteria:
+      - JSON Schema for fct_orders shown (amount integer not nullable)
+      - ajv validation runs against batch2 rows and surfaces first violation (field + constraint)
+      - copy frames contract as what would have caught this at ingestion, before the query ran
+      - meta-reveal: "this lab also used a contract to validate your query output before rendering the chart"
+    notes:
+      - lib: ajv (already installed)
+      - schema readable — teaching example not prod boilerplate
+      - validate first failing row only
+
+  - id: STR-009
+    title: 3-step navigation
+    priority: 1
+    status: DONE
+    description: Learner moves through steps sequentially; each step unlocks the next via a condition.
+    acceptance_criteria:
+      - step 1 (context + query): Next appears after chart renders successfully with valid output
+      - step 2 (pipeline re-run): Next appears after broken chart is shown
+      - step 3 (contract reveal): terminal step, no Next
+      - back navigation: discrete arrow (not a Prev button), always visible from step 2+
+      - only the active step is visible; no vertical scroll through all sections
+    notes:
+      - step state managed in the parent component
+      - Next condition is a signal set by child interactions
+
+  - id: STR-010
+    title: Pipeline DAG illustration
+    priority: 1
+    status: DONE
+    description: Learner sees the pipeline context before writing the query.
+    acceptance_criteria:
+      - simple linear DAG: source DB → upstream job → fct_orders + dim_customers → mart job (the CTE) → dashboard
+      - framing copy: the dashboard is watched by someone important; wrong numbers erode trust
+      - styled divs or inline SVG; no external library
+      - visible in step 1 above the SQL editor
+    notes:
+      - keep it simple — boxes + arrows, no animation needed here
+
+  - id: STR-011
+    title: Output data contract + meta-reveal
+    priority: 1
+    status: DONE
+    description: Query output validated against a schema before chart renders; revealed in step 3 as a meta-example.
+    acceptance_criteria:
+      - output schema: { customer_name: string, avg_order_amount: number not null }
+      - ajv validates query result rows before passing to chart component
+      - if invalid: show hint message (distinct from the main contract error in step 3)
+      - step 3 copy reveals this was happening all along
+    notes:
+      - distinct visual treatment from the fct_orders contract error — hint, not blocker
+      - ties the concept back to the learner's own interaction
+

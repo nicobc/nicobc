@@ -1,0 +1,11 @@
+id: EPIC-001
+title: BCN Rental Prices Map
+category: project
+priority: 3
+status: IN PROGRESS
+description: Visitor explores interactive BCN rental price map; understands geo/temporal pricing across neighbourhoods.
+notes:
+  - Angular + Leaflet frontend, FastAPI backend
+  - GeoJSON admin boundaries in place
+  - Rental price data ingestion + metrics service in progress
+stories: []

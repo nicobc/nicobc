@@ -1,0 +1,40 @@
+id: EPIC-002
+title: Shared Lab Infrastructure
+category: project
+priority: 1
+status: IDEATION
+description: Cross-cutting lab utilities in single location so each workshop focuses on teaching content.
+notes:
+  - DuckDB WASM query runner (all JS labs)
+  - Shared seed data: fct_orders + dim_customers, 2 batches, typed TS constants
+  - app/src/app/labs/data/ for seed data, app/src/app/labs/utils/ for utilities
+
+stories:
+
+  - id: STR-001
+    title: DuckDB WASM query runner utility
+    priority: 1
+    status: READY
+    description: Shared async query runner; labs don't re-implement DuckDB init.
+    acceptance_criteria:
+      - DuckDB WASM loads + inits once
+      - async execute(sql) exposed
+      - loading + error states handled
+    notes:
+      - pkg: @duckdb/duckdb-wasm
+      - location: app/src/app/labs/utils/duckdb.ts
+      - init takes few sec; spinner at call site
+
+  - id: STR-002
+    title: Seed data design — fct_orders + dim_customers
+    priority: 1
+    status: IDEATION
+    description: Shared seed data used by all workshop labs.
+    acceptance_criteria:
+      - dim_customers: customer_id PK, customer_name; ~20 rows
+      - fct_orders batch1: order_id, customer_id FK, amount NOT NULL INTEGER, order_date 2026; ~200 rows, clear top 5
+      - fct_orders batch2: same schema, amount nullable; high-value customers have NULL amounts → float to top on DESC ORDER BY
+      - exported as typed TS constants from app/src/app/labs/data/seed.ts
+    notes:
+      - IDEATION: values need design — top 5 visually distinct in batch1, clearly broken in batch2
+      - preserve DuckDB NULLS FIRST on DESC — teaching moment in EPIC-003

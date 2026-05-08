@@ -30,6 +30,50 @@
     opacity: 0.4;
     letter-spacing: 0.02em;
   }
+
+  .timeline {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+  }
+
+  .play-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    border: 1px solid var(--separator);
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.15s ease;
+
+    &:hover { opacity: 1; }
+  }
+
+  .year-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    min-width: 2.5rem;
+    opacity: 0.8;
+  }
+
+  .year-slider {
+    flex: 1;
+    max-width: 280px;
+    accent-color: currentColor;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.15s ease;
+
+    &:hover { opacity: 1; }
+  }
 }
 
 .deck-container {
@@ -41,4 +85,272 @@
   overflow: hidden;
   background: var(--bg);
   border: 1px solid var(--separator);
+}
+
+.info-btn {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 4px;
+  border: 1px solid var(--separator);
+  background: var(--bg);
+  color: inherit;
+  cursor: pointer;
+  font-style: italic;
+  font-size: 0.9rem;
+  opacity: 0.5;
+  transition: opacity 0.15s ease;
+
+  &:hover, &.active { opacity: 1; }
+}
+
+.info-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  width: 260px;
+  background: var(--bg);
+  border-left: 1px solid var(--separator);
+  display: flex;
+  flex-direction: column;
+
+  .info-panel-header {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--separator);
+  }
+
+  .info-panel-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.75rem 1.25rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  h3 {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    opacity: 0.5;
+  }
+
+  .info-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border: none;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font-size: 1.25rem;
+    line-height: 1;
+    opacity: 0.4;
+    transition: opacity 0.15s ease;
+
+    &:hover { opacity: 1; }
+  }
+
+  p {
+    font-size: 0.78rem;
+    line-height: 1.6;
+    opacity: 0.65;
+  }
+
+  .info-caveat {
+    font-size: 0.72rem;
+    opacity: 0.4;
+  }
+
+  .info-insights {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-top: 1px solid var(--separator);
+    border-bottom: 1px solid var(--separator);
+  }
+
+  .info-insight {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .info-insight-label {
+    font-size: 0.68rem;
+    opacity: 0.4;
+    letter-spacing: 0.03em;
+  }
+
+  .info-insight-value {
+    font-size: 0.9rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .info-insight-sub {
+    font-size: 0.7rem;
+    opacity: 0.5;
+  }
+}
+
+.fit-btn {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 4px;
+  border: 1px solid var(--separator);
+  background: var(--bg);
+  color: inherit;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.15s ease;
+
+  &:hover { opacity: 1; }
+}
+
+.tooltip {
+  position: absolute;
+  pointer-events: none;
+  z-index: 2;
+  background: var(--bg);
+  border: 1px solid var(--separator);
+  border-radius: 6px;
+  padding: 0.6rem 0.75rem;
+  min-width: 170px;
+  transform: translateY(-50%);
+
+  .tooltip-location {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .tooltip-neighborhood {
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .tooltip-district {
+    font-size: 0.7rem;
+    opacity: 0.5;
+  }
+
+  .tooltip-year {
+    font-size: 0.7rem;
+    opacity: 0.4;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.04em;
+  }
+
+  .tooltip-price {
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tooltip-total {
+    font-size: 0.75rem;
+    opacity: 0.7;
+    font-variant-numeric: tabular-nums;
+    margin-top: 0.15rem;
+  }
+
+  .tooltip-unit {
+    font-weight: 400;
+    font-size: 0.7rem;
+    opacity: 0.6;
+  }
+
+  .tooltip-deltas {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--separator);
+  }
+
+  .tooltip-delta {
+    font-size: 0.72rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+
+    &.up   { color: rgb(239, 68, 68); }
+    &.down { color: rgb(59, 130, 246); }
+  }
+}
+
+.attribution {
+  position: absolute;
+  bottom: 0.6rem;
+  right: 0.75rem;
+  z-index: 1;
+  font-size: 0.6rem;
+  opacity: 0.35;
+  letter-spacing: 0.02em;
+  color: inherit;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+
+  &:hover { opacity: 0.7; }
+}
+
+.legend {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  z-index: 1;
+  background: var(--bg);
+  border: 1px solid var(--separator);
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+
+  .legend-title {
+    font-size: 0.7rem;
+    opacity: 0.5;
+    letter-spacing: 0.02em;
+    margin-bottom: 0.4rem;
+  }
+
+  .legend-bar {
+    width: 120px;
+    height: 6px;
+    border-radius: 3px;
+    // rgb values must match interpolateColor() in bcn-map.ts
+    background: linear-gradient(to right, rgb(59, 130, 246), rgb(239, 68, 68));
+    margin-bottom: 0.3rem;
+  }
+
+  .legend-ticks {
+    display: flex;
+    justify-content: space-between;
+    width: 120px;
+    font-size: 0.65rem;
+    opacity: 0.4;
+  }
 }

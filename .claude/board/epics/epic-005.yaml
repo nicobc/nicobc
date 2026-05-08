@@ -1,0 +1,12 @@
+id: EPIC-005
+title: Distributed Computing Intuition Lab
+category: workshop
+priority: 3
+status: IDEATION
+description: Learner maps code smells in a data pipeline to distributed computing inefficiencies; builds perf intuition beyond technique names.
+notes:
+  - Shared dataset: fct_orders + dim_customers, KPI avg order value per customer name top 5 in 2026
+  - Numberless viz: animated rectangles only, geometry + motion carry meaning
+  - Concepts: predicate pushdown, column pruning, shuffle cost, serialization overhead
+  - Goal: mental model update, not technique recall
+stories: []

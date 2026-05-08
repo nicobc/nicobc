@@ -1,0 +1,9 @@
+<div class="editor-wrapper">
+  <div #editorHost class="editor-host"></div>
+  <div class="editor-actions">
+    <button class="btn-run" (click)="onRun()">Run</button>
+    @if (solution) {
+      <button class="btn-reveal" (click)="onReveal()">reveal solution</button>
+    }
+  </div>
+</div>
