@@ -25,7 +25,7 @@ jobs:
         run: |
           mkdir -p data/bcn/processed/ajuntament
           npx wrangler r2 object get ${{ env.R2_BUCKET }}/bcn/bcn-admin.geojson \
-            --file=data/bcn/processed/ajuntament/bcn-admin.geojson
+            --file=data/bcn/processed/ajuntament/bcn-admin.geojson --remote
       - name: Fetch rental prices
         run: |
           mkdir -p data/bcn/raw/ajuntament/rental-prices
