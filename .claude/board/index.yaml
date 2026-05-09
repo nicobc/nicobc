@@ -3,10 +3,10 @@ in_progress: []
 ready:
   - id: EPIC-004
     title: Unit Testing for Data Engineers Lab
-
-ideation:
   - id: EPIC-005
     title: Distributed Computing Intuition Lab
+
+ideation:
   - id: EPIC-006
     title: Copy Audit
 

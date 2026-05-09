@@ -3,11 +3,61 @@ title: Distributed Computing Intuition Lab
 scope: distributed-computing
 category: workshop
 priority: 3
-status: IDEATION
+status: READY
 description: Learner maps code smells in a data pipeline to distributed computing inefficiencies; builds perf intuition beyond technique names.
 notes:
-  - Shared dataset: fct_orders + dim_customers, KPI avg order value per customer name top 5 in 2026
-  - Numberless viz: animated rectangles only, geometry + motion carry meaning
-  - Concepts: predicate pushdown, column pruning, shuffle cost, serialization overhead
+  - Dataset: fct_orders + dim_customers batch1 from seed.ts; same KPI as other labs (avg order value per customer name top 5 in 2026)
+  - SQL snippets only, no runtime; applies to dbt/Snowflake, dbt/Redshift, BigQuery — not Spark-specific
+  - 3 concepts: column pruning, predicate pushdown, shuffle (folds in serialization + join strategy)
+  - Shuffle note: serialization is the hidden cost inside every shuffle (data leaving/arriving a node); also mention UDF-triggered serialization without shuffle (Snowflake UDFs, Spark Python UDFs, etc.)
+  - Opening framing: modern engines optimize the logical plan (Catalyst in Spark; analogous in Snowflake, BigQuery, Redshift) — they reduce blast radius but don't eliminate it; understanding the model is how you read an execution plan when something is slow
+  - Format per step: copy + animated viz → MCQ (two well-formed SQL snippets, pick the better one) → reveal with explanation
+  - MCQ distractors must be plausible near-misses; only difference between options is the concept being tested
+  - Viz: animated rectangles only, numberless; geometry (size, position) and motion carry meaning; at node boundaries rectangles morph (sharp → rounded → sharp) to represent serialization/deserialization
   - Goal: mental model update, not technique recall
-tickets: []
+
+tickets:
+
+  - id: T1
+    title: Lab page scaffold + routing
+    type: feat
+    priority: 1
+    status: READY
+    description: Learner navigates to distributed computing lab and sees page structure.
+    acceptance_criteria:
+      - /lab/distributed-computing route renders lab component
+      - lab card added to /lab landing page
+
+  - id: T2
+    title: Animated data-movement viz component
+    type: feat
+    priority: 1
+    status: READY
+    description: Reusable component that conveys distributed execution concepts through geometry and motion, no numbers.
+    acceptance_criteria:
+      - component accepts a scenario config (nodes, data blocks, movement sequences)
+      - nodes rendered as positioned containers; data blocks as rectangles with configurable size and color
+      - movement sequences animate data blocks traveling between nodes
+      - at node boundaries data blocks morph shape (sharp corners → rounded → sharp) to represent serialize/deserialize
+      - no labels, no numbers; geometry and motion are the only language
+      - animation loops or triggers on step entry
+      - used for all 3 concept steps
+    notes:
+      - gate ticket; validates the viz approach before content is built
+      - column pruning scenario: wide vs narrow rectangles flowing through a scan
+      - predicate pushdown scenario: many blocks reaching a late filter vs few blocks surviving an early one
+      - shuffle scenario: blocks moving across node boundaries with shape morph at each crossing
+
+  - id: T3
+    title: Lab content — 3 concepts + MCQ navigation
+    type: feat
+    priority: 2
+    status: READY
+    description: Learner works through 3 concepts; each step explains via viz then confirms via MCQ.
+    acceptance_criteria:
+      - opening framing note: optimizer limits + why mental model matters for profiling
+      - step 1 (column pruning) — viz + copy + MCQ; snippets contrast SELECT * before join vs project to needed columns first
+      - step 2 (predicate pushdown) — viz + copy + MCQ; snippets contrast WHERE late in CTE chain vs WHERE applied to source CTE
+      - step 3 (shuffle) — viz + copy + MCQ; snippets contrast 1:m join before filter+agg vs filter-first-then-1:1-join; copy covers serialization as hidden shuffle cost + UDF aside
+      - MCQ: correct answer unlocks Next; incorrect answer shows explanation and allows retry without penalty
+      - back arrow visible from step 2+; step 3 is terminal
