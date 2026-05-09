@@ -22,13 +22,13 @@ Valid values: IDEATION, READY, IN PROGRESS, DONE, DISCARDED.
 DISCARDED tickets stay in their file. Do not delete or renumber.
 
 ## epic status
-Epic status is driven by `feat` tickets only.
-Epic status = lowest status among active (non-DONE, non-DISCARDED) `feat` tickets.
-If all `feat` tickets are DONE or DISCARDED, epic is DONE.
+- READY: all tickets READY, none started
+- IN PROGRESS: any ticket is IN PROGRESS or DONE, but not all tickets are DONE or DISCARDED
+- DONE: all tickets DONE or DISCARDED; final and cannot be reopened
 
-Non-`feat` tickets do not affect epic status. A DONE epic stays DONE with open `fix`, `chore`, or other non-`feat` tickets.
+New work discovered after an epic is DONE goes to a new epic or the maintenance backlog — do not reopen.
 
-Before marking a `feat` ticket DONE, groom any now-unblocked IDEATION `feat` tickets to READY — epic status must not regress.
+Before marking a ticket DONE, groom any now-unblocked IDEATION tickets to READY.
 
 ## maintenance tickets
 Cross-cutting non-`feat` work that doesn't belong to a specific epic lives in `maintenance.yaml`.
