@@ -17,13 +17,22 @@ All epics have a `scope` field: short human-readable name used in commit message
 Maintenance tickets have their own `scope` field for the same purpose.
 
 ## ticket statuses
-Valid values: IDEATION, READY, IN PROGRESS, DONE, DISCARDED.
+Valid values: IDEATION, READY, IN PROGRESS, TESTING, DONE, DISCARDED.
+
+Lifecycle: READY → IN PROGRESS → TESTING → DONE. All ticket types go through TESTING.
+
+TESTING: code is on dev, PR is open, CI is running or awaiting manual verification.
+DONE: CI passed and ticket is verified working.
+
+Intermediate commits during IN PROGRESS or TESTING carry no `Closes` footer. The final commit that transitions to DONE carries the `Closes` footer and the board update.
+
+CI tickets requiring a live trigger to validate (tag push, scheduled run, webhook): add `workflow_dispatch:` temporarily during TESTING, remove it in the DONE commit.
 
 DISCARDED tickets stay in their file. Do not delete or renumber.
 
 ## epic status
 - READY: all tickets READY, none started
-- IN PROGRESS: any ticket is IN PROGRESS or DONE, but not all tickets are DONE or DISCARDED
+- IN PROGRESS: any ticket is IN PROGRESS, TESTING, or DONE, but not all tickets are DONE or DISCARDED
 - DONE: all tickets DONE or DISCARDED; final and cannot be reopened
 
 New work discovered after an epic is DONE goes to a new epic or the maintenance backlog — do not reopen.

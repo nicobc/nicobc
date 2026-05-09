@@ -69,7 +69,7 @@ tickets:
     title: GitHub Actions PR CI
     type: ci
     priority: 4
-    status: DONE
+    status: TESTING
     description: Path-filtered PR validation; each concern tested only when its code changes.
     acceptance_criteria:
       - on pull_request targeting main; if app/ changed — run ng build + ng test; failing build or test blocks merge
@@ -94,7 +94,7 @@ tickets:
     title: Rental prices pipeline workflow
     type: ci
     priority: 6
-    status: DONE
+    status: TESTING
     description: Run the rental prices pipeline and upload outputs to R2 via manual workflow dispatch.
     acceptance_criteria:
       - bcn-rental-prices-pipeline.yml workflow_dispatch curls source Excel to the path build-rental-prices expects, then runs the pipeline
