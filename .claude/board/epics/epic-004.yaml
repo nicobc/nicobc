@@ -3,13 +3,69 @@ title: Unit Testing for Data Engineers Lab
 scope: unit-testing
 category: workshop
 priority: 2
-status: IDEATION
+status: READY
 description: Learner refactors poorly tested pipeline function step by step; builds intuition for pytest best practices and I/O isolation.
 notes:
-  - Pyodide + DuckDB Python (duckdb-pyodide, available Oct 2024+)
-  - Shared dataset: fct_orders + dim_customers, KPI avg order value per customer name top 5 in 2026
+  - Pyodide + duckdb-pyodide; in-browser Python runtime
+  - Dataset: fct_orders + dim_customers batch1 from seed.ts (20 customers, 50 orders, no NULLs); top 5 by avg order value Meridian ~4200, Sable ~3500, Northveil ~2800, Crestline ~2100, Ironclad ~1600
+  - Starting function: get_top_customers_2026() with hardcoded duckdb.connect("orders.duckdb"); smells are hardcoded I/O, hardcoded year in name + SQL, raw tuple return
+  - Isolation arc: commit orders.duckdb (dumb) → side-effect fixture creates/seeds/deletes file via monkeypatch.chdir (less dumb) → function accepts conn param (right)
   - Concept progression: fixtures → factory fixtures → side-effect fixtures → monkeypatching → parametrization → testability via isolation
-  - Isolation arc: commit .duckdb file (dumb) → side-effect fixture (less dumb) → isolate logic from I/O (right)
-  - Per concept: before/after on simple unrelated snippet, then free-form exercise building on prev solution; reveal button as escape hatch
-  - pytest stdout rendered as styled pre block
-tickets: []
+  - Per step: before/after explained example on unrelated snippet, editable test file building on previous step's solution, reveal escape hatch
+  - Step unlock condition: learner's test suite passes
+  - pytest stdout rendered as styled pre block; pass/fail distinguishable
+
+tickets:
+
+  - id: T1
+    title: Lab page scaffold + routing
+    type: feat
+    priority: 1
+    status: READY
+    description: Learner navigates to UT lab and sees page structure.
+    acceptance_criteria:
+      - /lab/unit-testing route renders UT lab component
+      - UT lab card added to /lab landing page
+
+  - id: T2
+    title: Pyodide + pytest runner
+    type: feat
+    priority: 1
+    status: READY
+    description: As a learner, I want to run pytest in my browser.
+    acceptance_criteria:
+      - Pyodide + duckdb-pyodide loaded in lab context
+      - runner accepts test file content as string, runs pytest, captures stdout
+      - stdout rendered in styled pre block; pass/fail status distinguishable
+      - import errors and syntax errors surface in the pre block without crashing the page
+    notes:
+      - gate ticket; validates the technical approach before any content is built
+
+  - id: T3
+    title: Python source files + step-1 starting state
+    type: feat
+    priority: 2
+    status: READY
+    description: Lab has a function under test and a skeleton test the learner will refactor through all 6 steps.
+    acceptance_criteria:
+      - pipeline.py defines get_top_customers_2026() with hardcoded duckdb.connect("orders.duckdb"), hardcoded year in SQL, raw tuple return
+      - orders.duckdb committed as test fixture with batch1 data
+      - test_pipeline.py skeleton has one test reading from the committed file, no fixtures
+      - runner loads and runs the skeleton test successfully
+
+  - id: T4
+    title: 6-step progressive test refactoring + navigation
+    type: feat
+    priority: 3
+    status: READY
+    description: Learner refactors the test through 6 concepts; each step builds on the previous solution.
+    acceptance_criteria:
+      - step 1 (fixtures) — replace ad-hoc setup with @pytest.fixture
+      - step 2 (factory fixtures) — parametrize fixture to generate varied order datasets
+      - step 3 (side-effect fixtures) — fixture creates + seeds + deletes orders.duckdb via monkeypatch.chdir; function unchanged, I/O still hardcoded
+      - step 4 (monkeypatching) — patch duckdb.connect to return a seeded in-memory connection
+      - step 5 (parametrization) — @pytest.mark.parametrize across multiple customer/order datasets
+      - step 6 (isolation) — refactor function to accept conn param; monkeypatching becomes unnecessary; test simplifies to pure logic assertion
+      - each step renders before/after example, editable test editor, run button, reveal escape hatch
+      - Next unlocks when learner's test suite passes; back arrow always visible from step 2+
+      - step 6 is terminal (no Next)
