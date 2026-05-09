@@ -1,0 +1,93 @@
+id: EPIC-007
+title: Deployment
+scope: deployment
+category: infra
+priority: 1
+status: READY
+description: Ship the portfolio to a live URL. Vercel hosts the Angular SPA; Cloudflare R2 serves generated data assets. Production deploys are triggered by pushing a CalVer tag (YYYY.MM.N) — the tag is the deploy decision. Data pipeline runs independently on manual dispatch.
+
+tickets:
+
+  - id: T1
+    title: Commit seeds.ts
+    type: chore
+    priority: 1
+    status: READY
+    description: Seed data is now visible after gitignore fix; commit it.
+    acceptance_criteria:
+      - app/src/app/labs/data/seed.ts committed and tracked in git
+
+  - id: T2
+    title: Remove cadastral ownership artifacts
+    type: chore
+    priority: 1
+    status: READY
+    description: Cadastral metrics were dropped; remove all remaining traces from the repo.
+    acceptance_criteria:
+      - app/public/data/cadastral-ownership.json symlink removed from git
+
+  - id: T3
+    title: R2 bucket + data upload
+    type: chore
+    priority: 2
+    status: READY
+    description: Establish R2 as the authoritative source for generated data assets.
+    acceptance_criteria:
+      - R2 bucket created with public access enabled
+      - CORS configured to allow requests from app domain and localhost
+      - bcn-admin.geojson, rental-prices.json, rental-insights.json uploaded and publicly accessible
+      - bcn-admin.geojson symlink removed from git
+    notes:
+      - run build-admin-geo and build-rental-prices locally before uploading to confirm outputs are current
+
+  - id: T4
+    title: Environment-aware data URL
+    type: feat
+    priority: 3
+    status: READY
+    description: Angular app fetches data from R2 in production and from local public/data/ in development.
+    acceptance_criteria:
+      - a single base URL constant controls all data fetches in bcn-map
+      - development builds read from /data/ (local public/ dir)
+      - production builds read from R2 public URL via environment configuration
+      - bcn-map lab loads correctly in both environments
+
+  - id: T5
+    title: GitHub Actions PR CI
+    type: ci
+    priority: 4
+    status: READY
+    description: Path-filtered PR validation; each concern tested only when its code changes.
+    acceptance_criteria:
+      - on pull_request targeting main; if app/ changed — run ng build + ng test; failing build or test blocks merge
+      - on pull_request targeting main; if services/ changed — run uv run pytest; failing tests block merge
+    notes:
+      - services/ pytest job is a stub until EPIC-004 adds real tests; add the job now so it runs when tests land
+
+  - id: T6
+    title: Vercel config + deploy workflow
+    type: feat
+    priority: 5
+    status: READY
+    description: Configure Vercel and ship the first production deploy triggered by a CalVer tag push.
+    acceptance_criteria:
+      - vercel.json defines SPA rewrite (all paths → index.html), build command, output dir
+      - Vercel GitHub integration auto-deploy disabled
+      - deploy.yml triggers on CalVer tag push; runs vercel --prod
+      - PR builds generate Vercel preview URLs
+      - app loads at *.vercel.app URL; bcn-map loads from R2; data-contracts lab runs DuckDB queries successfully
+
+  - id: T7
+    title: Rental prices pipeline workflow
+    type: ci
+    priority: 6
+    status: READY
+    description: Run the rental prices pipeline and upload outputs to R2 via manual workflow dispatch.
+    acceptance_criteria:
+      - bcn-rental-prices-pipeline.yml workflow_dispatch curls source Excel to the path build-rental-prices expects, then runs the pipeline
+      - curl failure (non-200, missing file) aborts the workflow explicitly before the pipeline runs
+      - rental-prices.json and rental-insights.json uploaded to R2 on success
+      - build-admin-geo excluded (static data; run locally once)
+      - upload fails fast if R2 credentials are missing or bucket is unreachable
+    notes:
+      - source URL: https://habitatge.gencat.cat/web/.content/home/dades/estadistiques/01_Estadistiques_de_construccio_i_mercat_immobiliari/03_Mercat_de_lloguer/03_Lloguers_Barcelona_per_districtes_i_barris/anual_bcn_lloguer_m2.xlsx

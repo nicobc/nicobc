@@ -1,6 +1,8 @@
 in_progress: []
 
 ready:
+  - id: EPIC-007
+    title: Deployment
   - id: EPIC-004
     title: Unit Testing for Data Engineers Lab
   - id: EPIC-005
