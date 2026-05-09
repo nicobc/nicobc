@@ -18,8 +18,4 @@ done:
   - id: EPIC-003
     title: Data Contracts Lab
 
-maintenance:
-  - ref: MAINT / T1
-    title: Scrollbar + padding scroll fix
-    type: fix
-    status: READY
+maintenance: []

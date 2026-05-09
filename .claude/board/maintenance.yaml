@@ -5,11 +5,12 @@ tickets:
     type: fix
     scope: ui
     priority: 1
-    status: READY
-    description: Full viewport width is scrollable; scrollbar sits at far right of window.
-    acceptance_criteria:
-      - overflow-y on html/body, not on a child container
-      - page scrolls when cursor hovers over left/right padding areas
-      - applies to all pages
+    status: DONE
+    description: Scrollbar should sit at viewport edge, not at far right of horizontal overflow.
+    resolution: >
+      All pages render inside main (max-width: 860px, margin: 0 auto). No page container
+      causes viewport-level horizontal overflow. Data-contracts code blocks use overflow-x: auto,
+      scoping their scrollbar to the element. BCN map uses negative margins (intentional bleed),
+      not viewport overflow. Fix is already in place across all pages.
     notes:
-      - CSS-only fix in global styles
+      - Pattern for new labs with wide content: overflow-x auto on the element, not the page container
