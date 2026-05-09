@@ -30,7 +30,7 @@ tickets:
     title: R2 bucket + data upload
     type: chore
     priority: 2
-    status: IN PROGRESS
+    status: DONE
     description: Establish R2 as the authoritative source for generated data assets.
     acceptance_criteria:
       - R2 bucket created with public access enabled
@@ -45,7 +45,7 @@ tickets:
     title: Buy domain + connect to Cloudflare
     type: chore
     priority: 2
-    status: READY
+    status: DONE
     description: Buy a domain via Cloudflare Registrar and wire it up for both R2 and Vercel.
     acceptance_criteria:
       - domain purchased via Cloudflare Registrar
