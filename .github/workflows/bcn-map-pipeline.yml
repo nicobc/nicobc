@@ -1,4 +1,4 @@
-name: BCN Rental Prices Pipeline
+name: BCN Map Pipeline
 
 on:
   workflow_dispatch:
@@ -14,7 +14,7 @@ jobs:
       - name: Fetch admin boundaries
         run: |
           mkdir -p data/bcn/raw/ajuntament/admin-boundaries
-          curl -f -o data/bcn/raw/ajuntament/admin-boundaries/0301100100_UNITATS_ADM_POLIGONS.json \
+          curl -fL -o data/bcn/raw/ajuntament/admin-boundaries/0301100100_UNITATS_ADM_POLIGONS.json \
             "https://opendata-ajuntament.barcelona.cat/data/dataset/808daafa-d9ce-48c0-925a-fa5afdb1ed41/resource/cd800462-f326-429f-a67a-c69b7fc4c50a/download"
       - name: Build admin boundaries
         run: uv run --project pipelines/bcn-map build-admin-geo
