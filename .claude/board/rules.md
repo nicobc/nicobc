@@ -40,6 +40,8 @@ One ticket = one commit. Before committing, update the ticket status to DONE in 
 Commit message: `type(scope): description`
 `type` and `scope` are taken directly from the ticket. Epic tickets inherit scope from the parent epic; maintenance tickets have their own `scope` field.
 
+Include a `Closes EPIC-XXX/TN` footer (or `Closes MAINT/TN`) for traceability. Place it after `Co-Authored-By` if present.
+
 Exception: board meta-work (structural changes to the board itself, convention updates) uses `chore(board): ...` with no ticket required. `board` is a reserved scope.
 
 ## grooming convention
