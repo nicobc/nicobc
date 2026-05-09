@@ -95,12 +95,39 @@ tickets:
     type: ci
     priority: 6
     status: TESTING
-    description: Run the rental prices pipeline and upload outputs to R2 via manual workflow dispatch.
+    description: Run the rental prices pipeline and upload outputs to R2 via manual workflow dispatch; target bucket inferred from git ref.
     acceptance_criteria:
       - bcn-rental-prices-pipeline.yml workflow_dispatch curls source Excel to the path build-rental-prices expects, then runs the pipeline
       - curl failure (non-200, missing file) aborts the workflow explicitly before the pipeline runs
-      - rental-prices.json and rental-insights.json uploaded to R2 on success
+      - ref is a tag → uploads to nicobc-prd-r2b; ref is a branch → uploads to nicobc-dev-r2b
       - build-admin-geo excluded (static data; run locally once)
       - upload fails fast if R2 credentials are missing or bucket is unreachable
     notes:
       - source URL: https://habitatge.gencat.cat/web/.content/home/dades/estadistiques/01_Estadistiques_de_construccio_i_mercat_immobiliari/03_Mercat_de_lloguer/03_Lloguers_Barcelona_per_districtes_i_barris/anual_bcn_lloguer_m2.xlsx
+      - depends on T9 (buckets must exist before workflow can be tested)
+
+  - id: T9
+    title: Migrate R2 buckets to naming convention
+    type: chore
+    priority: 7
+    status: READY
+    description: Rename prod bucket to nicobc-prd-r2b and create dev bucket nicobc-dev-r2b.
+    acceptance_criteria:
+      - nicobc-prd-r2b bucket created; files migrated from nicobc-data; custom domain data.nicolascontreras.dev re-pointed
+      - nicobc-data bucket deleted
+      - nicobc-dev-r2b bucket created; public access enabled
+      - prod R2 CORS updated to include *.nicobc.pages.dev (prereq for T10)
+      - environment.prod.ts dataBaseUrl confirmed still working after migration
+
+  - id: T10
+    title: Enable Cloudflare Pages preview deployments
+    type: chore
+    priority: 8
+    status: READY
+    description: Re-enable Cloudflare git integration for non-production branches so dev branch gets a preview URL automatically.
+    acceptance_criteria:
+      - preview deployments re-enabled for non-production branches in Cloudflare Pages settings
+      - dev branch deploys to dev.nicobc.pages.dev on push
+      - bcn-map loads correctly on dev.nicobc.pages.dev (reads from prod R2 bucket)
+    notes:
+      - depends on T9 (CORS must include *.nicobc.pages.dev before enabling previews)
