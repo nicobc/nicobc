@@ -14,7 +14,7 @@ jobs:
       - name: Fetch admin boundaries
         run: |
           mkdir -p data/bcn/raw/ajuntament/admin-boundaries
-          curl -fL -o /tmp/admin-boundaries.zip \
+          curl -fL -A "Mozilla/5.0" -o /tmp/admin-boundaries.zip \
             "https://opendata-ajuntament.barcelona.cat/data/dataset/808daafa-d9ce-48c0-925a-fa5afdb1ed41/resource/cd800462-f326-429f-a67a-c69b7fc4c50a/download"
           unzip -p /tmp/admin-boundaries.zip 0301100100_UNITATS_ADM_POLIGONS.json \
             > data/bcn/raw/ajuntament/admin-boundaries/0301100100_UNITATS_ADM_POLIGONS.json
