@@ -2,6 +2,7 @@ import { Component, effect, ElementRef, inject, OnDestroy, OnInit, signal, ViewC
 import { Deck, FlyToInterpolator } from '@deck.gl/core';
 import { GeoJsonLayer } from '@deck.gl/layers';
 import { ThemeService } from '../../services/theme';
+import { environment } from '../../../environments/environment';
 
 const INITIAL_VIEW = {
   longitude: 2.13,
@@ -85,10 +86,11 @@ export class BcnMap implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    const base = environment.dataBaseUrl;
     Promise.all([
-      fetch('/data/bcn-admin.geojson').then(r => r.json()),
-      fetch('/data/rental-prices.json').then(r => r.json()),
-      fetch('/data/rental-insights.json').then(r => r.json()),
+      fetch(`${base}/bcn-admin.geojson`).then(r => r.json()),
+      fetch(`${base}/rental-prices.json`).then(r => r.json()),
+      fetch(`${base}/rental-insights.json`).then(r => r.json()),
     ]).then(([geojson, metrics, insights]) => this.initDeck(geojson, metrics, insights));
   }
 

@@ -30,7 +30,7 @@ tickets:
     title: R2 bucket + data upload
     type: chore
     priority: 2
-    status: READY
+    status: IN PROGRESS
     description: Establish R2 as the authoritative source for generated data assets.
     acceptance_criteria:
       - R2 bucket created with public access enabled
@@ -44,7 +44,7 @@ tickets:
     title: Environment-aware data URL
     type: feat
     priority: 3
-    status: READY
+    status: DONE
     description: Angular app fetches data from R2 in production and from local public/data/ in development.
     acceptance_criteria:
       - a single base URL constant controls all data fetches in bcn-map
