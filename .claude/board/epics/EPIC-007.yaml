@@ -12,7 +12,7 @@ tickets:
     title: Commit seeds.ts
     type: chore
     priority: 1
-    status: READY
+    status: DONE
     description: Seed data is now visible after gitignore fix; commit it.
     acceptance_criteria:
       - app/src/app/labs/data/seed.ts committed and tracked in git
