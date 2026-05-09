@@ -2,9 +2,7 @@ _private/
 .idea/
 .claude/settings.local.json
 .DS_Store
-data/
+/data/
 **/.venv/
 **/__pycache__/
 **/*.pyc
-data/bcn/raw/
-data/bcn/processed/ajuntament/metrics/
