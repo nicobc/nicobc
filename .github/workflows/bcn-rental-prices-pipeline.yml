@@ -11,12 +11,19 @@ jobs:
       - uses: astral-sh/setup-uv@v5
         with:
           python-version: '3.14'
-      - name: Fetch source data
+      - name: Fetch admin boundaries
+        run: |
+          mkdir -p data/bcn/raw/ajuntament/admin-boundaries
+          curl -f -o data/bcn/raw/ajuntament/admin-boundaries/0301100100_UNITATS_ADM_POLIGONS.json \
+            "https://opendata-ajuntament.barcelona.cat/data/dataset/808daafa-d9ce-48c0-925a-fa5afdb1ed41/resource/cd800462-f326-429f-a67a-c69b7fc4c50a/download"
+      - name: Build admin boundaries
+        run: uv run --project pipelines/bcn-map build-admin-geo
+      - name: Fetch rental prices
         run: |
           mkdir -p data/bcn/raw/ajuntament/rental-prices
           curl -f -o data/bcn/raw/ajuntament/rental-prices/anual_bcn_lloguer_m2.xlsx \
             "https://habitatge.gencat.cat/web/.content/home/dades/estadistiques/01_Estadistiques_de_construccio_i_mercat_immobiliari/03_Mercat_de_lloguer/03_Lloguers_Barcelona_per_districtes_i_barris/anual_bcn_lloguer_m2.xlsx"
-      - name: Run pipeline
+      - name: Build rental prices
         run: uv run --project pipelines/bcn-map build-rental-prices
       - name: Set target bucket
         run: |
@@ -27,6 +34,9 @@ jobs:
           fi
       - name: Upload to R2
         run: |
+          npx wrangler r2 object put ${{ env.R2_BUCKET }}/bcn/bcn-admin.geojson \
+            --file=data/bcn/processed/ajuntament/bcn-admin.geojson \
+            --content-type=application/geo+json
           npx wrangler r2 object put ${{ env.R2_BUCKET }}/bcn/rental-prices.json \
             --file=data/bcn/processed/ajuntament/rental-prices.json \
             --content-type=application/json
