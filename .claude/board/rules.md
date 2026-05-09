@@ -42,6 +42,9 @@ Commit message: `type(scope): description`
 
 Exception: board meta-work (structural changes to the board itself, convention updates) uses `chore(board): ...` with no ticket required. `board` is a reserved scope.
 
+## grooming convention
+Each grooming session (moving an epic from IDEATION to READY) is committed separately per epic as `chore(board): groom EPIC-XXX`. No ticket required. The commit includes the epic file and any index.yaml changes for that epic only.
+
 ## maintenance index section
 Open tickets from `maintenance.yaml` plus any open non-`feat` tickets from feature epics appear in the `maintenance:` section of `index.yaml`. Load individual files only when you need ticket detail.
 
