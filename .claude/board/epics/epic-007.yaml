@@ -110,24 +110,28 @@ tickets:
     title: Migrate R2 buckets to naming convention
     type: chore
     priority: 7
-    status: READY
+    status: DONE
     description: Rename prod bucket to nicobc-prd-r2b and create dev bucket nicobc-dev-r2b.
     acceptance_criteria:
       - nicobc-prd-r2b bucket created; files migrated from nicobc-data; custom domain data.nicolascontreras.dev re-pointed
       - nicobc-data bucket deleted
       - nicobc-dev-r2b bucket created; public access enabled
-      - prod R2 CORS updated to include *.nicobc.pages.dev (prereq for T10)
+      - dev R2 CORS configured to allow *.nicobc.pages.dev and localhost (prereq for T10)
       - environment.prod.ts dataBaseUrl confirmed still working after migration
 
   - id: T10
-    title: Enable Cloudflare Pages preview deployments
+    title: Self-contained dev environment on Cloudflare Pages
     type: chore
     priority: 8
     status: READY
-    description: Re-enable Cloudflare git integration for non-production branches so dev branch gets a preview URL automatically.
+    description: Wire up a fully isolated dev environment — preview builds on *.nicobc.pages.dev read from nicobc-dev-r2b via data.dev.nicolascontreras.dev. No-tag pushes use the dev Angular config; CalVer tag pushes use production.
     acceptance_criteria:
-      - preview deployments re-enabled for non-production branches in Cloudflare Pages settings
-      - dev branch deploys to dev.nicobc.pages.dev on push
-      - bcn-map loads correctly on dev.nicobc.pages.dev (reads from prod R2 bucket)
+      - data.dev.nicolascontreras.dev custom domain connected to nicobc-dev-r2b
+      - environment.dev.ts created with dataBaseUrl pointing to data.dev.nicolascontreras.dev/bcn
+      - angular.json dev build configuration added with fileReplacements swapping in environment.dev.ts
+      - Cloudflare Pages preview build command uses --configuration=dev
+      - preview deployments re-enabled for non-production branches
+      - dev branch deploys to dev.nicobc.pages.dev on push; bcn-map loads from data.dev.nicolascontreras.dev
     notes:
-      - depends on T9 (CORS must include *.nicobc.pages.dev before enabling previews)
+      - depends on T9 (public access and CORS on nicobc-dev-r2b must be set before enabling previews)
+      - nicobc-dev-r2b has no data until T7 pipeline runs from a branch; bcn-map will 404 until then
