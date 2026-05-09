@@ -14,8 +14,10 @@ jobs:
       - name: Fetch admin boundaries
         run: |
           mkdir -p data/bcn/raw/ajuntament/admin-boundaries
-          curl -fL -o data/bcn/raw/ajuntament/admin-boundaries/0301100100_UNITATS_ADM_POLIGONS.json \
+          curl -fL -o /tmp/admin-boundaries.zip \
             "https://opendata-ajuntament.barcelona.cat/data/dataset/808daafa-d9ce-48c0-925a-fa5afdb1ed41/resource/cd800462-f326-429f-a67a-c69b7fc4c50a/download"
+          unzip -p /tmp/admin-boundaries.zip 0301100100_UNITATS_ADM_POLIGONS.json \
+            > data/bcn/raw/ajuntament/admin-boundaries/0301100100_UNITATS_ADM_POLIGONS.json
       - name: Build admin boundaries
         run: uv run --project pipelines/bcn-map build-admin-geo
       - name: Fetch rental prices
