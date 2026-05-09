@@ -35,9 +35,9 @@ jobs:
         run: uv run --project pipelines/bcn-map build-rental-prices
       - name: Upload to R2
         run: |
-          npx wrangler r2 object put ${{ env.R2_BUCKET }}/bcn/rental-prices.json \
+          npx wrangler r2 object put ${{ env.R2_BUCKET }}/bcn/rental-prices.json --remote \
             --file=data/bcn/processed/ajuntament/rental-prices.json \
             --content-type=application/json
-          npx wrangler r2 object put ${{ env.R2_BUCKET }}/bcn/rental-insights.json \
+          npx wrangler r2 object put ${{ env.R2_BUCKET }}/bcn/rental-insights.json --remote \
             --file=data/bcn/processed/ajuntament/rental-insights.json \
             --content-type=application/json

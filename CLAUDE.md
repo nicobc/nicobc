@@ -15,5 +15,8 @@ Trust Nicolas's copy judgment but copy decisions prioritize reader and site obje
 
 Files under .claude/ are agent-facing only. Write for comprehension, not readability. Omit flourish, bend grammar freely if meaning stays unambiguous, prefer dense over verbose.
 
+## GHA workflow testing
+When iterating on a GHA workflow: commit and push the change, dispatch with `gh workflow run <file> --ref <branch> --repo nicobc/nicobc`, then immediately watch with `gh run watch <run-id> --repo nicobc/nicobc`. On failure, fetch logs with `gh run view <run-id> --log-failed --repo nicobc/nicobc`, diagnose, fix, and repeat — without waiting for the user to paste output. `gh` is at `/opt/homebrew/bin/gh`.
+
 ## Language
 All code, data schemas, column names, JSON keys, and GeoJSON property names must be in English. Geographic proper nouns (place names like "el Raval", "Eixample") are kept in their original language as they are names, not labels.
