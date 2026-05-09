@@ -3,7 +3,7 @@ title: Deployment
 scope: deployment
 category: infra
 priority: 1
-status: READY
+status: IN PROGRESS
 description: Ship the portfolio to a live URL. Vercel hosts the Angular SPA; Cloudflare R2 serves generated data assets. Production deploys are triggered by pushing a CalVer tag (YYYY.MM.N) — the tag is the deploy decision. Data pipeline runs independently on manual dispatch.
 
 tickets:
@@ -56,13 +56,13 @@ tickets:
     title: GitHub Actions PR CI
     type: ci
     priority: 4
-    status: READY
+    status: DONE
     description: Path-filtered PR validation; each concern tested only when its code changes.
     acceptance_criteria:
       - on pull_request targeting main; if app/ changed — run ng build + ng test; failing build or test blocks merge
-      - on pull_request targeting main; if services/ changed — run uv run pytest; failing tests block merge
+      - on pull_request targeting main; if pipelines/ changed — run uv run pytest; failing tests block merge
     notes:
-      - services/ pytest job is a stub until EPIC-004 adds real tests; add the job now so it runs when tests land
+      - pipelines/ pytest job is a stub until EPIC-004 adds real tests; add the job now so it runs when tests land
 
   - id: T6
     title: Vercel config + deploy workflow
