@@ -21,7 +21,7 @@ tickets:
     title: Remove cadastral ownership artifacts
     type: chore
     priority: 1
-    status: READY
+    status: DONE
     description: Cadastral metrics were dropped; remove all remaining traces from the repo.
     acceptance_criteria:
       - app/public/data/cadastral-ownership.json symlink removed from git
