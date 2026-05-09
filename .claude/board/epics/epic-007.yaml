@@ -94,7 +94,7 @@ tickets:
     title: Rental prices pipeline workflow
     type: ci
     priority: 6
-    status: READY
+    status: DONE
     description: Run the rental prices pipeline and upload outputs to R2 via manual workflow dispatch.
     acceptance_criteria:
       - bcn-rental-prices-pipeline.yml workflow_dispatch curls source Excel to the path build-rental-prices expects, then runs the pipeline

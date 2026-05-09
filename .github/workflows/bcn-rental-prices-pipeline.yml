@@ -1,0 +1,31 @@
+name: BCN Rental Prices Pipeline
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: '3.14'
+      - name: Fetch source data
+        run: |
+          mkdir -p data/bcn/raw/ajuntament/rental-prices
+          curl -f -o data/bcn/raw/ajuntament/rental-prices/anual_bcn_lloguer_m2.xlsx \
+            "https://habitatge.gencat.cat/web/.content/home/dades/estadistiques/01_Estadistiques_de_construccio_i_mercat_immobiliari/03_Mercat_de_lloguer/03_Lloguers_Barcelona_per_districtes_i_barris/anual_bcn_lloguer_m2.xlsx"
+      - name: Run pipeline
+        run: uv run --project pipelines/bcn-map build-rental-prices
+      - name: Upload to R2
+        run: |
+          npx wrangler r2 object put nicobc-data/bcn/rental-prices.json \
+            --file=data/bcn/processed/ajuntament/rental-prices.json \
+            --content-type=application/json
+          npx wrangler r2 object put nicobc-data/bcn/rental-insights.json \
+            --file=data/bcn/processed/ajuntament/rental-insights.json \
+            --content-type=application/json
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
