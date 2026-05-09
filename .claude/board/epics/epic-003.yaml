@@ -1,5 +1,6 @@
 id: EPIC-003
 title: Data Contracts Lab
+scope: data-contracts
 category: workshop
 priority: 1
 status: DONE
@@ -12,10 +13,11 @@ notes:
   - Shared dataset: fct_orders + dim_customers, KPI avg order amount per customer name top 5 in 2026
   - 3-step navigation: condition-gated Next button, discrete back arrow, no vertical scroll flow
 
-stories:
+tickets:
 
-  - id: STR-003
+  - id: T1
     title: DC lab page scaffold + routing
+    type: feat
     priority: 1
     status: DONE
     description: Learner navigates to DC lab and sees page structure.
@@ -25,8 +27,9 @@ stories:
     notes:
       - implemented
 
-  - id: STR-004
+  - id: T2
     title: Seed data wiring into DC lab
+    type: feat
     priority: 1
     status: DONE
     description: DC lab loads fct_orders + dim_customers into DuckDB on init.
@@ -36,8 +39,9 @@ stories:
     notes:
       - implemented; uses registerFileText + read_json_auto pattern
 
-  - id: STR-005
+  - id: T3
     title: SQL editor + reveal solution button
+    type: feat
     priority: 1
     status: DONE
     description: Learner writes CTE in syntax-highlighted editor.
@@ -50,8 +54,9 @@ stories:
     notes:
       - empty query silent failure needs to be fixed
 
-  - id: STR-006
+  - id: T4
     title: Query results horizontal bar chart
+    type: feat
     priority: 1
     status: DONE
     description: Learner sees KPI as bar chart.
@@ -63,8 +68,9 @@ stories:
     notes:
       - spacing fix needed
 
-  - id: STR-007
+  - id: T5
     title: Schema drift scenario — batch2 broken chart
+    type: feat
     priority: 1
     status: DONE
     description: Learner loads refreshed data and re-runs the same query; chart silently breaks.
@@ -79,8 +85,9 @@ stories:
       - DuckDB WASM uses NULLS LAST on DESC; batch2 top customers drop out, replaced by lower-spend ones
       - seed+query run in one DuckDB connection to avoid cross-conn DDL lag in WASM
 
-  - id: STR-008
+  - id: T6
     title: Data contract reveal + JSON Schema validation
+    type: feat
     priority: 1
     status: DONE
     description: Step 3 reveals the contract as the solution to what the learner just saw.
@@ -94,8 +101,9 @@ stories:
       - schema readable — teaching example not prod boilerplate
       - validate first failing row only
 
-  - id: STR-009
+  - id: T7
     title: 3-step navigation
+    type: feat
     priority: 1
     status: DONE
     description: Learner moves through steps sequentially; each step unlocks the next via a condition.
@@ -109,8 +117,9 @@ stories:
       - step state managed in the parent component
       - Next condition is a signal set by child interactions
 
-  - id: STR-010
+  - id: T8
     title: Pipeline DAG illustration
+    type: feat
     priority: 1
     status: DONE
     description: Learner sees the pipeline context before writing the query.
@@ -122,8 +131,9 @@ stories:
     notes:
       - keep it simple — boxes + arrows, no animation needed here
 
-  - id: STR-011
+  - id: T9
     title: Output data contract + meta-reveal
+    type: feat
     priority: 1
     status: DONE
     description: Query output validated against a schema before chart renders; revealed in step 3 as a meta-example.
@@ -135,4 +145,3 @@ stories:
     notes:
       - distinct visual treatment from the fct_orders contract error — hint, not blocker
       - ties the concept back to the learner's own interaction
-

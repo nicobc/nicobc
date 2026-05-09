@@ -1,16 +1,9 @@
-id: EPIC-007
-title: UI Polish + Tech Debt
-category: project
-priority: 2
-status: IDEATION
-description: Cross-cutting UI fixes and small tech debt items that don't belong to a specific feature epic.
-notes:
-  - catch-all for global style fixes, minor UX improvements, and cleanup tasks
+tickets:
 
-stories:
-
-  - id: STR-013
+  - id: T1
     title: Scrollbar + padding scroll fix
+    type: fix
+    scope: ui
     priority: 1
     status: READY
     description: Full viewport width is scrollable; scrollbar sits at far right of window.

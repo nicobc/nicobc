@@ -1,5 +1,6 @@
 id: EPIC-005
 title: Distributed Computing Intuition Lab
+scope: distributed-computing
 category: workshop
 priority: 3
 status: IDEATION
@@ -9,4 +10,4 @@ notes:
   - Numberless viz: animated rectangles only, geometry + motion carry meaning
   - Concepts: predicate pushdown, column pruning, shuffle cost, serialization overhead
   - Goal: mental model update, not technique recall
-stories: []
+tickets: []

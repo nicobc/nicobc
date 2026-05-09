@@ -1,5 +1,6 @@
 id: EPIC-004
 title: Unit Testing for Data Engineers Lab
+scope: unit-testing
 category: workshop
 priority: 2
 status: IDEATION
@@ -11,4 +12,4 @@ notes:
   - Isolation arc: commit .duckdb file (dumb) → side-effect fixture (less dumb) → isolate logic from I/O (right)
   - Per concept: before/after on simple unrelated snippet, then free-form exercise building on prev solution; reveal button as escape hatch
   - pytest stdout rendered as styled pre block
-stories: []
+tickets: []

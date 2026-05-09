@@ -1,20 +1,22 @@
 id: EPIC-002
 title: Shared Lab Infrastructure
+scope: lab-infra
 category: project
 priority: 1
-status: IDEATION
+status: DONE
 description: Cross-cutting lab utilities in single location so each workshop focuses on teaching content.
 notes:
   - DuckDB WASM query runner (all JS labs)
   - Shared seed data: fct_orders + dim_customers, 2 batches, typed TS constants
   - app/src/app/labs/data/ for seed data, app/src/app/labs/utils/ for utilities
 
-stories:
+tickets:
 
-  - id: STR-001
+  - id: T1
     title: DuckDB WASM query runner utility
+    type: feat
     priority: 1
-    status: READY
+    status: DONE
     description: Shared async query runner; labs don't re-implement DuckDB init.
     acceptance_criteria:
       - DuckDB WASM loads + inits once
@@ -25,10 +27,11 @@ stories:
       - location: app/src/app/labs/utils/duckdb.ts
       - init takes few sec; spinner at call site
 
-  - id: STR-002
+  - id: T2
     title: Seed data design — fct_orders + dim_customers
+    type: feat
     priority: 1
-    status: IDEATION
+    status: DONE
     description: Shared seed data used by all workshop labs.
     acceptance_criteria:
       - dim_customers: customer_id PK, customer_name; ~20 rows
