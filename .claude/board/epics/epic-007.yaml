@@ -35,10 +35,23 @@ tickets:
     acceptance_criteria:
       - R2 bucket created with public access enabled
       - CORS configured to allow requests from app domain and localhost
-      - bcn-admin.geojson, rental-prices.json, rental-insights.json uploaded and publicly accessible
+      - bcn-admin.geojson, rental-prices.json, rental-insights.json uploaded and accessible via custom domain (see T8)
       - bcn-admin.geojson symlink removed from git
     notes:
       - run build-admin-geo and build-rental-prices locally before uploading to confirm outputs are current
+      - r2.dev public URL is non-functional; custom domain (T8) is the delivery mechanism
+
+  - id: T8
+    title: Buy domain + connect to Cloudflare
+    type: chore
+    priority: 2
+    status: READY
+    description: Buy a domain via Cloudflare Registrar and wire it up for both R2 and Vercel.
+    acceptance_criteria:
+      - domain purchased via Cloudflare Registrar
+      - data subdomain (e.g. data.yourdomain.dev) connected to R2 bucket as custom domain
+      - environment.prod.ts updated with new data subdomain URL instead of r2.dev
+      - root domain reserved for Vercel (T6)
 
   - id: T4
     title: Environment-aware data URL
