@@ -78,17 +78,17 @@ tickets:
       - pipelines/ pytest job is a stub until EPIC-004 adds real tests; add the job now so it runs when tests land
 
   - id: T6
-    title: Vercel config + deploy workflow
+    title: Cloudflare Pages config + deploy workflow
     type: feat
     priority: 5
-    status: READY
-    description: Configure Vercel and ship the first production deploy triggered by a CalVer tag push.
+    status: DONE
+    description: Configure Cloudflare Pages and ship the first production deploy triggered by a CalVer tag push.
     acceptance_criteria:
-      - vercel.json defines SPA rewrite (all paths → index.html), build command, output dir
-      - Vercel GitHub integration auto-deploy disabled
-      - deploy.yml triggers on CalVer tag push; runs vercel --prod
-      - PR builds generate Vercel preview URLs
-      - app loads at *.vercel.app URL; bcn-map loads from R2; data-contracts lab runs DuckDB queries successfully
+      - _redirects file defines SPA rewrite (all paths → index.html)
+      - Cloudflare Pages project created and connected to GitHub repo
+      - auto-deploy from branch disabled; production deploys triggered by deploy.yml on CalVer tag push via wrangler pages deploy
+      - PR builds generate Pages preview URLs
+      - app loads at nicolascontreras.dev; bcn-map loads from R2; data-contracts lab runs DuckDB queries successfully
 
   - id: T7
     title: Rental prices pipeline workflow
