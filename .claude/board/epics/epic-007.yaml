@@ -69,7 +69,7 @@ tickets:
     title: GitHub Actions PR CI
     type: ci
     priority: 4
-    status: TESTING
+    status: DONE
     description: Path-filtered PR validation using a changes-detection job; each concern tested only when its code changes. Gate job pattern ensures required status checks always report a result.
     acceptance_criteria:
       - app-ci.yml and pipelines-ci.yml deleted; replaced by test-app.yml and test-bcn-map-pipeline.yml
@@ -139,3 +139,15 @@ tickets:
     notes:
       - depends on T9 (public access and CORS on nicobc-dev-r2b must be set before enabling previews)
       - nicobc-dev-r2b has no data until T7 pipeline runs from a branch; bcn-map will 404 until then
+
+  - id: T11
+    title: Update dorny/paths-filter to Node 24 compatible version
+    type: chore
+    priority: 9
+    status: READY
+    description: dorny/paths-filter@v3 runs on Node.js 20, which GitHub Actions forces to Node.js 24 on 2026-06-02. Update before that date or CI will break.
+    acceptance_criteria:
+      - dorny/paths-filter pinned to a version that supports Node.js 24 in both test-app.yml and test-bcn-map-pipeline.yml
+      - both status gate checks still pass on a PR after the update
+    notes:
+      - deadline 2026-06-02; check dorny/paths-filter releases for a Node 24 compatible tag

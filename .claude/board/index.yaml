@@ -22,4 +22,6 @@ done:
   - id: EPIC-003
     title: Data Contracts Lab
 
-maintenance: []
+maintenance:
+  - id: EPIC-007/T11
+    title: Update dorny/paths-filter to Node 24 compatible version
