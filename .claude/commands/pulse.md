@@ -2,7 +2,7 @@
 description: Portfolio pulse check — what's built, how it reads to hiring teams, seniority signal, good/bad, what's next
 ---
 
-Read the current project state (git status, routes, pages, services, data pipeline modules) and answer the following as a senior engineering hiring manager who has reviewed hundreds of DE portfolios:
+Read the current project state (git status, routes, pages, data pipeline modules) and answer the following as a senior engineering hiring manager who has reviewed hundreds of DE portfolios:
 
 1. **What have we built?** Summarize the current state of the portfolio concisely — what's live/working, what's in progress, what's wired together end-to-end.
 

@@ -12,7 +12,6 @@ dependencies = [
 
 [project.scripts]
 build-admin-geo = "bcn_map.admin_geo.main:main"
-build-cadastral-metrics = "bcn_map.metrics.main:main"
 build-rental-prices = "bcn_map.rental_prices.main:main"
 
 [build-system]
