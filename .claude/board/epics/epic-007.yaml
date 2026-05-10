@@ -123,7 +123,7 @@ tickets:
     title: Self-contained dev environment on Cloudflare Pages
     type: chore
     priority: 8
-    status: READY
+    status: DONE
     description: Wire up a fully isolated dev environment — preview builds on *.nicobc.pages.dev read from nicobc-dev-r2b via data.dev.nicolascontreras.dev. No-tag pushes use the dev Angular config; CalVer tag pushes use production.
     acceptance_criteria:
       - data.dev.nicolascontreras.dev custom domain connected to nicobc-dev-r2b
