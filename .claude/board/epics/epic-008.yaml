@@ -1,0 +1,48 @@
+id: EPIC-008
+title: Test Coverage
+scope: quality
+category: quality
+priority: 2
+status: READY
+description: Establish test coverage across the repo — Python pipeline tests and Angular app tests. Includes testing skill files for both stacks.
+
+tickets:
+
+  - id: T1
+    title: Python testing skill
+    type: test
+    priority: 1
+    status: READY
+    description: Discuss Python testing standards for the repo and produce .claude/skills/python-testing.md.
+    acceptance_criteria:
+      - .claude/skills/python-testing.md created; covers test location convention, fixture patterns, I/O isolation with tmp_path, what to test vs not
+
+  - id: T2
+    title: bcn-map pipeline tests
+    type: test
+    priority: 2
+    status: IDEATION
+    description: Write unit tests for bcn-map pipeline pure-logic functions per python-testing.md. Groom after T1.
+
+  - id: T3
+    title: Fix broken Angular specs
+    type: fix
+    priority: 3
+    status: READY
+    description: Stale specs in app/ fail CI. app.spec.ts has a broken "should render title" test checking for a template that no longer exists.
+    acceptance_criteria:
+      - app.spec.ts broken "should render title" test removed
+      - all remaining "should create" specs pass
+      - ng test exits cleanly
+
+  - id: T4
+    title: Angular app quality pass — scoping
+    type: chore
+    priority: 4
+    status: READY
+    description: Review app/ code and test coverage; create angular-testing.md skill; groom follow-on tickets for Angular tests and any refactoring surfaced.
+    acceptance_criteria:
+      - angular-testing.md skill created
+      - follow-on tickets groomed to READY
+    notes:
+      - depends on T3

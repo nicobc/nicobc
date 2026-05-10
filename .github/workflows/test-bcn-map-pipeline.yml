@@ -1,0 +1,42 @@
+name: Test BCN Map Pipeline
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      bcnmap: ${{ steps.filter.outputs.bcnmap }}
+    steps:
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            bcnmap:
+              - 'pipelines/bcn-map/**'
+
+  test:
+    needs: changes
+    if: needs.changes.outputs.bcnmap == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: pipelines/bcn-map
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - uses: astral-sh/setup-uv@v5
+      - run: uv run pytest
+
+  status:
+    needs: [changes, test]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          result="${{ needs.test.result }}"
+          [[ "$result" == "failure" || "$result" == "cancelled" ]] && exit 1 || exit 0
