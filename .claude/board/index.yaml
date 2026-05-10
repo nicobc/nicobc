@@ -1,6 +1,4 @@
-in_progress:
-  - id: EPIC-007
-    title: Deployment
+in_progress: []
 
 ready:
   - id: EPIC-008
@@ -21,7 +19,7 @@ done:
     title: Shared Lab Infrastructure
   - id: EPIC-003
     title: Data Contracts Lab
+  - id: EPIC-007
+    title: Deployment
 
-maintenance:
-  - id: EPIC-007/T11
-    title: Update dorny/paths-filter to Node 24 compatible version
+maintenance: []
