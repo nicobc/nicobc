@@ -53,11 +53,6 @@ Include a `Closes EPIC-XXX/TN` footer (or `Closes MAINT/TN`) for traceability. P
 
 Exception: board meta-work (structural changes to the board itself, convention updates) uses `chore(board): ...` with no ticket required. `board` is a reserved scope.
 
-## PR convention
-One ticket = one PR. Include more only when tickets are directly dependent (e.g. a chore that unblocks the feat in the same PR). Keep PRs lean — a focused PR is easier to review and revert.
-
-Merge strategy: squash merge. One clean commit lands on main per PR; the PR description is the canonical record of what changed and why.
-
 ## grooming convention
 Each grooming session (moving an epic from IDEATION to READY) is committed separately per epic as `chore(board): groom EPIC-XXX`. No ticket required. The commit includes the epic file and any index.yaml changes for that epic only.
 
