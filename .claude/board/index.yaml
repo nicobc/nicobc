@@ -20,8 +20,4 @@ done:
   - id: EPIC-003
     title: Data Contracts Lab
 
-maintenance:
-  - id: MAINT/T2
-    title: Data contracts lab light theme visual bugs
-  - id: MAINT/T3
-    title: Data contracts lab copy — define contracts and frame JSON schema
+maintenance: []
