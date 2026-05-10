@@ -39,6 +39,8 @@ New work discovered after an epic is DONE goes to a new epic or the maintenance 
 
 Before marking a ticket DONE, groom any now-unblocked IDEATION tickets to READY.
 
+When updating a ticket status, check whether the change requires updating the parent epic status (e.g. last ticket going DONE closes the epic; first ticket going IN PROGRESS opens the epic). Update index.yaml accordingly in the same commit.
+
 ## maintenance tickets
 Cross-cutting non-`feat` work that doesn't belong to a specific epic lives in `maintenance.yaml`.
 Non-`feat` tickets that do belong to a specific epic (e.g. a bug in a feature area) live in that epic's `tickets:` list.

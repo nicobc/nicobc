@@ -3,7 +3,7 @@ title: Deployment
 scope: deployment
 category: infra
 priority: 1
-status: IN PROGRESS
+status: DONE
 description: Ship the portfolio to a live URL. Vercel hosts the Angular SPA; Cloudflare R2 serves generated data assets. Production deploys are triggered by pushing a CalVer tag (YYYY.MM.N) — the tag is the deploy decision. Data pipeline runs independently on manual dispatch.
 
 tickets:
@@ -144,7 +144,7 @@ tickets:
     title: Update dorny/paths-filter to Node 24 compatible version
     type: chore
     priority: 9
-    status: READY
+    status: DONE
     description: dorny/paths-filter@v3 runs on Node.js 20, which GitHub Actions forces to Node.js 24 on 2026-06-02. Update before that date or CI will break.
     acceptance_criteria:
       - dorny/paths-filter pinned to a version that supports Node.js 24 in both test-app.yml and test-bcn-map-pipeline.yml

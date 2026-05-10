@@ -26,9 +26,10 @@ Each branch gets its own Cloudflare Pages preview deployment.
 4. `gh pr create --base main --head type/scope --repo nicobc/nicobc`
 5. Watch CI: `gh run watch <run-id> --repo nicobc/nicobc`
    - CI failure → fix and return to step 2. Never merge a failing PR.
-6. Get explicit approval before merging. PR title must follow conventional commits — it becomes the squash commit message on main.
+6. Update the board ticket to DONE and commit the change before merging.
+7. Get explicit approval before merging. PR title must follow conventional commits — it becomes the squash commit message on main.
    `gh pr merge <n> --squash --delete-branch --repo nicobc/nicobc`
-7. Create and push a CalVer tag from main:
+8. Create and push a CalVer tag from main:
    ```bash
    git fetch origin main
    git tag vYYYY.MM.N origin/main
