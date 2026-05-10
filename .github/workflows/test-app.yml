@@ -1,0 +1,45 @@
+name: Test App
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      app: ${{ steps.filter.outputs.app }}
+    steps:
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            app:
+              - 'app/**'
+
+  build-and-test:
+    needs: changes
+    if: needs.changes.outputs.app == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: app/package-lock.json
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+
+  status:
+    needs: [changes, build-and-test]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          result="${{ needs.build-and-test.result }}"
+          [[ "$result" == "failure" || "$result" == "cancelled" ]] && exit 1 || exit 0
