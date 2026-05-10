@@ -5,7 +5,7 @@ tickets:
     type: fix
     scope: data-contracts
     priority: 1
-    status: READY
+    status: DONE
     description: Several elements in the dc lab are invisible or low-contrast in light theme.
     acceptance_criteria:
       - chart colors adapt to theme (visible in both light and dark)

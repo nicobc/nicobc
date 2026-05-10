@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnChanges, OnDestroy, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, AfterViewInit, OnChanges, OnDestroy, ViewChild } from '@angular/core';
 import { Chart, BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
 import { ChartRow } from '../../../pages/data-contracts/data-contracts';
 
@@ -10,12 +10,22 @@ Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, L
   template: `<canvas #canvas></canvas>`,
   styles: `:host { display: block; } canvas { width: 100% !important; }`,
 })
-export class ComparisonChart implements OnChanges, OnDestroy {
+export class ComparisonChart implements AfterViewInit, OnChanges, OnDestroy {
   @Input() batch1: ChartRow[] = [];
   @Input() batch2: ChartRow[] = [];
   @ViewChild('canvas', { static: true }) canvasRef!: ElementRef<HTMLCanvasElement>;
 
   private chart: Chart | null = null;
+  private themeObserver: MutationObserver | null = null;
+
+  ngAfterViewInit() {
+    this.themeObserver = new MutationObserver(() => {
+      this.chart?.destroy();
+      this.chart = null;
+      if (this.batch1.length && this.batch2.length) this.render();
+    });
+    this.themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  }
 
   ngOnChanges() {
     if (this.batch1.length && this.batch2.length) this.render();
@@ -23,6 +33,15 @@ export class ComparisonChart implements OnChanges, OnDestroy {
 
   ngOnDestroy() {
     this.chart?.destroy();
+    this.themeObserver?.disconnect();
+  }
+
+  private fg(alpha: number): string {
+    const hex = getComputedStyle(document.documentElement).getPropertyValue('--fg').trim();
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r},${g},${b},${alpha})`;
   }
 
   private render() {
@@ -46,8 +65,8 @@ export class ComparisonChart implements OnChanges, OnDestroy {
           {
             label: 'Batch 1',
             data: b1Data,
-            backgroundColor: 'rgba(255,255,255,0.12)',
-            borderColor: 'rgba(255,255,255,0.5)',
+            backgroundColor: this.fg(0.12),
+            borderColor: this.fg(0.5),
             borderWidth: 1,
             borderRadius: 3,
           },
@@ -67,7 +86,7 @@ export class ComparisonChart implements OnChanges, OnDestroy {
         plugins: {
           legend: {
             display: true,
-            labels: { color: 'rgba(255,255,255,0.45)', font: { size: 11 }, boxWidth: 12 },
+            labels: { color: this.fg(0.45), font: { size: 11 }, boxWidth: 12 },
           },
           tooltip: {
             callbacks: {
@@ -82,11 +101,11 @@ export class ComparisonChart implements OnChanges, OnDestroy {
         },
         scales: {
           x: {
-            ticks: { color: 'rgba(255,255,255,0.4)', font: { size: 11 } },
-            grid:  { color: 'rgba(255,255,255,0.06)' },
+            ticks: { color: this.fg(0.4), font: { size: 11 } },
+            grid:  { color: this.fg(0.06) },
           },
           y: {
-            ticks: { color: 'rgba(255,255,255,0.65)', font: { size: 12 } },
+            ticks: { color: this.fg(0.65), font: { size: 12 } },
             grid:  { display: false },
           },
         },

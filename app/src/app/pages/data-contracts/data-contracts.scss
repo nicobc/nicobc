@@ -61,21 +61,6 @@
   &:hover { opacity: 0.7; }
 }
 
-.btn-next {
-  display: inline-block;
-  margin-top: 2.5rem;
-  padding: 0.5rem 1.5rem;
-  background: #fff;
-  color: #000;
-  border: none;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: opacity 0.15s;
-
-  &:hover { opacity: 0.85; }
-}
 
 // ── step content ──────────────────────────────────────────────────────────────
 
@@ -89,7 +74,7 @@
     code {
       font-family: 'Fira Code', 'Courier New', monospace;
       font-size: 0.875em;
-      background: rgba(255, 255, 255, 0.08);
+      background: color-mix(in srgb, var(--fg) 8%, transparent);
       padding: 0.1em 0.35em;
       border-radius: 3px;
     }
@@ -118,7 +103,7 @@
 
 .dag-node {
   padding: 0.4rem 0.75rem;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid color-mix(in srgb, var(--fg) 15%, transparent);
   border-radius: 4px;
   font-size: 0.8rem;
   opacity: 0.6;
@@ -132,13 +117,13 @@
   }
 
   &--highlight {
-    border-color: rgba(255, 255, 255, 0.5);
+    border-color: color-mix(in srgb, var(--fg) 50%, transparent);
     opacity: 1;
     font-weight: 600;
   }
 
   &--dashboard {
-    border-color: rgba(255, 255, 255, 0.3);
+    border-color: color-mix(in srgb, var(--fg) 30%, transparent);
     opacity: 0.8;
   }
 }
@@ -152,17 +137,14 @@
 
 .chart-wrap {
   margin-top: 2rem;
-
-  &--spaced {
-    margin-bottom: 2.5rem;
-  }
+  margin-bottom: 2rem;
 }
 
 // ── step 2 ────────────────────────────────────────────────────────────────────
 
 .sql-readonly {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: color-mix(in srgb, var(--fg) 4%, transparent);
+  border: 1px solid color-mix(in srgb, var(--fg) 8%, transparent);
   border-radius: 6px;
   padding: 1rem 1.25rem;
   font-family: 'Fira Code', 'Courier New', monospace;
@@ -173,19 +155,6 @@
   white-space: pre;
 }
 
-.btn-run-again {
-  padding: 0.5rem 1.25rem;
-  background: #fff;
-  color: #000;
-  border: none;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: opacity 0.15s;
-
-  &:hover { opacity: 0.85; }
-}
 
 // ── errors + hints ────────────────────────────────────────────────────────────
 
@@ -228,7 +197,7 @@
 
     code {
       font-family: inherit;
-      background: rgba(255, 255, 255, 0.08);
+      background: color-mix(in srgb, var(--fg) 8%, transparent);
       padding: 0.1em 0.3em;
       border-radius: 3px;
     }
@@ -236,8 +205,8 @@
 }
 
 .contract-block {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: color-mix(in srgb, var(--fg) 4%, transparent);
+  border: 1px solid color-mix(in srgb, var(--fg) 8%, transparent);
   border-radius: 6px;
   padding: 1.25rem;
   font-family: 'Fira Code', 'Courier New', monospace;
@@ -250,6 +219,6 @@
 .meta-reveal {
   margin-top: 2.5rem !important;
   padding-top: 2rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid color-mix(in srgb, var(--fg) 8%, transparent);
   font-style: italic;
 }

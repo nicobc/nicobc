@@ -83,7 +83,7 @@
 
           <pre class="sql-readonly">{{ lastSql() }}</pre>
 
-          <button class="btn-run-again" (click)="onRunStep2()">Run</button>
+          <button class="btn-primary" (click)="onRunStep2()">Run</button>
 
           @if (sqlError()) {
             <p class="error-sql">{{ sqlError() }}</p>
@@ -108,7 +108,7 @@
           </p>
 
           @if (step1Rows().length > 0 && step2Rows().length > 0) {
-            <div class="chart-wrap chart-wrap--spaced">
+            <div class="chart-wrap">
               <app-comparison-chart [batch1]="step1Rows()" [batch2]="step2Rows()" />
             </div>
           }
@@ -154,7 +154,7 @@
 
       <!-- next button -->
       @if (canGoNext()) {
-        <button class="btn-next" (click)="goNext()">Next</button>
+        <button class="btn-primary" (click)="goNext()">Next</button>
       }
 
     </div>
