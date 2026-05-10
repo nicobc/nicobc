@@ -43,6 +43,8 @@ Before marking a ticket DONE, groom any now-unblocked IDEATION tickets to READY.
 Cross-cutting non-`feat` work that doesn't belong to a specific epic lives in `maintenance.yaml`.
 Non-`feat` tickets that do belong to a specific epic (e.g. a bug in a feature area) live in that epic's `tickets:` list.
 
+New tickets are always appended at the bottom of their file (epic or maintenance.yaml). Never insert mid-file. Numbering must match append order so the file reads chronologically.
+
 ## commit convention
 One ticket = one commit. Before committing, update the ticket status to DONE in the board — this is a non-optional acceptance criterion, not a follow-up. The commit includes both the code changes and the board update.
 
