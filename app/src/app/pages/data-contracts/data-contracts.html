@@ -129,9 +129,21 @@
             ingestion, before the mart job ran and faulty data reached the dashboard.
           </p>
 
+          <p>
+            A data contract is a formal agreement between producer and consumer.
+            At minimum, the producing team declares field types, nullability, and constraints;
+            the consuming team validates incoming data against that declaration at
+            the boundary. A batch that violates the contract fails there instead
+            of propagating silently downstream.
+          </p>
+
+          <p>Several formats can express a contract; this lab uses JSON Schema:</p>
+
+          <pre class="contract-block">{{ schemaDisplay }}</pre>
+
           @if (inputViolation()) {
             <div class="violation-block">
-              <p class="violation-block__title">What the contract would have surfaced</p>
+              <p class="violation-block__title">What the contract would have thrown at ingestion</p>
               <p class="violation-block__detail">
                 Field <code>{{ inputViolation()!.field }}</code> —
                 {{ inputViolation()!.constraint }},
@@ -139,8 +151,6 @@
               </p>
             </div>
           }
-
-          <pre class="contract-block">{{ schemaDisplay }}</pre>
 
           <p class="meta-reveal">
             One more thing: this lab validated your query output against a contract

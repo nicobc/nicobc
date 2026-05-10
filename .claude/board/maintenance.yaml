@@ -18,7 +18,7 @@ tickets:
     type: fix
     scope: data-contracts
     priority: 2
-    status: READY
+    status: DONE
     description: The narrative jumps from "stakeholder would freak out" to a fake error and a JSON schema with no bridging explanation. Reader has no context for what a data contract is or why JSON schema specifically.
     acceptance_criteria:
       - data contracts defined (what they are, the problem they solve) before the example
