@@ -10,6 +10,8 @@ One ticket = one PR. Include more only when tickets are directly dependent (e.g.
 
 Keep the PR description current: update the summary when new commits change the scope, and tick test plan items as CI validates them.
 
+Omit the test plan section when there is nothing to test — changes confined to `.claude/` files, `.md` files, or other non-executable assets do not require one.
+
 ## Branching
 
 Work on short-lived feature branches cut directly from `main`. Branch name mirrors the commit type and scope: `type/scope` (e.g. `feat/bcn-map`, `ci/deployment`, `fix/app`). Delete the branch after the PR merges.
@@ -26,7 +28,7 @@ Each branch gets its own Cloudflare Pages preview deployment.
 2. Commit following conventional commits.
 3. `git push origin type/scope`
 4. `gh pr create --base main --head type/scope --repo nicobc/nicobc`
-5. Watch CI: `gh run watch <run-id> --repo nicobc/nicobc`
+5. Watch all PR checks: `gh pr checks <n> --repo nicobc/nicobc --watch`
    - CI failure → fix and return to step 2. Never merge a failing PR.
 6. Update the board ticket to DONE and commit the change before merging.
 7. Get explicit approval before merging. PR title must follow conventional commits — it becomes the squash commit message on main.
