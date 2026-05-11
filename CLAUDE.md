@@ -17,7 +17,7 @@ Files under .claude/ are agent-facing only. Write for comprehension, not readabi
 
 ## Release process
 
-Read `RELEASING.md` at session start. If the user introduces work that belongs in a separate PR while one is already open, push back and suggest merging the current PR first (one ticket = one PR, or directly dependent tickets only).
+If the user introduces work that belongs in a separate PR while one is already open, push back and suggest merging the current PR first (one ticket = one PR, or directly dependent tickets only).
 
 ## GHA workflow testing
 When iterating on a GHA workflow: commit and push the change, dispatch with `gh workflow run <file> --ref <branch> --repo nicobc/nicobc`, then immediately watch with `gh run watch <run-id> --repo nicobc/nicobc`. On failure, fetch logs with `gh run view <run-id> --log-failed --repo nicobc/nicobc`, diagnose, fix, and repeat — without waiting for the user to paste output. `gh` is at `/opt/homebrew/bin/gh`.

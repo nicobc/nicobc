@@ -1,10 +1,8 @@
-import json
 import logging
 
 import pandas as pd
 
-from bcn_map.admin_geo.constants.paths import ADMIN_BOUNDARIES_OUTPUT
-from bcn_map.rental_prices._reading import _MIN_YEAR
+from bcn_map.rental_prices._parsing import _MIN_YEAR
 
 logger = logging.getLogger(__name__)
 
@@ -12,9 +10,16 @@ _PRE_COVID_YEAR = 2019
 _SQM = 80
 
 
-def summarize(records: list[dict]) -> dict:
+def extract_neighborhood_names(geojson: dict) -> dict[int, str]:
+    return {
+        f["properties"]["code"]: f["properties"]["name"]
+        for f in geojson["features"]
+        if f["properties"]["level"] == "neighborhood"
+    }
+
+
+def summarize(records: list[dict], names: dict[int, str]) -> dict:
     df = pd.DataFrame(records)
-    names = _load_neighborhood_names()
     max_year = int(df["year"].max())
     volatile_codes = _find_volatile_codes(df)
 
@@ -28,16 +33,6 @@ def summarize(records: list[dict]) -> dict:
         "biggest_surge": biggest_surge,
         "city_avg": city_avg,
         "suppressed_neighborhoods": sorted(volatile_codes),
-    }
-
-
-def _load_neighborhood_names() -> dict[int, str]:
-    with open(ADMIN_BOUNDARIES_OUTPUT, encoding="utf-8") as f:
-        geojson = json.load(f)
-    return {
-        f["properties"]["code"]: f["properties"]["name"]
-        for f in geojson["features"]
-        if f["properties"]["level"] == "neighborhood"
     }
 
 

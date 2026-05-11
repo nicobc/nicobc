@@ -1,8 +1,8 @@
-in_progress: []
-
-ready:
+in_progress:
   - id: EPIC-008
     title: Test Coverage
+
+ready:
   - id: EPIC-004
     title: Unit Testing for Data Engineers Lab
   - id: EPIC-005
