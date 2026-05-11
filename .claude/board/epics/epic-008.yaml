@@ -28,7 +28,7 @@ tickets:
     title: Fix broken Angular specs
     type: fix
     priority: 3
-    status: READY
+    status: DONE
     description: Stale specs in app/ fail CI. app.spec.ts has a broken "should render title" test checking for a template that no longer exists.
     acceptance_criteria:
       - app.spec.ts broken "should render title" test removed
