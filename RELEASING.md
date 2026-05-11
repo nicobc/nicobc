@@ -27,12 +27,12 @@ Each branch gets its own Cloudflare Pages preview deployment.
    ```
 2. Commit following conventional commits.
 3. `git push origin type/scope`
-4. `gh pr create --base main --head type/scope --repo nicobc/nicobc`
-5. Watch all PR checks: `gh pr checks <n> --repo nicobc/nicobc --watch`
+4. `/opt/homebrew/bin/gh pr create --base main --head type/scope --repo nicobc/nicobc`
+5. Watch all PR checks: `/opt/homebrew/bin/gh pr checks <n> --repo nicobc/nicobc --watch`
    - CI failure → fix and return to step 2. Never merge a failing PR.
 6. Update the board ticket to DONE and commit the change before merging.
 7. Get explicit approval before merging. PR title must follow conventional commits — it becomes the squash commit message on main.
-   `gh pr merge <n> --squash --delete-branch --repo nicobc/nicobc`
+   `/opt/homebrew/bin/gh pr merge <n> --squash --delete-branch --repo nicobc/nicobc`
 8. Clean up local branch:
    ```bash
    git switch main
@@ -47,4 +47,4 @@ Each branch gets its own Cloudflare Pages preview deployment.
    git push origin vYYYY.MM.N
    ```
    Increment the patch number within the month (e.g. `v2026.05.6` follows `v2026.05.5`).
-   Watch deploy: `gh run watch <run-id> --repo nicobc/nicobc`. Report success or failure.
+   Watch deploy: `/opt/homebrew/bin/gh run watch <run-id> --repo nicobc/nicobc`. Report success or failure.
