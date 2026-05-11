@@ -13,7 +13,9 @@ _SQM = 80
 
 def extract_neighborhood_names(geojson: dict) -> dict[int, str]:
     return {
-        f[GeoJsonKey.PROPERTIES][GeoJsonProp.CODE]: f[GeoJsonKey.PROPERTIES][GeoJsonProp.NAME]
+        f[GeoJsonKey.PROPERTIES][GeoJsonProp.CODE]: f[GeoJsonKey.PROPERTIES][
+            GeoJsonProp.NAME
+        ]
         for f in geojson[GeoJsonKey.FEATURES]
         if f[GeoJsonKey.PROPERTIES][GeoJsonProp.LEVEL] == AdminLevel.NEIGHBORHOOD
     }

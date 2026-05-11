@@ -20,6 +20,8 @@ def read_prices(path: str) -> list[list]:
     try:
         ws = wb.active
         assert ws is not None, f"No active sheet in {path}"
-        return [list(row) for row in ws.iter_rows(min_row=_DATA_START_ROW, values_only=True)]
+        return [
+            list(row) for row in ws.iter_rows(min_row=_DATA_START_ROW, values_only=True)
+        ]
     finally:
         wb.close()

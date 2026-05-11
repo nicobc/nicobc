@@ -62,5 +62,7 @@ def _extract_properties(props: dict) -> dict:
         GeoJsonProp.LEVEL: ADMIN_LEVEL_NAMES[props[RAW_LEVEL]],
         GeoJsonProp.NAME: props[RAW_NAME].strip() or None,
         GeoJsonProp.DISTRICT_CODE: props.get(RAW_DISTRICT) or None,
-        GeoJsonProp.CODE: int(props[RAW_CODE].strip()) if props[RAW_CODE].strip() else None,
+        GeoJsonProp.CODE: int(props[RAW_CODE].strip())
+        if props[RAW_CODE].strip()
+        else None,
     }
