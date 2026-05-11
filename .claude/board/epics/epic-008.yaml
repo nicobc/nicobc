@@ -46,3 +46,15 @@ tickets:
       - follow-on tickets groomed to READY
     notes:
       - depends on T3
+
+  - id: T5
+    title: Python code quality tools — ruff, pyright
+    type: ci
+    priority: 5
+    status: READY
+    description: Add ruff and pyright to bcn-map pipeline dev dependencies. Set up a .pre-commit-config.yaml with ruff check and ruff format hooks for local enforcement. Document pyright as a manual pre-commit step in RELEASING.md. Add a lint/type-check CI job to test-bcn-map-pipeline.yml that runs ruff check, ruff format --check, and pyright (no --fix, no autoformat) before the unit tests job.
+    acceptance_criteria:
+      - ruff, pyright added to bcn-map dev dependencies (pyproject.toml)
+      - .pre-commit-config.yaml at repo root with ruff check and ruff-format hooks (astral-sh/ruff-pre-commit) and a local pyright hook using entry: uv run --directory pipelines/bcn-map pyright so it resolves the bcn-map venv without manual activation
+      - test-bcn-map-pipeline.yml has a lint job running ruff check, ruff format --check, pyright with no auto-fix flags
+      - test job depends on lint job — CI skips tests on lint failure
