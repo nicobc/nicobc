@@ -1,8 +1,9 @@
 import logging
 
-import pandas as pd
+import duckdb
 
-from bcn_map.rental_prices._parsing import _MIN_YEAR
+from bcn_map.enums.admin_geo import AdminLevel
+from bcn_map.enums.geojson import GeoJsonKey, GeoJsonProp
 
 logger = logging.getLogger(__name__)
 
@@ -12,20 +13,22 @@ _SQM = 80
 
 def extract_neighborhood_names(geojson: dict) -> dict[int, str]:
     return {
-        f["properties"]["code"]: f["properties"]["name"]
-        for f in geojson["features"]
-        if f["properties"]["level"] == "neighborhood"
+        f[GeoJsonKey.PROPERTIES][GeoJsonProp.CODE]: f[GeoJsonKey.PROPERTIES][GeoJsonProp.NAME]
+        for f in geojson[GeoJsonKey.FEATURES]
+        if f[GeoJsonKey.PROPERTIES][GeoJsonProp.LEVEL] == AdminLevel.NEIGHBORHOOD
     }
 
 
 def summarize(records: list[dict], names: dict[int, str]) -> dict:
-    df = pd.DataFrame(records)
-    max_year = int(df["year"].max())
-    volatile_codes = _find_volatile_codes(df)
+    conn = _connect(records)
+    row = conn.execute("SELECT MAX(year) FROM records").fetchone()
+    assert row is not None
+    max_year: int = row[0]
+    volatile_codes = _find_volatile_codes(conn)
 
-    priciest = _compute_priciest(df, names, max_year)
-    biggest_surge = _compute_biggest_surge(df, names, max_year, volatile_codes)
-    city_avg = _compute_city_avg(df, max_year)
+    priciest = _compute_priciest(conn, names, max_year)
+    biggest_surge = _compute_biggest_surge(conn, names, max_year, volatile_codes)
+    city_avg = _compute_city_avg(conn, max_year)
 
     logger.info(f"Summarized insights for {max_year} vs {_PRE_COVID_YEAR}")
     return {
@@ -36,17 +39,42 @@ def summarize(records: list[dict], names: dict[int, str]) -> dict:
     }
 
 
-def _compute_priciest(df: pd.DataFrame, names: dict[int, str], year: int) -> dict:
-    latest = df[df["year"] == year].dropna(subset=["price_per_sqm"])
-    row = latest.loc[latest["price_per_sqm"].idxmax()]
+def _connect(records: list[dict]) -> duckdb.DuckDBPyConnection:
+    conn = duckdb.connect()
+    conn.execute(
+        "CREATE TABLE records (year INTEGER, neighborhood_code INTEGER, price_per_sqm DOUBLE)"
+    )
+    conn.executemany(
+        "INSERT INTO records VALUES (?, ?, ?)",
+        [(r["year"], r["neighborhood_code"], r["price_per_sqm"]) for r in records],
+    )
+    return conn
+
+
+def _compute_priciest(
+    conn: duckdb.DuckDBPyConnection, names: dict[int, str], year: int
+) -> dict:
+    row = conn.execute(
+        """
+        SELECT neighborhood_code, price_per_sqm
+        FROM records
+        WHERE year = ? AND price_per_sqm IS NOT NULL
+        ORDER BY price_per_sqm DESC
+        LIMIT 1
+        """,
+        [year],
+    ).fetchone()
+    assert row is not None
     return {
-        "neighborhood": names.get(int(row["neighborhood_code"]), ""),
-        "price_per_sqm": round(float(row["price_per_sqm"]), 2),
+        "neighborhood": names.get(row[0], ""),
+        "price_per_sqm": round(row[1], 2),
         "year": year,
     }
 
 
-def _find_volatile_codes(df: pd.DataFrame, max_yoy_swing: float = 0.40) -> set[int]:
+def _find_volatile_codes(
+    conn: duckdb.DuckDBPyConnection, max_yoy_swing: float = 0.40
+) -> set[int]:
     """Return neighborhood codes whose price history is too volatile to be reliable.
 
     The source dataset does not publish sample sizes, so there is no direct way to
@@ -58,44 +86,92 @@ def _find_volatile_codes(df: pd.DataFrame, max_yoy_swing: float = 0.40) -> set[i
     chosen conservatively — any legitimate market move of that magnitude would be
     front-page news.
     """
-    pivot = df.pivot(index="neighborhood_code", columns="year", values="price_per_sqm")
-    max_swing = pivot.pct_change(axis=1).abs().max(axis=1)
-    volatile = set(max_swing[max_swing > max_yoy_swing].index)
+    rows = conn.execute(
+        """
+        WITH yoy AS (
+            SELECT
+                neighborhood_code,
+                price_per_sqm,
+                LAG(price_per_sqm) OVER (PARTITION BY neighborhood_code ORDER BY year) AS prev_price
+            FROM records
+            WHERE price_per_sqm IS NOT NULL
+        )
+        SELECT DISTINCT neighborhood_code
+        FROM yoy
+        WHERE prev_price > 0
+          AND ABS(price_per_sqm / prev_price - 1) > ?
+        """,
+        [max_yoy_swing],
+    ).fetchall()
+    volatile = {row[0] for row in rows}
     if volatile:
-        logger.debug(f"Volatility filter flagged {len(volatile)} neighborhood(s): {sorted(volatile)}")
+        logger.debug(
+            f"Volatility filter flagged {len(volatile)} neighborhood(s): {sorted(volatile)}"
+        )
     return volatile
 
 
 def _compute_biggest_surge(
-    df: pd.DataFrame, names: dict[int, str], year: int, volatile_codes: set[int]
+    conn: duckdb.DuckDBPyConnection,
+    names: dict[int, str],
+    year: int,
+    volatile_codes: set[int],
 ) -> dict:
-    stable_df = df[~df["neighborhood_code"].isin(volatile_codes)]
-    latest = stable_df[stable_df["year"] == year][["neighborhood_code", "price_per_sqm"]].dropna()
-    pre_covid = stable_df[stable_df["year"] == _PRE_COVID_YEAR][["neighborhood_code", "price_per_sqm"]].dropna()
-    merged = latest.merge(pre_covid, on="neighborhood_code", suffixes=("_now", "_pre"))
-    merged = merged.assign(
-        delta_monthly=(merged["price_per_sqm_now"] - merged["price_per_sqm_pre"]) * _SQM,
-        pct_change=(merged["price_per_sqm_now"] - merged["price_per_sqm_pre"]) / merged["price_per_sqm_pre"] * 100,
-    )
-    row = merged.loc[merged["delta_monthly"].idxmax()]
+    row = conn.execute(
+        """
+        WITH stable AS (
+            SELECT neighborhood_code, year, price_per_sqm
+            FROM records
+            WHERE price_per_sqm IS NOT NULL
+              AND NOT list_contains(?, neighborhood_code)
+        ),
+        latest AS (
+            SELECT neighborhood_code, price_per_sqm AS price_now
+            FROM stable WHERE year = ?
+        ),
+        pre_covid AS (
+            SELECT neighborhood_code, price_per_sqm AS price_pre
+            FROM stable WHERE year = ?
+        )
+        SELECT
+            l.neighborhood_code,
+            ROUND((l.price_now - p.price_pre) * ?, 0) AS delta_monthly,
+            ROUND((l.price_now - p.price_pre) / p.price_pre * 100, 1) AS pct_change
+        FROM latest l
+        JOIN pre_covid p USING (neighborhood_code)
+        ORDER BY delta_monthly DESC
+        LIMIT 1
+        """,
+        [list(volatile_codes), year, _PRE_COVID_YEAR, _SQM],
+    ).fetchone()
+    assert row is not None
     return {
-        "neighborhood": names.get(int(row["neighborhood_code"]), ""),
-        "delta_monthly_80sqm": round(float(row["delta_monthly"])),
-        "pct_change": round(float(row["pct_change"]), 1),
+        "neighborhood": names.get(row[0], ""),
+        "delta_monthly_80sqm": int(row[1]),
+        "pct_change": row[2],
         "pre_covid_year": _PRE_COVID_YEAR,
         "year": year,
     }
 
 
-def _compute_city_avg(df: pd.DataFrame, year: int) -> dict:
-    avg = df.groupby("year")["price_per_sqm"].mean()
-    latest_avg = float(avg[year])
-    pre_covid_avg = float(avg[_PRE_COVID_YEAR])
-    pct_change = (latest_avg - pre_covid_avg) / pre_covid_avg * 100
+def _compute_city_avg(conn: duckdb.DuckDBPyConnection, year: int) -> dict:
+    row = conn.execute(
+        """
+        SELECT
+            ROUND(AVG(CASE WHEN year = ? THEN price_per_sqm END), 2) AS latest_avg,
+            ROUND(AVG(CASE WHEN year = ? THEN price_per_sqm END), 2) AS pre_covid_avg
+        FROM records
+        WHERE price_per_sqm IS NOT NULL
+        """,
+        [year, _PRE_COVID_YEAR],
+    ).fetchone()
+    assert row is not None
+    latest_avg, pre_covid_avg = row[0], row[1]
+    pct_change = round((latest_avg - pre_covid_avg) / pre_covid_avg * 100, 1)
     return {
-        "price_per_sqm": round(latest_avg, 2),
-        "pre_covid_price_per_sqm": round(pre_covid_avg, 2),
-        "pct_change": round(pct_change, 1),
+        "price_per_sqm": latest_avg,
+        "pre_covid_price_per_sqm": pre_covid_avg,
+        "pct_change": pct_change,
         "pre_covid_year": _PRE_COVID_YEAR,
         "year": year,
     }

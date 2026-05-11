@@ -51,10 +51,26 @@ tickets:
     title: Python code quality tools — ruff, pyright
     type: ci
     priority: 5
-    status: READY
-    description: Add ruff and pyright to bcn-map pipeline dev dependencies. Set up a .pre-commit-config.yaml with ruff check and ruff format hooks for local enforcement. Document pyright as a manual pre-commit step in RELEASING.md. Add a lint/type-check CI job to test-bcn-map-pipeline.yml that runs ruff check, ruff format --check, and pyright (no --fix, no autoformat) before the unit tests job.
+    status: TESTING
+    description: Add ruff and pyright to bcn-map pipeline dev dependencies. Set up a .pre-commit-config.yaml with ruff check, ruff format, and pyright hooks for local enforcement. Add a lint/type-check CI job to test-bcn-map-pipeline.yml that runs ruff check, ruff format --check, and pyright (no --fix, no autoformat) before the unit tests job.
     acceptance_criteria:
       - ruff, pyright added to bcn-map dev dependencies (pyproject.toml)
-      - .pre-commit-config.yaml at repo root with ruff check and ruff-format hooks (astral-sh/ruff-pre-commit) and a local pyright hook using entry: uv run --directory pipelines/bcn-map pyright so it resolves the bcn-map venv without manual activation
+      - .pre-commit-config.yaml at repo root with ruff check and ruff-format hooks (astral-sh/ruff-pre-commit) and a local pyright hook (entry: uv run --directory pipelines/bcn-map pyright, language: system)
       - test-bcn-map-pipeline.yml has a lint job running ruff check, ruff format --check, pyright with no auto-fix flags
       - test job depends on lint job — CI skips tests on lint failure
+
+  - id: T6
+    title: Replace pandas with DuckDB in rental prices pipeline
+    type: refactor
+    priority: 6
+    status: TESTING
+    description: Replace pandas with DuckDB for all data transformations in the rental prices pipeline. Use openpyxl directly for Excel reading. Implement wide-to-long reshape with DuckDB UNPIVOT and all aggregations (priciest, biggest_surge, city_avg, volatile neighborhoods) as SQL queries. Remove pandas from runtime dependencies and pandas-stubs from dev dependencies.
+    acceptance_criteria:
+      - pandas removed from runtime dependencies; pandas-stubs removed from dev dependencies
+      - duckdb added to runtime dependencies
+      - read_prices() uses openpyxl directly and returns list[list]
+      - parse_prices() accepts list[list] and uses DuckDB UNPIVOT for wide-to-long reshape
+      - all summarize() computations rewritten as DuckDB SQL queries
+      - test fixtures updated to match new input types; all existing tests pass
+    notes:
+      - bundled with T5 in one PR (T6 removes the pandas type-stub noise that T5 would otherwise fight)

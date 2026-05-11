@@ -4,31 +4,40 @@ from pyproj import Transformer
 from shapely.geometry import mapping, shape
 from shapely.ops import transform
 
-from bcn_map.admin_geo.constants.admin_boundaries import LEVEL_NAMES, RAW_CODE, RAW_DISTRICT, RAW_LEVEL, RAW_NAME
+from bcn_map.admin_geo.constants.admin_boundaries import (
+    ADMIN_LEVEL_NAMES,
+    RAW_CODE,
+    RAW_DISTRICT,
+    RAW_LEVEL,
+    RAW_NAME,
+)
+from bcn_map.enums.geojson import GeoJsonKey, GeoJsonProp
 
 logger = logging.getLogger(__name__)
 
+_SRC_CRS = "EPSG:25831"
+_DST_CRS = "EPSG:4326"
 # Module-level to avoid recreating on every geometry call
-_TRANSFORMER = Transformer.from_crs("EPSG:25831", "EPSG:4326", always_xy=True)
+_TRANSFORMER = Transformer.from_crs(_SRC_CRS, _DST_CRS, always_xy=True)
 _COORD_PRECISION = 10
 
 
 def project(features: list[dict]) -> dict:
     output_features = [
         {
-            "type": "Feature",
-            "properties": _extract_properties(f["properties"]),
-            "geometry": _reproject(f["geometry"]),
+            GeoJsonKey.TYPE: "Feature",
+            GeoJsonKey.PROPERTIES: _extract_properties(f[GeoJsonKey.PROPERTIES]),
+            GeoJsonKey.GEOMETRY: _reproject(f[GeoJsonKey.GEOMETRY]),
         }
         for f in features
     ]
     logger.info(f"Reprojected {len(output_features):,} features to WGS84")
-    return {"type": "FeatureCollection", "features": output_features}
+    return {GeoJsonKey.TYPE: "FeatureCollection", GeoJsonKey.FEATURES: output_features}
 
 
 def _reproject(geometry: dict) -> dict:
     geom = mapping(transform(_TRANSFORMER.transform, shape(geometry)))
-    return {**geom, "coordinates": _round_coords(geom["coordinates"])}
+    return {**geom, GeoJsonKey.COORDINATES: _round_coords(geom[GeoJsonKey.COORDINATES])}
 
 
 def _round_coords(coords: tuple) -> tuple:
@@ -50,8 +59,8 @@ def _round_coords(coords: tuple) -> tuple:
 
 def _extract_properties(props: dict) -> dict:
     return {
-        "level": LEVEL_NAMES[props[RAW_LEVEL]],
-        "name": props[RAW_NAME].strip() or None,
-        "district_code": props.get(RAW_DISTRICT) or None,
-        "code": int(props[RAW_CODE].strip()) if props[RAW_CODE].strip() else None,
+        GeoJsonProp.LEVEL: ADMIN_LEVEL_NAMES[props[RAW_LEVEL]],
+        GeoJsonProp.NAME: props[RAW_NAME].strip() or None,
+        GeoJsonProp.DISTRICT_CODE: props.get(RAW_DISTRICT) or None,
+        GeoJsonProp.CODE: int(props[RAW_CODE].strip()) if props[RAW_CODE].strip() else None,
     }

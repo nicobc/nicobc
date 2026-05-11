@@ -1,7 +1,9 @@
-LEVEL_NAMES = {
-    "ADM_01_PL": "city",
-    "ADM_02_PL": "district",
-    "ADM_03_PL": "neighborhood",
+from bcn_map.enums.admin_geo import AdminLevel
+
+ADMIN_LEVEL_NAMES = {
+    "ADM_01_PL": AdminLevel.CITY,
+    "ADM_02_PL": AdminLevel.DISTRICT,
+    "ADM_03_PL": AdminLevel.NEIGHBORHOOD,
 }
 
 RAW_LEVEL = "NIVELL"
