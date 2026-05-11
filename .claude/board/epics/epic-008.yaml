@@ -12,7 +12,7 @@ tickets:
     title: Python testing skill
     type: test
     priority: 1
-    status: READY
+    status: DONE
     description: Discuss Python testing standards for the repo and produce .claude/skills/python-testing.md.
     acceptance_criteria:
       - .claude/skills/python-testing.md created; covers test location convention, fixture patterns, I/O isolation with tmp_path, what to test vs not
