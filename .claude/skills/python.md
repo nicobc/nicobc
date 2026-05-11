@@ -3,7 +3,7 @@ description: Python coding standards for this project
 paths: "**/*.py"
 ---
 
-# Python & Pandas Standards
+# Python Standards
 
 ## Module structure
 - Gerund naming for function-first modules (`_reading.py`, `_pivoting.py`, `_computing.py`, `_writing.py`)
@@ -29,15 +29,6 @@ paths: "**/*.py"
 - `dict[str, MyEnum]` only when the raw string doesn't map cleanly to the enum by name
 - Constants live in dedicated `constants/` modules when shared across modules; single-module constants stay as private module-level variables
 - When a dict defines the canonical set of keys, don't create a parallel set/list — use `dict.keys()` or `key in dict` directly
-
-## Pandas
-- Prefer `groupby()` over `pivot_table` whenever possible — better performance, more composable
-- Prefer vectorized operations over `.apply()` — use str accessors, `pd.to_numeric`, boolean masks, etc. `.apply()` is a Python loop in disguise and should be a last resort
-- `.pipe()` to chain `DataFrame → DataFrame` transforms; terminal side effects (write) belong outside the chain
-- `.loc[:, col] = value` for all assignments; `df[col]` is fine for reads and mask expressions
-- `np.nan` not `float("nan")`
-- No chained indexing on assignment (`df[mask][col] = value`)
-- No pre-emptive `.copy()` — only copy when there is a concrete aliasing risk
 
 ## Docstrings and comments
 - Code should be self-documenting — docstrings are a last resort
