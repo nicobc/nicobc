@@ -25,3 +25,5 @@ done:
 maintenance:
   - id: EPIC-008/T4
     title: Angular app quality pass — scoping
+  - id: MAINT/T4
+    title: Scope Cloudflare preview builds to app/

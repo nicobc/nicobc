@@ -40,3 +40,20 @@ tickets:
       - copy acknowledges multiple formats exist (Great Expectations, dbt contracts, JSON schema, etc.)
       - JSON schema example introduced explicitly as one approach
       - flow reads coherently from incident to concept to concrete example
+
+  - id: T4
+    title: Scope Cloudflare preview builds to app/
+    type: ci
+    scope: deployment
+    priority: 2
+    status: IN PROGRESS
+    description: Replace native Cloudflare Pages GitHub integration with a GHA workflow that triggers only on app/ changes. Eliminates spurious preview builds on .claude/ and .md-only PRs.
+    acceptance_criteria:
+      - deploy-app.yml gains workflow_dispatch trigger
+      - guard step fails with clear message if dispatched from main
+      - deploy step uses --branch=main on tag push, --branch=${{ github.ref_name }} on manual dispatch
+      - Create GitHub release step gated to tag push events only
+      - native Cloudflare Pages GitHub integration disabled in CF dashboard (manual step)
+    notes:
+      - uses CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID already present in GHA secrets
+      - native integration must be disabled in CF dashboard after workflow is verified working
