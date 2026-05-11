@@ -31,5 +31,12 @@ export class Lab {
       description: 'Write a query, see it work, then watch it silently break on the next batch. A hands-on look at schema drift and how data contracts catch it early.',
       route: '/lab/data-contracts',
     },
+    {
+      slug: 'distributed-computing',
+      category: 'Data Engineering · Distributed',
+      title: 'What the optimizer won\'t fix',
+      description: 'The optimizer reduces blast radius. It does not eliminate it. Animated diagrams that put distributed execution patterns in front of you before you need to read an execution plan.',
+      route: '/lab/distributed-computing',
+    },
   ];
 }
