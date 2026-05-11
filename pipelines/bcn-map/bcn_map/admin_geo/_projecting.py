@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 
 # Module-level to avoid recreating on every geometry call
 _TRANSFORMER = Transformer.from_crs("EPSG:25831", "EPSG:4326", always_xy=True)
+_COORD_PRECISION = 10
 
 
 def project(features: list[dict]) -> dict:
@@ -26,7 +27,25 @@ def project(features: list[dict]) -> dict:
 
 
 def _reproject(geometry: dict) -> dict:
-    return mapping(transform(_TRANSFORMER.transform, shape(geometry)))
+    geom = mapping(transform(_TRANSFORMER.transform, shape(geometry)))
+    return {**geom, "coordinates": _round_coords(geom["coordinates"])}
+
+
+def _round_coords(coords: tuple) -> tuple:
+    """Round coordinate values to _COORD_PRECISION decimal places.
+
+    pyproj's floating-point output varies at the 15th–16th significant digit across
+    PROJ library versions and platforms. Without rounding, hardcoded expected coordinates
+    in tests diverge between environments (e.g. macOS vs Linux CI). 10 decimal places
+    gives ~1mm precision on Earth's surface, which is far beyond any real need here.
+
+    Recurses because shapely.mapping() returns nested tuples whose depth mirrors the
+    geometry type: a Polygon ring is ((x, y), ...), a Polygon with holes adds one more
+    level, a MultiPolygon adds yet another. The base case is a flat (x, y) pair.
+    """
+    if isinstance(coords[0], (int, float)):
+        return tuple(round(c, _COORD_PRECISION) for c in coords)
+    return tuple(_round_coords(c) for c in coords)
 
 
 def _extract_properties(props: dict) -> dict:
