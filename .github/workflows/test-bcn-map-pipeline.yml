@@ -17,8 +17,25 @@ jobs:
             bcnmap:
               - 'pipelines/bcn-map/**'
 
-  test:
+  lint:
     needs: changes
+    if: needs.changes.outputs.bcnmap == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: pipelines/bcn-map
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - uses: astral-sh/setup-uv@v5
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run pyright
+
+  test:
+    needs: [changes, lint]
     if: needs.changes.outputs.bcnmap == 'true'
     runs-on: ubuntu-latest
     defaults:
@@ -33,10 +50,13 @@ jobs:
       - run: uv run pytest
 
   status:
-    needs: [changes, test]
+    needs: [changes, lint, test]
     if: always()
     runs-on: ubuntu-latest
     steps:
       - run: |
-          result="${{ needs.test.result }}"
-          [[ "$result" == "failure" || "$result" == "cancelled" ]] && exit 1 || exit 0
+          lint="${{ needs.lint.result }}"
+          test="${{ needs.test.result }}"
+          [[ "$lint" == "failure" || "$lint" == "cancelled" ]] && exit 1
+          [[ "$test" == "failure" || "$test" == "cancelled" ]] && exit 1
+          exit 0

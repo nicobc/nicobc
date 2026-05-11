@@ -31,11 +31,17 @@ Each branch gets its own Cloudflare Pages preview deployment.
 6. Update the board ticket to DONE and commit the change before merging.
 7. Get explicit approval before merging. PR title must follow conventional commits — it becomes the squash commit message on main.
    `gh pr merge <n> --squash --delete-branch --repo nicobc/nicobc`
-8. Create and push a CalVer tag from main:
+8. Clean up local branch:
+   ```bash
+   git switch main
+   git pull origin main
+   git branch -d type/scope
+   ```
+9. _(Only if changes require redeploying `app/`)_ Create and push a CalVer tag from main:
    ```bash
    git fetch origin main
    git tag vYYYY.MM.N origin/main
    git push origin vYYYY.MM.N
    ```
    Increment the patch number within the month (e.g. `v2026.05.6` follows `v2026.05.5`).
-8. Watch deploy: `gh run watch <run-id> --repo nicobc/nicobc`. Report success or failure.
+   Watch deploy: `gh run watch <run-id> --repo nicobc/nicobc`. Report success or failure.

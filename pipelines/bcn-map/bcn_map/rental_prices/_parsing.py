@@ -1,69 +1,70 @@
 import logging
 
-import pandas as pd
+import duckdb
 
 _CODE_COL = 0
 _FIRST_YEAR_COL = 2
 # The dataset suppresses figures for areas with fewer than 6 registered contracts.
 # Pre-2014 coverage is too sparse — most neighborhoods have no data before that year.
 _MIN_YEAR = 2014
-
-_COL_NEIGHBORHOOD_CODE = "neighborhood_code"
-_COL_YEAR = "year"
-_COL_PRICE = "price_per_sqm"
+_SECTION_LABEL = "Barris"
 
 logger = logging.getLogger(__name__)
 
 
-def parse_prices(raw: pd.DataFrame) -> list[dict]:
-    """Parse the raw Excel DataFrame into a flat list of (year, neighborhood_code, price_per_sqm) records.
+def parse_prices(raw: list[list]) -> list[dict]:
+    """Parse raw Excel rows into a flat list of (year, neighborhood_code, price_per_sqm) records.
 
     The source layout has years as columns and neighborhoods as rows, preceded by header rows and
     section labels that must be skipped. Years before _MIN_YEAR are dropped (sparse coverage).
     Prices that cannot be parsed as numeric are kept as None (suppressed by the source for thin samples).
     """
-    years = _parse_years(raw)
-    rows = _extract_neighborhood_rows(raw)
-    records = _build_records(rows, years)
-    n_years = sum(1 for y in years if y >= _MIN_YEAR)
-    logger.info(f"Parsed {len(records):,} records ({len(rows)} neighborhoods × {n_years} years, {_MIN_YEAR}–{max(years)})")
-    return records
+    years = [int(y) for y in raw[0][_FIRST_YEAR_COL:] if y is not None]
 
+    barri_idx = next(
+        i for i, row in enumerate(raw) if str(row[1] or "").startswith(_SECTION_LABEL)
+    )
 
-def _parse_years(raw: pd.DataFrame) -> list[int]:
-    return [int(y) for y in raw.iloc[0, _FIRST_YEAR_COL:]]
+    conn = duckdb.connect()
+    year_col_ddl = ", ".join(f'"{y}" VARCHAR' for y in years)
+    conn.execute(f"CREATE TABLE wide (neighborhood_code INTEGER, {year_col_ddl})")
 
+    placeholders = ", ".join(["?"] * (1 + len(years)))
+    n_rows = 0
+    for row in raw[barri_idx + 1 :]:
+        try:
+            code = int(row[_CODE_COL])
+        except (TypeError, ValueError):
+            continue
+        prices = [
+            str(row[_FIRST_YEAR_COL + i])
+            if row[_FIRST_YEAR_COL + i] is not None
+            else None
+            for i in range(len(years))
+        ]
+        conn.execute(f"INSERT INTO wide VALUES ({placeholders})", [code] + prices)
+        n_rows += 1
 
-def _extract_neighborhood_rows(raw: pd.DataFrame) -> pd.DataFrame:
-    data = raw.iloc[1:]  # skip year-header row
-    barri_mask = data.iloc[:, 1].astype(str).str.startswith("Barris", na=False)
-    barri_start = data.index[barri_mask][0] + 1
-    candidates = data.loc[barri_start:]
-    has_code = pd.to_numeric(candidates.iloc[:, _CODE_COL], errors="coerce").notna()
-    return candidates[has_code]
+    filtered_years = [y for y in years if y >= _MIN_YEAR]
+    n_years = len(filtered_years)
+    year_selects = " UNION ALL ".join(
+        f'SELECT neighborhood_code, {y} AS year, "{y}" AS price_per_sqm FROM wide'
+        for y in filtered_years
+    )
 
+    records = conn.execute(f"""
+        SELECT
+            year,
+            neighborhood_code,
+            ROUND(TRY_CAST(price_per_sqm AS DOUBLE), 2) AS price_per_sqm
+        FROM ({year_selects})
+        ORDER BY neighborhood_code, year
+    """).fetchall()
 
-def _build_records(rows: pd.DataFrame, years: list[int]) -> list[dict]:
-    """Reshape the wide Excel layout (one column per year) into a flat list of records.
-
-    stack() unpivots the wide price table so each (neighborhood, year) pair becomes
-    its own row; one pd.to_numeric call then coerces the entire price column at once.
-
-        wide (one col per year):              long (one row per pair):
-        code | 2022 | 2023                    neighborhood_code | year | price_per_sqm
-        -----+------+-----        stack()     ------------------+------+--------------
-           8 | 12.5 | 13.1       -------->                   8 | 2022 |         12.50
-           9 | 10.0 |  NaN                                   8 | 2023 |         13.10
-                                                             9 | 2022 |         10.00
-                                                             9 | 2023 |          None
-    """
-    prices = rows.iloc[:, _FIRST_YEAR_COL:].copy()
-    prices.columns = pd.Index(years)
-    prices = prices[[y for y in years if y >= _MIN_YEAR]]
-    prices.insert(0, _COL_NEIGHBORHOOD_CODE, rows.iloc[:, _CODE_COL].astype(int).values)
-    long = prices.set_index(_COL_NEIGHBORHOOD_CODE).stack().reset_index()
-    long.columns = pd.Index([_COL_NEIGHBORHOOD_CODE, _COL_YEAR, _COL_PRICE])
-    long[_COL_PRICE] = pd.to_numeric(long[_COL_PRICE], errors="coerce").round(2)
-    # NaN → None so downstream json.dumps serialises missing prices as null
-    long[_COL_PRICE] = long[_COL_PRICE].astype(object).where(long[_COL_PRICE].notna(), other=None)
-    return long[[_COL_YEAR, _COL_NEIGHBORHOOD_CODE, _COL_PRICE]].to_dict(orient="records")
+    logger.info(
+        f"Parsed {len(records):,} records ({n_rows} neighborhoods × {n_years} years, {_MIN_YEAR}–{max(years)})"
+    )
+    return [
+        {"year": r[0], "neighborhood_code": r[1], "price_per_sqm": r[2]}
+        for r in records
+    ]

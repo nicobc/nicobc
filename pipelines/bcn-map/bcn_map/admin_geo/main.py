@@ -4,9 +4,14 @@ from bcn_map.admin_geo._projecting import project
 from bcn_map.admin_geo._reading import read_features
 from bcn_map.admin_geo._simplifying import simplify
 from bcn_map.admin_geo._writing import write
-from bcn_map.admin_geo.constants.paths import ADMIN_BOUNDARIES_OUTPUT, ADMIN_BOUNDARIES_RAW
+from bcn_map.admin_geo.constants.paths import (
+    ADMIN_BOUNDARIES_OUTPUT,
+    ADMIN_BOUNDARIES_RAW,
+)
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 TOLERANCE = 10  # metres

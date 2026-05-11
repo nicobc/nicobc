@@ -1,7 +1,9 @@
 from bcn_map.rental_prices._summarizing import extract_neighborhood_names, summarize
 
 
-def test_extract_neighborhood_names(input_geojson: dict, expected_neighborhood_names: dict[int, str]) -> None:
+def test_extract_neighborhood_names(
+    input_geojson: dict, expected_neighborhood_names: dict[int, str]
+) -> None:
     actual_names = extract_neighborhood_names(input_geojson)
     assert actual_names == expected_neighborhood_names
 

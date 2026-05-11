@@ -22,4 +22,8 @@ done:
   - id: EPIC-007
     title: Deployment
 
-maintenance: []
+maintenance:
+  - id: EPIC-008/T3
+    title: Fix broken Angular specs
+  - id: EPIC-008/T4
+    title: Angular app quality pass — scoping

@@ -3,9 +3,15 @@
 Personal portfolio built to signal staff-level data engineering to hiring managers, CTOs, and CDOs. Quality bar is high.
 
 ## Board
-See `.claude/board/index.yaml` for status overview, then load relevant epic files from `.claude/board/epics/`. Check at session start.
 
-Board conventions (numbering, statuses, yaml integrity): `.claude/board/rules.md`.
+**MANDATORY — DO NOT SKIP:** At session start, read ALL of the following before doing anything else:
+1. `.claude/board/index.yaml`
+2. Relevant epic files from `.claude/board/epics/`
+3. `.claude/board/rules.md` (full read, every time)
+4. `RELEASING.md` (full read, every time)
+
+**MANDATORY — DO NOT SKIP:** Any time the user mentions the board, grooming, a commit, a PR, a merge, or a deploy — re-read `.claude/board/rules.md` AND `RELEASING.md` before acting. Never rely on memory of prior reads. Missing a step (e.g. index.yaml update, Closes footer, TESTING before DONE) is not acceptable.
+
 Cross-cutting non-feat tickets: `.claude/board/maintenance.yaml`.
 
 ## Copy
