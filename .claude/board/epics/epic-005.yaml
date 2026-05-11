@@ -22,7 +22,7 @@ tickets:
     title: Lab page scaffold + routing
     type: feat
     priority: 1
-    status: TESTING
+    status: DONE
     description: Learner navigates to distributed computing lab and sees page structure.
     acceptance_criteria:
       - /lab/distributed-computing route renders lab component
