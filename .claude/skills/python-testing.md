@@ -11,6 +11,8 @@ Test behavior, not implementation details. A test earns its place when it verifi
 
 Test the highest-level public entrypoints that can still be considered independent units: public members of modules imported in `main`, or `main` itself. Everything beneath is an implementation detail unless independently complex.
 
+When something is independently complex, the right response is design, not testing: extract the logic into a separate public pure function and test that. Never test I/O functions (readers, loaders, writers) — they contain no logic by definition. If one does, that logic belongs in a pure function instead.
+
 If isolating a unit requires heroics (deep monkeypatching, filesystem gymnastics), that's a design smell — the unit has too many external dependencies baked in. Fix the design, don't paper over it with mocks.
 
 If arrange is dominated by mocks and the underlying code isn't smelly, you're likely writing an integration test. That's a different concern — don't conflate.
@@ -18,6 +20,7 @@ If arrange is dominated by mocks and the underlying code isn't smelly, you're li
 ## What not to test
 
 - Private helpers (`_foo`)
+- I/O functions (readers, loaders, writers)
 - Third-party library behavior
 - Framework glue
 
@@ -34,7 +37,7 @@ root/toplevelpackage/package/module.py
 → root/tests/unit/test_package_module.py
 ```
 
-Flat naming under `tests/unit/` avoids pytest crashes from duplicate filenames across packages.
+Flat naming under `tests/unit/` avoids pytest crashes from duplicate filenames across packages. Never add `__init__.py` to test directories — pytest discovers tests without them.
 
 ### No test classes — only functions
 
@@ -50,7 +53,10 @@ def test_function_name(fixture_a, fixture_b, input_x, expected_y):
     # Act — finish constructing inputs if needed; call the unit under test
     actual_output = function_under_test(input_x, fixture_a)
 
-    # Assert — assert on instance equality, not individual attributes
+    # Assert — assert on instance equality, not individual attributes.
+    # Never transform actual_* before asserting — it masks bugs at the source.
+    # Discrepancies between actual and expected must be fixed at the origin: either
+    # the unit under test is wrong, or the expected fixture is wrong.
     assert actual_output == expected_output
 ```
 
@@ -97,6 +103,8 @@ def test_compute_avg_order_value(customer: Customer, expected_avg: float) -> Non
 ## Fixtures
 
 All fixtures in `conftest.py`. Scope to minimize suite runtime.
+
+Default to one combined fixture per unit under test. A single fixture that exercises multiple behaviors (e.g. null handling, cutoff logic, multiple records) is preferable to separate scenario fixtures. Use named scenario fixtures (`fixture_scenario`) only when behaviors are mutually exclusive or a combined fixture would be misleading.
 
 ```yaml
 factory:         returns a callable that creates instances with varied arguments during arrange

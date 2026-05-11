@@ -3,7 +3,7 @@ title: Test Coverage
 scope: quality
 category: quality
 priority: 2
-status: READY
+status: IN PROGRESS
 description: Establish test coverage across the repo — Python pipeline tests and Angular app tests. Includes testing skill files for both stacks.
 
 tickets:
@@ -21,7 +21,7 @@ tickets:
     title: bcn-map pipeline tests
     type: test
     priority: 2
-    status: IDEATION
+    status: DONE
     description: Write unit tests for bcn-map pipeline pure-logic functions per python-testing.md. Groom after T1.
 
   - id: T3

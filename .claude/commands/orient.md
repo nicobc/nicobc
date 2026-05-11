@@ -1,9 +1,10 @@
-Read the board and recent git history, then output a session briefing.
+Read the board, release process, and recent git history, then output a session briefing.
 
-1. Read `.claude/board/index.yaml`
-2. Read epic files for all IN PROGRESS and READY epics
-3. Read `.claude/board/maintenance.yaml` if maintenance section in index is non-empty
-4. Run `git log --oneline -10`
+1. Read `RELEASING.md`
+2. Read `.claude/board/index.yaml`
+3. Read epic files for all IN PROGRESS and READY epics
+4. Read `.claude/board/maintenance.yaml` if maintenance section in index is non-empty
+5. Run `git log --oneline -10`
 
 Output:
 **Active** — IN PROGRESS epics and next actionable feat ticket
