@@ -35,8 +35,9 @@ Each branch gets its own Cloudflare Pages preview deployment.
    ```bash
    git switch main
    git pull origin main
-   git branch -d type/scope
+   git branch -D type/scope
    ```
+   `-D` required — squash merges leave the local branch unrecognised as merged by git.
 9. _(Only if changes require redeploying `app/`)_ Create and push a CalVer tag from main:
    ```bash
    git fetch origin main
