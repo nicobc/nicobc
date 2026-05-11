@@ -64,12 +64,12 @@ tickets:
     type: refactor
     priority: 6
     status: DONE
-    description: Replace pandas with DuckDB for all data transformations in the rental prices pipeline. Use openpyxl directly for Excel reading. Implement wide-to-long reshape with DuckDB UNPIVOT and all aggregations (priciest, biggest_surge, city_avg, volatile neighborhoods) as SQL queries. Remove pandas from runtime dependencies and pandas-stubs from dev dependencies.
+    description: Replace pandas with DuckDB for all data transformations in the rental prices pipeline. Use openpyxl directly for Excel reading. Implement wide-to-long reshape with UNION ALL and all aggregations (priciest, biggest_surge, city_avg, volatile neighborhoods) as SQL queries. Remove pandas from runtime dependencies and pandas-stubs from dev dependencies.
     acceptance_criteria:
       - pandas removed from runtime dependencies; pandas-stubs removed from dev dependencies
       - duckdb added to runtime dependencies
       - read_prices() uses openpyxl directly and returns list[list]
-      - parse_prices() accepts list[list] and uses DuckDB UNPIVOT for wide-to-long reshape
+      - parse_prices() accepts list[list] and uses UNION ALL for wide-to-long reshape
       - all summarize() computations rewritten as DuckDB SQL queries
       - test fixtures updated to match new input types; all existing tests pass
     notes:
