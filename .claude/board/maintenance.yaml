@@ -46,7 +46,7 @@ tickets:
     type: ci
     scope: deployment
     priority: 2
-    status: IN PROGRESS
+    status: DONE
     description: Replace native Cloudflare Pages GitHub integration with a GHA workflow that triggers only on app/ changes. Eliminates spurious preview builds on .claude/ and .md-only PRs.
     acceptance_criteria:
       - deploy-app.yml gains workflow_dispatch trigger
