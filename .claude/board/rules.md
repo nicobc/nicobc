@@ -24,6 +24,8 @@ Lifecycle: READY → IN PROGRESS → TESTING → DONE. All ticket types go throu
 TESTING: code is on dev, PR is open, CI is running or awaiting manual verification.
 DONE: CI passed and ticket is verified working.
 
+CI (Linux) is the authoritative source of truth for test tickets. Local tests passing is not sufficient — set to TESTING when the PR is opened, DONE only after CI passes. Never skip TESTING.
+
 Intermediate commits during IN PROGRESS or TESTING carry no `Closes` footer. The final commit that transitions to DONE carries the `Closes` footer and the board update.
 
 CI tickets requiring a live trigger to validate (tag push, scheduled run, webhook): add `workflow_dispatch:` temporarily during TESTING, remove it in the DONE commit.

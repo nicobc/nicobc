@@ -8,6 +8,8 @@ Commit convention follows `.claude/board/rules.md`.
 
 One ticket = one PR. Include more only when tickets are directly dependent (e.g. a chore that unblocks the feat in the same PR). Keep PRs lean — a focused PR is easier to review and revert.
 
+Keep the PR description current: update the summary when new commits change the scope, and tick test plan items as CI validates them.
+
 ## Branching
 
 Work on short-lived feature branches cut directly from `main`. Branch name mirrors the commit type and scope: `type/scope` (e.g. `feat/bcn-map`, `ci/deployment`, `fix/app`). Delete the branch after the PR merges.
