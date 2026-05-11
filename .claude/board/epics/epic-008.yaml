@@ -51,7 +51,7 @@ tickets:
     title: Python code quality tools — ruff, pyright
     type: ci
     priority: 5
-    status: TESTING
+    status: DONE
     description: Add ruff and pyright to bcn-map pipeline dev dependencies. Set up a .pre-commit-config.yaml with ruff check, ruff format, and pyright hooks for local enforcement. Add a lint/type-check CI job to test-bcn-map-pipeline.yml that runs ruff check, ruff format --check, and pyright (no --fix, no autoformat) before the unit tests job.
     acceptance_criteria:
       - ruff, pyright added to bcn-map dev dependencies (pyproject.toml)
@@ -63,7 +63,7 @@ tickets:
     title: Replace pandas with DuckDB in rental prices pipeline
     type: refactor
     priority: 6
-    status: TESTING
+    status: DONE
     description: Replace pandas with DuckDB for all data transformations in the rental prices pipeline. Use openpyxl directly for Excel reading. Implement wide-to-long reshape with DuckDB UNPIVOT and all aggregations (priciest, biggest_surge, city_avg, volatile neighborhoods) as SQL queries. Remove pandas from runtime dependencies and pandas-stubs from dev dependencies.
     acceptance_criteria:
       - pandas removed from runtime dependencies; pandas-stubs removed from dev dependencies
