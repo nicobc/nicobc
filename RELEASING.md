@@ -10,6 +10,8 @@ One ticket = one PR. Include more only when tickets are directly dependent (e.g.
 
 Keep the PR description current: update the summary when new commits change the scope, and tick test plan items as CI validates them.
 
+Omit the test plan section when there is nothing to test — changes confined to `.claude/` files, `.md` files, or other non-executable assets do not require one.
+
 ## Branching
 
 Work on short-lived feature branches cut directly from `main`. Branch name mirrors the commit type and scope: `type/scope` (e.g. `feat/bcn-map`, `ci/deployment`, `fix/app`). Delete the branch after the PR merges.
