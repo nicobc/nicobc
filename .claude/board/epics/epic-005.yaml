@@ -32,7 +32,7 @@ tickets:
     title: Animated data-movement viz component
     type: feat
     priority: 1
-    status: READY
+    status: TESTING
     description: Reusable component that conveys distributed execution concepts through geometry and motion, no numbers.
     acceptance_criteria:
       - component accepts a scenario config (nodes, data blocks, movement sequences)
@@ -52,7 +52,7 @@ tickets:
     title: Lab content — 3 concepts + MCQ navigation
     type: feat
     priority: 2
-    status: READY
+    status: DISCARDED
     description: Learner works through 3 concepts; each step explains via viz then confirms via MCQ.
     acceptance_criteria:
       - opening framing note: optimizer limits + why mental model matters for profiling
@@ -61,3 +61,41 @@ tickets:
       - step 3 (shuffle) — viz + copy + MCQ; snippets contrast 1:m join before filter+agg vs filter-first-then-1:1-join; copy covers serialization as hidden shuffle cost + UDF aside
       - MCQ: correct answer unlocks Next; incorrect answer shows explanation and allows retry without penalty
       - back arrow visible from step 2+; step 3 is terminal
+    notes:
+      - split into T4 (column pruning), T5 (predicate pushdown), T6 (shuffle)
+
+  - id: T4
+    title: Column pruning — animation + copy + MCQ
+    type: feat
+    priority: 2
+    status: READY
+    description: Learner sees the cost of a full column scan vs a pruned scan, then picks the better SQL.
+    acceptance_criteria:
+      - baseline animation (late pruning) — full-width blocks travel from storage to 2 nodes; after settling, blocks slim down in-node to represent in-memory pruning
+      - early pruning animation — narrow blocks travel from storage to nodes; no in-node slimming
+      - toggle pill (SELECT * / SELECT customer_id, customer_name) switches between the two animations and auto-replays on switch
+      - SQL snippet footer updates with toggle state; shows full query (SELECT * FROM dim_customers vs SELECT customer_id, customer_name FROM dim_customers)
+      - replay button retained
+      - copy covers optimizer framing (engine reduces blast radius but doesn't eliminate it) + late vs early pruning distinction
+      - MCQ: two SQL snippets contrasting SELECT * with projected columns; early pruning is correct; wrong answer shows explanation and allows retry without penalty
+      - correct answer unlocks Next
+    notes:
+      - opening framing (optimizer limits + why mental model matters) lives in this step as it is the first concept
+
+  - id: T5
+    title: Predicate pushdown — animation + copy + MCQ
+    type: feat
+    priority: 3
+    status: IDEATION
+    description: Learner sees the cost of a late filter vs an early one, then picks the better SQL.
+
+  - id: T6
+    title: Shuffle — animation + copy + MCQ
+    type: feat
+    priority: 4
+    status: IDEATION
+    description: Learner sees the cost of data crossing node boundaries, then picks the better SQL.
+    notes:
+      - shape morph (sharp → rounded → sharp) at node boundaries represents serialize/deserialize
+      - copy must cover serialization as the hidden cost inside every shuffle
+      - UDF aside: mention UDF-triggered serialization without shuffle (Snowflake UDFs, Spark Python UDFs)
