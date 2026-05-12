@@ -1,12 +1,12 @@
 in_progress:
   - id: EPIC-008
     title: Test Coverage
+  - id: EPIC-005
+    title: Distributed Computing Intuition Lab
 
 ready:
   - id: EPIC-004
     title: Unit Testing for Data Engineers Lab
-  - id: EPIC-005
-    title: Distributed Computing Intuition Lab
 
 ideation:
   - id: EPIC-006

@@ -3,7 +3,7 @@ title: Distributed Computing Intuition Lab
 scope: distributed-computing
 category: workshop
 priority: 3
-status: READY
+status: IN PROGRESS
 description: Learner maps code smells in a data pipeline to distributed computing inefficiencies; builds perf intuition beyond technique names.
 notes:
   - Dataset: fct_orders + dim_customers batch1 from seed.ts; same KPI as other labs (avg order value per customer name top 5 in 2026)
@@ -22,7 +22,7 @@ tickets:
     title: Lab page scaffold + routing
     type: feat
     priority: 1
-    status: READY
+    status: DONE
     description: Learner navigates to distributed computing lab and sees page structure.
     acceptance_criteria:
       - /lab/distributed-computing route renders lab component

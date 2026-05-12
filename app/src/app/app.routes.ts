@@ -5,6 +5,7 @@ import { Contact } from './pages/contact/contact';
 import { Lab } from './pages/lab/lab';
 import { BcnMap } from './pages/bcn-map/bcn-map';
 import { DataContracts } from './pages/data-contracts/data-contracts';
+import { DistributedComputing } from './pages/distributed-computing/distributed-computing';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -14,4 +15,5 @@ export const routes: Routes = [
   { path: 'lab', component: Lab },
   { path: 'lab/bcn-map', component: BcnMap },
   { path: 'lab/data-contracts', component: DataContracts },
+  { path: 'lab/distributed-computing', component: DistributedComputing },
 ];

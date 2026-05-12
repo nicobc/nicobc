@@ -99,3 +99,29 @@ main {
     padding: 2.5rem 1.5rem;
   }
 }
+
+.lab-page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 6rem;
+}
+
+.lab-header {
+  margin-bottom: 2.5rem;
+
+  .category {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.4;
+    margin-bottom: 0.75rem;
+  }
+
+  h1 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    line-height: 1.15;
+  }
+}
