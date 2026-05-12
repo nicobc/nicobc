@@ -99,3 +99,20 @@ tickets:
       - shape morph (sharp → rounded → sharp) at node boundaries represents serialize/deserialize
       - copy must cover serialization as the hidden cost inside every shuffle
       - UDF aside: mention UDF-triggered serialization without shuffle (Snowflake UDFs, Spark Python UDFs)
+
+  - id: T7
+    title: Workshop landing page + lab grid refactor
+    type: feat
+    priority: 5
+    status: READY
+    description: Learner lands on a workshop landing page that introduces the through-line scenario before entering any individual lab; the lab grid reflects the new structure.
+    acceptance_criteria:
+      - /lab/workshops route renders workshop landing page
+      - landing page introduces the scenario — Spanish e-commerce company expanding to France; pipeline, fct_orders + dim_customers, KPI (avg order value per customer top 5 for Spain)
+      - landing page includes "Any resemblance to actual companies or persons is purely coincidental"
+      - landing page has one card per workshop in the series, each linking to its lab
+      - lab grid replaces individual workshop cards with a single Workshop Series card routing to /lab/workshops
+      - lab grid layout updated — two cards (Workshop Series + BCN Map), same size, centered
+      - category labels on all lab grid cards use type only — Workshop / Project — no domain suffix
+    notes:
+      - depends on MAINT/T5 for scenario copy (country filter, company names)
