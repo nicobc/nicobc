@@ -65,26 +65,24 @@ tickets:
       - split into T4 (column pruning), T5 (predicate pushdown), T6 (shuffle)
 
   - id: T4
-    title: Column pruning — animation + copy + MCQ
+    title: Column pruning — animation + copy + challenge
     type: feat
     priority: 2
-    status: IN PROGRESS
-    description: Learner sees the cost of a full column scan vs a pruned scan, then picks the better SQL.
+    status: TESTING
+    description: Learner sees the cost of a full column scan vs a pruned scan, then validates understanding via a fill-in challenge.
     acceptance_criteria:
-      - baseline animation (late pruning) — full-width blocks travel from storage to 2 nodes; after settling, blocks slim down in-node to represent in-memory pruning
-      - early pruning animation — narrow blocks travel from storage to nodes; no in-node slimming
-      - toggle pill (SELECT * / SELECT customer_id, customer_name) switches between the two animations and auto-replays on switch; static FROM dim_customers label follows the pill
-      - replay button retained
-      - copy goes after the viz; covers optimizer framing (engine reduces blast radius but doesn't eliminate it) + late vs early pruning distinction
-      - CTA button ("Test your understanding") at the bottom of the step; click opens a modal panel with blurred background
-      - MCQ format: single CTE query using dim_products + fct_order_items (same e-commerce domain, not the viz scenario tables); learner fills a text input replacing the column list in the first CTE
-      - dim_products schema shown alongside the query so learner knows available columns
-      - validation: case-insensitive, whitespace-normalized, order-agnostic set comparison; expected answer is the two columns traceable from downstream CTE usage
-      - wrong answer: explanation shown in panel, retry without closing
-      - correct answer: panel shows success state with Next → button that advances the step and closes the panel
+      - animation toggle pill (SELECT * / SELECT customer_id, customer_name + FROM dim_customers label) switches between unpruned (full-width blocks travel and rest at full width) and pruned (narrow blocks throughout); auto-replays on switch
+      - step 1 split into viz phase and copy phase; step indicator reads "1 / 3 — Column pruning"
+      - viz phase: Next button appears (right of centered Replay) only after learner has selected the pruned mode at least once
+      - copy phase: 2 paragraphs covering SELECT * scan cost and OLAP engine projection pushdown; "Back to animation" left, "Test your understanding" right
+      - challenge: modal overlay with blurred background; single CTE query (dim_products + fct_order_items); learner fills a text input replacing the column list in the first CTE; dim_products schema shown
+      - validation: case-insensitive, whitespace-normalized, order-agnostic set comparison; expected product_id, category
+      - wrong: "Not quite." + explanation, retry without closing; reveal solution populates input and transitions to correct state
+      - correct: success feedback + Next → advances to step 2 and closes panel
+      - inline code styled globally with theme-aware background (--code-bg CSS variable)
     notes:
       - opening framing (optimizer limits + why mental model matters) lives in this step as it is the first concept
-      - copy in distributed-computing.html does not need placeholder treatment; MCQ is decoupled from MAINT/T5 (different tables, different scenario)
+      - challenge is decoupled from MAINT/T5; uses dim_products + fct_order_items, not the workshop scenario tables
 
   - id: T5
     title: Predicate pushdown — animation + copy + MCQ

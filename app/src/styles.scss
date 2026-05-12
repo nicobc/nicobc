@@ -4,6 +4,7 @@
   --fg: #ffffff;
   --separator: rgba(255, 255, 255, 0.08);
   --separator-hover: color-mix(in srgb, var(--fg) 35%, transparent);
+  --code-bg: color-mix(in srgb, var(--fg) 16%, transparent);
 }
 
 [data-theme='light'] {
@@ -11,10 +12,12 @@
   --fg: #1a1b1e;
   --separator: rgba(0, 0, 0, 0.1);
   --separator-hover: color-mix(in srgb, var(--fg) 35%, transparent);
+  --code-bg: color-mix(in srgb, var(--fg) 9%, transparent);
 }
 
 :root {
   --nav-height: 56px;
+  --accent-red: #f87171;
 }
 
 .btn-primary {
@@ -36,6 +39,14 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+code {
+  font-family: monospace;
+  font-size: 0.875em;
+  background: var(--code-bg);
+  border-radius: 3px;
+  padding: 0.15em 0.4em;
 }
 
 html {

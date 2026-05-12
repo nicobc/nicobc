@@ -1,0 +1,195 @@
+:host { display: block; }
+
+// ── stage ─────────────────────────────────────────────────────────────────────
+
+.stage {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+  max-width: 85%;
+  height: 300px;
+  overflow: hidden;
+}
+
+// ── storage cylinder ──────────────────────────────────────────────────────────
+//
+// Left side, vertically centered.
+// SVG viewBox 80×90: top ellipse at cy=9, body rect y=9 h=72, bottom ellipse cy=81.
+// Bottom ellipse same opacity as the front face (rect).
+
+.storage {
+  position: absolute;
+  left: 5%;
+  top: calc(50% - 45px); // vertically centers the 90px-tall cylinder
+  width: 100px;
+  height: 90px;
+
+  color: var(--fg); // SVG shapes use currentColor
+
+  svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+}
+
+// ── cluster nodes ─────────────────────────────────────────────────────────────
+//
+// Right side, stacked vertically.
+// Two nodes of equal height; gap between them ≈ equal to the margin above/below.
+// Stage 300px, two nodes 110px each, gaps: (300 - 220) / 3 ≈ 27px.
+
+.node {
+  position: absolute;
+  right: 5%;
+  width: 130px;
+  height: 110px;
+  border: 1px solid color-mix(in srgb, var(--fg) 20%, transparent);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--fg) 4%, transparent);
+
+  &.node-1 { top: 27px; }
+  &.node-2 { top: 163px; }
+}
+
+// ── partition blocks ──────────────────────────────────────────────────────────
+
+$cell-w: 22px;
+$cell-h: 10px;
+
+$dc-cols:        4;  // dim_customers full width
+$dc-rows:        3;
+$dc-narrow-cols: 2;  // early-pruning mode
+
+$fo-cols: 5;         // fct_orders
+$fo-rows: 5;
+
+.partition {
+  position: absolute;
+  opacity: 0;
+  border-radius: 3px;
+}
+
+.dim-customers {
+  width: $dc-cols * $cell-w;
+  height: $dc-rows * $cell-h;
+  background-color: color-mix(in srgb, var(--fg) 40%, transparent);
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--fg) 12%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--fg) 12%, transparent) 1px, transparent 1px);
+  background-size: $cell-w $cell-h;
+}
+
+.fct-orders {
+  width: $fo-cols * $cell-w;
+  height: $fo-rows * $cell-h;
+  background-color: color-mix(in srgb, var(--accent-red) 55%, transparent);
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--accent-red) 28%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--accent-red) 28%, transparent) 1px, transparent 1px);
+  background-size: $cell-w $cell-h;
+}
+
+// ── toggle pill ───────────────────────────────────────────────────────────────
+
+.cp-toggle {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+.toggle-pill {
+  padding: 0.35rem 1rem;
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--fg) 20%, transparent);
+  color: var(--fg);
+  font-size: 0.8rem;
+  font-family: monospace;
+  cursor: pointer;
+  opacity: 0.45;
+  transition: background 0.15s, opacity 0.15s;
+
+  &:first-child { border-radius: 4px 0 0 4px; border-right: none; }
+  &:last-child  { border-radius: 0 4px 4px 0; }
+  &.active      { background: color-mix(in srgb, var(--fg) 10%, transparent); opacity: 1; }
+  &:hover       { opacity: 0.75; }
+}
+
+.cp-from {
+  font-family: monospace;
+  font-size: 0.8rem;
+  opacity: 0.5;
+  align-self: center;
+  margin-left: 0.75rem;
+}
+
+// ── column-pruning animations ─────────────────────────────────────────────────
+//
+// All blocks depart from the cylinder center: left calc(5%+110px), top calc(50%-15px).
+// Nodes at right: node left edge = calc(95%-130px); blocks land 10px inside = calc(95%-120px).
+//
+// Node 1 (top:27px h:110px): pn1a → top:37px  pn1b → top:73px
+// Node 2 (top:163px h:110px): pn2a → top:173px  pn2b → top:209px
+//
+// fct_orders (pn1b/pn2b): same in both modes; depart 0.25s after dim_customers.
+// dim_customers (pn1a/pn2a):
+//   unpruned — full width ($dc-cols) travels and rests at full width
+//   pruned   — narrow ($dc-narrow-cols) throughout
+
+.cp-stage.animating {
+  .pn1b { animation: cp-orders-n1 4.5s ease-in-out 1 forwards; animation-delay: 0.25s; }
+  .pn2b { animation: cp-orders-n2 4.5s ease-in-out 1 forwards; animation-delay: 0.25s; }
+}
+
+.cp-stage--unpruned.animating {
+  .pn1a { animation: cp-unpruned-dim-n1 4.5s ease-in-out 1 forwards; }
+  .pn2a { animation: cp-unpruned-dim-n2 4.5s ease-in-out 1 forwards; }
+}
+
+.cp-stage--pruned.animating {
+  .pn1a { animation: cp-pruned-dim-n1 4.5s ease-in-out 1 forwards; }
+  .pn2a { animation: cp-pruned-dim-n2 4.5s ease-in-out 1 forwards; }
+}
+
+@keyframes cp-orders-n1 {
+  0%   { left: calc(5% + 110px); top: calc(50% - 15px); opacity: 0; }
+  6%   { opacity: 1; }
+  60%  { left: calc(95% - 120px); top: 73px;  opacity: 1; }
+  100% { left: calc(95% - 120px); top: 73px;  opacity: 1; }
+}
+
+@keyframes cp-orders-n2 {
+  0%   { left: calc(5% + 110px); top: calc(50% - 15px); opacity: 0; }
+  6%   { opacity: 1; }
+  60%  { left: calc(95% - 120px); top: 209px; opacity: 1; }
+  100% { left: calc(95% - 120px); top: 209px; opacity: 1; }
+}
+
+@keyframes cp-unpruned-dim-n1 {
+  0%   { left: calc(5% + 110px); top: calc(50% - 15px); opacity: 0; width: $dc-cols * $cell-w; }
+  6%   { opacity: 1; }
+  60%  { left: calc(95% - 120px); top: 37px;  opacity: 1; width: $dc-cols * $cell-w; }
+  100% { left: calc(95% - 120px); top: 37px;  opacity: 1; width: $dc-cols * $cell-w; }
+}
+
+@keyframes cp-unpruned-dim-n2 {
+  0%   { left: calc(5% + 110px); top: calc(50% - 15px); opacity: 0; width: $dc-cols * $cell-w; }
+  6%   { opacity: 1; }
+  60%  { left: calc(95% - 120px); top: 173px; opacity: 1; width: $dc-cols * $cell-w; }
+  100% { left: calc(95% - 120px); top: 173px; opacity: 1; width: $dc-cols * $cell-w; }
+}
+
+@keyframes cp-pruned-dim-n1 {
+  0%   { left: calc(5% + 110px); top: calc(50% - 15px); opacity: 0; width: $dc-narrow-cols * $cell-w; }
+  6%   { opacity: 1; }
+  60%  { left: calc(95% - 120px); top: 37px;  opacity: 1; width: $dc-narrow-cols * $cell-w; }
+  100% { left: calc(95% - 120px); top: 37px;  opacity: 1; width: $dc-narrow-cols * $cell-w; }
+}
+
+@keyframes cp-pruned-dim-n2 {
+  0%   { left: calc(5% + 110px); top: calc(50% - 15px); opacity: 0; width: $dc-narrow-cols * $cell-w; }
+  6%   { opacity: 1; }
+  60%  { left: calc(95% - 120px); top: 173px; opacity: 1; width: $dc-narrow-cols * $cell-w; }
+  100% { left: calc(95% - 120px); top: 173px; opacity: 1; width: $dc-narrow-cols * $cell-w; }
+}
+
