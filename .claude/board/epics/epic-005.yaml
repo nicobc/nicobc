@@ -68,19 +68,19 @@ tickets:
     title: Column pruning — animation + copy + MCQ
     type: feat
     priority: 2
-    status: READY
+    status: IN PROGRESS
     description: Learner sees the cost of a full column scan vs a pruned scan, then picks the better SQL.
     acceptance_criteria:
       - baseline animation (late pruning) — full-width blocks travel from storage to 2 nodes; after settling, blocks slim down in-node to represent in-memory pruning
       - early pruning animation — narrow blocks travel from storage to nodes; no in-node slimming
-      - toggle pill (SELECT * / SELECT customer_id, customer_name) switches between the two animations and auto-replays on switch
-      - SQL snippet footer updates with toggle state; shows full query (SELECT * FROM dim_customers vs SELECT customer_id, customer_name FROM dim_customers)
+      - toggle pill (SELECT * / SELECT customer_id, customer_name) switches between the two animations and auto-replays on switch; static FROM dim_customers label follows the pill
       - replay button retained
-      - copy covers optimizer framing (engine reduces blast radius but doesn't eliminate it) + late vs early pruning distinction
+      - copy goes after the viz; covers optimizer framing (engine reduces blast radius but doesn't eliminate it) + late vs early pruning distinction
       - MCQ: two SQL snippets contrasting SELECT * with projected columns; early pruning is correct; wrong answer shows explanation and allows retry without penalty
       - correct answer unlocks Next
     notes:
       - opening framing (optimizer limits + why mental model matters) lives in this step as it is the first concept
+      - copy draft in distributed-computing.html; to be revised after MAINT/T5 ships (country filter + company names change the scenario framing)
 
   - id: T5
     title: Predicate pushdown — animation + copy + MCQ
@@ -114,5 +114,6 @@ tickets:
       - lab grid replaces individual workshop cards with a single Workshop Series card routing to /lab/workshops
       - lab grid layout updated — two cards (Workshop Series + BCN Map), same size, centered
       - category labels on all lab grid cards use type only — Workshop / Project — no domain suffix
+      - CLAUDE.md updated with data-to-ink ratio principle (one line)
     notes:
       - depends on MAINT/T5 for scenario copy (country filter, company names)
