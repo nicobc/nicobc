@@ -76,11 +76,15 @@ tickets:
       - toggle pill (SELECT * / SELECT customer_id, customer_name) switches between the two animations and auto-replays on switch; static FROM dim_customers label follows the pill
       - replay button retained
       - copy goes after the viz; covers optimizer framing (engine reduces blast radius but doesn't eliminate it) + late vs early pruning distinction
-      - MCQ: two SQL snippets contrasting SELECT * with projected columns; early pruning is correct; wrong answer shows explanation and allows retry without penalty
-      - correct answer unlocks Next
+      - CTA button ("Test your understanding") at the bottom of the step; click opens a modal panel with blurred background
+      - MCQ format: single CTE query using dim_products + fct_order_items (same e-commerce domain, not the viz scenario tables); learner fills a text input replacing the column list in the first CTE
+      - dim_products schema shown alongside the query so learner knows available columns
+      - validation: case-insensitive, whitespace-normalized, order-agnostic set comparison; expected answer is the two columns traceable from downstream CTE usage
+      - wrong answer: explanation shown in panel, retry without closing
+      - correct answer: panel shows success state with Next → button that advances the step and closes the panel
     notes:
       - opening framing (optimizer limits + why mental model matters) lives in this step as it is the first concept
-      - copy draft in distributed-computing.html; to be revised after MAINT/T5 ships (country filter + company names change the scenario framing)
+      - copy in distributed-computing.html does not need placeholder treatment; MCQ is decoupled from MAINT/T5 (different tables, different scenario)
 
   - id: T5
     title: Predicate pushdown — animation + copy + MCQ
