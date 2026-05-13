@@ -2,7 +2,6 @@ import { Component, computed, ElementRef, inject, OnInit, signal } from '@angula
 import Ajv, { ErrorObject } from 'ajv';
 import { SqlEditor } from '../../labs/components/sql-editor/sql-editor';
 import { BarChart } from '../../labs/components/bar-chart/bar-chart';
-import { ComparisonChart } from '../../labs/components/comparison-chart/comparison-chart';
 import { getDB, query } from '../../labs/db/duckdb';
 import { dimCustomers, fctOrdersBatch1, fctOrdersBatch2, FctOrder } from '../../labs/data/seed';
 import { ChartRow } from '../../labs/components/chart-colors';
@@ -80,7 +79,7 @@ interface ContractViolation {
 
 @Component({
   selector: 'app-data-contracts',
-  imports: [SqlEditor, BarChart, ComparisonChart],
+  imports: [SqlEditor, BarChart],
   templateUrl: './data-contracts.html',
   styleUrl: './data-contracts.scss',
 })

@@ -91,7 +91,7 @@
 
           @if (step1Rows().length > 0 && step2Rows().length > 0) {
             <div class="chart-wrap">
-              <app-comparison-chart [batch1]="step1Rows()" [batch2]="step2Rows()" />
+              <app-bar-chart [rows]="step1Rows()" [comparisonRows]="step2Rows()" />
             </div>
           }
 
