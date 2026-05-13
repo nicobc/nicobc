@@ -39,7 +39,7 @@ tickets:
     title: Angular app quality pass — scoping
     type: chore
     priority: 4
-    status: READY
+    status: DONE
     description: Review app/ code and test coverage; create angular-testing.md skill; groom follow-on tickets for Angular tests and any refactoring surfaced.
     acceptance_criteria:
       - angular-testing.md skill created
@@ -75,3 +75,24 @@ tickets:
       - test fixtures updated to match new input types; all existing tests pass
     notes:
       - bundled with T5 in one PR (T6 removes the pandas type-stub noise that T5 would otherwise fight)
+
+  - id: T7
+    title: Angular skill — component conventions
+    type: chore
+    priority: 7
+    status: READY
+    description: Write .claude/skills/angular.md covering HTML, TS, and SCSS conventions; apply across app/ codebase, adjusting the skill as the refactor surfaces new patterns.
+    acceptance_criteria:
+      - .claude/skills/angular.md created; covers component structure, TS patterns, SCSS split (styles.scss vs component.scss), data-to-ink ratio principle
+      - skill applied across all components in app/; codebase consistent with skill
+
+  - id: T8
+    title: Angular testing skill + test coverage pass
+    type: test
+    priority: 8
+    status: READY
+    description: Write .claude/skills/angular-testing.md; apply across app/ specs, adding and refactoring tests to match the skill, adjusting the skill as the pass surfaces new patterns.
+    acceptance_criteria:
+      - .claude/skills/angular-testing.md created; covers what to test, fixture patterns, async handling, what not to test
+      - existing specs refactored to match skill; new specs added where coverage is missing
+      - ng test exits cleanly
