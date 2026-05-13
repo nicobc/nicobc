@@ -1,4 +1,4 @@
-import { Component, ViewChild, signal } from '@angular/core';
+import { Component, HostListener, ViewChild, signal } from '@angular/core';
 import { DataMovementViz, PruningMode, VizScenario } from '../../labs/components/data-movement-viz/data-movement-viz';
 
 const SCENARIOS: VizScenario[] = ['column-pruning', 'predicate-pushdown', 'shuffle'];
@@ -65,6 +65,11 @@ export class DistributedComputing {
     this.step.set(prev);
     this.phase.set('copy');
     setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 0);
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape() {
+    if (this.showChallenge()) this.closeChallenge();
   }
 
   openChallenge() {

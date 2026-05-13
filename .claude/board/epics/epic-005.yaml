@@ -68,7 +68,7 @@ tickets:
     title: Column pruning — animation + copy + challenge
     type: feat
     priority: 2
-    status: TESTING
+    status: DONE
     description: Learner sees the cost of a full column scan vs a pruned scan, then validates understanding via a fill-in challenge.
     acceptance_criteria:
       - animation toggle pill (SELECT * / SELECT customer_id, customer_name + FROM dim_customers label) switches between unpruned (full-width blocks travel and rest at full width) and pruned (narrow blocks throughout); auto-replays on switch
