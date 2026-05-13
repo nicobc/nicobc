@@ -21,7 +21,8 @@ Define every reusable unit at the smallest scope that covers all its consumers.
 - Reuse existing styles before defining new ones — style consistency is the default
 - New styles defined with reusability in mind; if reusable, they go in `styles.scss`
 - Used in one component only → component `.ts` or `.scss`
-- Shared TS logic → service or a purposefully named file
+- Shared TS logic, functions, and interfaces → service or a purposefully named file; types follow the same scoping rule as functions
+- Shared components must not import from page components — dependency flows inward (pages → shared), never outward
 - Shared SCSS → `styles.scss`; no other shared partials
 - SCSS design tokens (colors, spacing, font sizes) → CSS custom properties on `:root` in `styles.scss`, consumed via `var(--token)`
 
