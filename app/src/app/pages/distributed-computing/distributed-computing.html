@@ -8,7 +8,7 @@
   <div class="step-shell">
 
     @if (step() > 1) {
-      <button class="btn-ghost" (click)="goBack()">&#8592;</button>
+      <button class="btn-ghost step-back" (click)="goBack()">&#8592;</button>
     }
 
     <span class="step-indicator">{{ step() }} / {{ totalSteps }} — {{ conceptName() }}</span>

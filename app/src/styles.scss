@@ -285,9 +285,14 @@ main {
 .step-shell {
   position: relative;
   padding-top: 2rem;
+}
 
-  // back arrow: positional layout is step-shell's concern, not the button's
-  > .btn-ghost { position: absolute; top: 0; left: 0; font-size: var(--fs-lg); }
+// back arrow inside any step-shell; position is step-shell's concern
+.step-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: var(--fs-lg);
 }
 
 .step-indicator {
