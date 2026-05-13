@@ -23,8 +23,10 @@ done:
     title: Deployment
 
 maintenance:
-  - id: EPIC-008/T4
-    title: Angular app quality pass — scoping
+  - id: EPIC-008/T7
+    title: Angular skill — component conventions
+  - id: EPIC-008/T8
+    title: Angular testing skill + test coverage pass
   - id: MAINT/T5
     title: Replace year filter with country filter in workshop through-line scenario
   - id: MAINT/T6
