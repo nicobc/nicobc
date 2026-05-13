@@ -1,4 +1,4 @@
-import { Component, computed, HostListener, ViewChild, signal } from '@angular/core';
+import { Component, computed, ElementRef, HostListener, ViewChild, signal } from '@angular/core';
 import { DataMovementViz, PruningMode, VizScenario } from '../../labs/components/data-movement-viz/data-movement-viz';
 
 const SCENARIOS: VizScenario[] = ['column-pruning', 'predicate-pushdown', 'shuffle'];
@@ -14,6 +14,8 @@ const CHALLENGE_ANSWER_TEXT = 'product_id, category';
 })
 export class DistributedComputing {
   @ViewChild(DataMovementViz) private viz?: DataMovementViz;
+  @ViewChild('challengePanel') private challengePanel?: ElementRef<HTMLElement>;
+  @ViewChild('challengeTrigger') private challengeTrigger?: ElementRef<HTMLButtonElement>;
 
   readonly step = signal<1 | 2 | 3>(1);
   readonly phase = signal<'viz' | 'copy'>('viz');
@@ -94,10 +96,36 @@ export class DistributedComputing {
     this.challengeState.set('unanswered');
     this.solutionRevealed.set(false);
     this.showChallenge.set(true);
+    setTimeout(() => {
+      const first = this.challengePanel?.nativeElement.querySelector<HTMLElement>(
+        'input:not([disabled]), button:not([disabled])'
+      );
+      first?.focus();
+    });
   }
 
   closeChallenge(): void {
     this.showChallenge.set(false);
+    this.challengeTrigger?.nativeElement.focus();
+  }
+
+  trapFocus(event: KeyboardEvent): void {
+    if (event.key !== 'Tab') return;
+    const panel = this.challengePanel?.nativeElement;
+    if (!panel) return;
+    const focusable = Array.from(
+      panel.querySelectorAll<HTMLElement>('button:not([disabled]), input:not([disabled]), a[href]')
+    );
+    if (focusable.length === 0) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
   }
 
   onChallengeInput(event: Event): void {

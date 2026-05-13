@@ -37,7 +37,7 @@
         </div>
         <div class="copy-footer">
           <button class="btn-ghost" (click)="returnToViz()">&#8592; {{ backToAnimationLabel }}</button>
-          <button class="btn-outline" (click)="openChallenge()">{{ testUnderstandingLabel }} &#8594;</button>
+          <button #challengeTrigger class="btn-outline" (click)="openChallenge()">{{ testUnderstandingLabel }} &#8594;</button>
         </div>
       }
 
@@ -47,7 +47,7 @@
 
   @if (showChallenge()) {
     <div class="challenge-overlay" (click)="closeChallenge()">
-      <div class="challenge-panel" (click)="$event.stopPropagation()">
+      <div #challengePanel class="challenge-panel" role="dialog" aria-modal="true" aria-label="Challenge" (click)="$event.stopPropagation()" (keydown)="trapFocus($event)">
 
         @if (challengeState() !== 'correct') {
           <button class="btn-icon challenge-close" (click)="closeChallenge()">&#x2715;</button>
