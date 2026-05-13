@@ -9,7 +9,7 @@ import { ChartRow } from '../../labs/components/chart-colors';
 
 // ── schemas ──────────────────────────────────────────────────────────────────
 
-export const FCT_ORDERS_SCHEMA = {
+const FCT_ORDERS_SCHEMA = {
   $schema: 'http://json-schema.org/draft-07/schema#',
   title: 'fct_orders row',
   type: 'object',
@@ -47,7 +47,7 @@ function firstInputViolation(rows: FctOrder[]): { row: FctOrder; error: ErrorObj
 
 // ── editor content ────────────────────────────────────────────────────────────
 
-export const SOLUTION = `WITH avg_amounts AS (
+const SOLUTION = `WITH avg_amounts AS (
   SELECT
     c.customer_name,
     AVG(o.amount) AS avg_order_amount
@@ -61,7 +61,7 @@ FROM avg_amounts
 ORDER BY avg_order_amount DESC
 LIMIT 5;`;
 
-export const SKELETON = `-- Compute average order amount per customer name for 2026
+const SKELETON = `-- Compute average order amount per customer name for 2026
 -- Tables: fct_orders (order_id, customer_id, amount, order_date)
 --         dim_customers (customer_id, customer_name)
 -- Return: customer_name, avg_order_amount — top 5 DESC
@@ -70,7 +70,7 @@ export const SKELETON = `-- Compute average order amount per customer name for 2
 
 // ── types ─────────────────────────────────────────────────────────────────────
 
-export interface ContractViolation {
+interface ContractViolation {
   field: string;
   constraint: string;
   received: string;
