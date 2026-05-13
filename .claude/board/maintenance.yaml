@@ -57,3 +57,36 @@ tickets:
     notes:
       - uses CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID already present in GHA secrets
       - native integration must be disabled in CF dashboard after workflow is verified working
+
+  - id: T5
+    title: Replace year filter with country filter in workshop through-line scenario
+    type: refactor
+    scope: labs
+    priority: 2
+    status: READY
+    description: The KPI query filters by YEAR(order_date) = 2026, which is arbitrary and adds noise to labs that are not about date handling. Replace with WHERE country = 'Spain' — geographically coherent with the BCN map, semantically intuitive, and keeps order_date on fct_orders as an intentionally unused column for the column pruning illustration. Scenario framing: Spanish e-commerce company expanding to France; KPI targets the Spanish market.
+    acceptance_criteria:
+      - dim_customers seed data gains a country column; ~4-5 customers from France, rest from Spain
+      - French customers rank below the Spanish top 5 in the unfiltered dataset (realistic — new market, shorter order history)
+      - customer names replaced with realistic fictional Spanish company names (e.g. Grupo Valera, Distribuciones Casas); French customers follow the same pattern (e.g. Maison Dupont, Atelier Laurent)
+      - data contracts lab skeleton and solution queries updated — year filter replaced with WHERE d.country = 'Spain'
+      - data contracts lab expected top 5 re-derived and validated against updated seed
+      - EPIC-004 notes updated — KPI filter and expected values updated to match new seed
+      - EPIC-005 notes updated — KPI filter updated
+      - workshop landing page copy includes "Any resemblance to actual companies or persons is purely coincidental"
+    notes:
+      - order_date stays on fct_orders — intentionally unused, clean extra-column example for column pruning
+
+  - id: T6
+    title: Data contracts lab — two-tier output validation
+    type: feat
+    scope: data-contracts
+    priority: 3
+    status: READY
+    description: Step 1 currently validates query output loosely. Replace with two explicit tiers — JSON schema for output structure, expected output for business logic — so feedback is precise and mirrors the contract concept the lab teaches.
+    acceptance_criteria:
+      - JSON schema defined for expected output (column names and types); schema failure shows current error behaviour
+      - expected output defined as exact match fixture (top 5 rows, post-T5 values)
+      - schema pass + exact match → chart renders, Next unlocks
+      - schema pass + mismatch → hint shown ("check your filter or aggregation"), Next stays locked
+      - schema fail → existing error behaviour unchanged

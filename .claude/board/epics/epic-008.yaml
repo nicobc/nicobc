@@ -46,6 +46,7 @@ tickets:
       - follow-on tickets groomed to READY
     notes:
       - depends on T3
+      - follow-on tickets should include a frontend skill (SCSS conventions, data-to-ink ratio, styles.scss vs component.scss split)
 
   - id: T5
     title: Python code quality tools — ruff, pyright

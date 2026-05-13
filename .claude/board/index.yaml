@@ -25,3 +25,7 @@ done:
 maintenance:
   - id: EPIC-008/T4
     title: Angular app quality pass — scoping
+  - id: MAINT/T5
+    title: Replace year filter with country filter in workshop through-line scenario
+  - id: MAINT/T6
+    title: Data contracts lab — two-tier output validation

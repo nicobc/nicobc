@@ -1,0 +1,43 @@
+@if (scenario === 'column-pruning') {
+
+  <div class="cp-toggle">
+    <button class="toggle-pill" [class.active]="pruningMode() === 'unpruned'" (click)="setPruningMode('unpruned')">SELECT *</button>
+    <button class="toggle-pill" [class.active]="pruningMode() === 'pruned'" (click)="setPruningMode('pruned')">SELECT customer_id, customer_name</button>
+    <span class="cp-from">FROM dim_customers</span>
+  </div>
+
+  <div class="stage cp-stage"
+       [class.animating]="animating()"
+       [class.cp-stage--unpruned]="pruningMode() === 'unpruned'"
+       [class.cp-stage--pruned]="pruningMode() === 'pruned'">
+
+    <div class="storage">
+      <svg viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg">
+        <g fill="currentColor" opacity="0.20">
+          <ellipse cx="40" cy="9"  rx="38" ry="9" />
+          <rect    x="2"  y="9"  width="76" height="72" />
+          <ellipse cx="40" cy="81" rx="38" ry="9" />
+        </g>
+        <ellipse cx="40" cy="9" rx="38" ry="9" fill="currentColor" opacity="0.35" />
+      </svg>
+    </div>
+
+    <div class="node node-1"></div>
+    <div class="node node-2"></div>
+
+    <div class="partition dim-customers pn1a"></div>
+    <div class="partition fct-orders    pn1b"></div>
+    <div class="partition dim-customers pn2a"></div>
+    <div class="partition fct-orders    pn2b"></div>
+
+  </div>
+
+}
+
+@if (scenario === 'predicate-pushdown') {
+  <div class="stage"></div>
+}
+
+@if (scenario === 'shuffle') {
+  <div class="stage"></div>
+}
