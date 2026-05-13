@@ -1,6 +1,6 @@
 import { Component, ElementRef, Input, AfterViewInit, OnChanges, OnDestroy, ViewChild } from '@angular/core';
 import { Chart, BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
-import { ChartRow } from '../../../pages/data-contracts/data-contracts';
+import { ChartRow, resolveFgColor, resolveAccentRedColor } from '../chart-colors';
 
 Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -36,13 +36,7 @@ export class ComparisonChart implements AfterViewInit, OnChanges, OnDestroy {
     this.themeObserver?.disconnect();
   }
 
-  private fg(alpha: number): string {
-    const hex = getComputedStyle(document.documentElement).getPropertyValue('--fg').trim();
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    return `rgba(${r},${g},${b},${alpha})`;
-  }
+  private fg(alpha: number): string { return resolveFgColor(alpha); }
 
   private render() {
     const labels = this.batch1.map((_, i) => `#${i + 1}`);
@@ -73,8 +67,8 @@ export class ComparisonChart implements AfterViewInit, OnChanges, OnDestroy {
           {
             label: 'Batch 2',
             data: b2Data,
-            backgroundColor: 'rgba(248,113,113,0.18)',
-            borderColor: 'rgba(248,113,113,0.7)',
+            backgroundColor: resolveAccentRedColor(0.18),
+            borderColor: resolveAccentRedColor(0.7),
             borderWidth: 1,
             borderRadius: 3,
           },

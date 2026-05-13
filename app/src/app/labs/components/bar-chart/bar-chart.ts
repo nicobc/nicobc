@@ -1,6 +1,6 @@
 import { Component, ElementRef, Input, AfterViewInit, OnChanges, OnDestroy, ViewChild } from '@angular/core';
 import { Chart, BarController, BarElement, CategoryScale, LinearScale, Tooltip } from 'chart.js';
-import { ChartRow } from '../../../pages/data-contracts/data-contracts';
+import { ChartRow, resolveFgColor } from '../chart-colors';
 
 Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip);
 
@@ -35,13 +35,7 @@ export class BarChart implements AfterViewInit, OnChanges, OnDestroy {
     this.themeObserver?.disconnect();
   }
 
-  private fg(alpha: number): string {
-    const hex = getComputedStyle(document.documentElement).getPropertyValue('--fg').trim();
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    return `rgba(${r},${g},${b},${alpha})`;
-  }
+  private fg(alpha: number): string { return resolveFgColor(alpha); }
 
   private render() {
     const labels = this.rows.map(r => r.label);

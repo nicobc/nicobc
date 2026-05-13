@@ -5,6 +5,7 @@ import { BarChart } from '../../labs/components/bar-chart/bar-chart';
 import { ComparisonChart } from '../../labs/components/comparison-chart/comparison-chart';
 import { getDB, query } from '../../labs/db/duckdb';
 import { dimCustomers, fctOrdersBatch1, fctOrdersBatch2, FctOrder } from '../../labs/data/seed';
+import { ChartRow } from '../../labs/components/chart-colors';
 
 // ── schemas ──────────────────────────────────────────────────────────────────
 
@@ -68,11 +69,6 @@ export const SKELETON = `-- Compute average order amount per customer name for 2
 `;
 
 // ── types ─────────────────────────────────────────────────────────────────────
-
-export interface ChartRow {
-  label: string;
-  value: number | null;
-}
 
 export interface ContractViolation {
   field: string;
