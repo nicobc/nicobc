@@ -44,9 +44,9 @@
   right: 5%;
   width: 130px;
   height: 110px;
-  border: 1px solid color-mix(in srgb, var(--fg) 20%, transparent);
+  border: 1px solid var(--border);
   border-radius: 4px;
-  background: color-mix(in srgb, var(--fg) 4%, transparent);
+  background: var(--surface-faint);
 
   &.node-1 { top: 27px; }
   &.node-2 { top: 163px; }
@@ -83,10 +83,10 @@ $fo-rows: 5;
 .fct-orders {
   width: $fo-cols * $cell-w;
   height: $fo-rows * $cell-h;
-  background-color: color-mix(in srgb, var(--accent-red) 55%, transparent);
+  background-color: color-mix(in srgb, var(--accent) 55%, transparent);
   background-image:
-    linear-gradient(color-mix(in srgb, var(--accent-red) 28%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--accent-red) 28%, transparent) 1px, transparent 1px);
+    linear-gradient(color-mix(in srgb, var(--accent) 28%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--accent) 28%, transparent) 1px, transparent 1px);
   background-size: $cell-w $cell-h;
 }
 
@@ -101,17 +101,17 @@ $fo-rows: 5;
 .toggle-pill {
   padding: 0.35rem 1rem;
   background: transparent;
-  border: 1px solid color-mix(in srgb, var(--fg) 20%, transparent);
+  border: 1px solid var(--border);
   color: var(--fg);
   font-size: 0.8rem;
   font-family: var(--font-mono);
   cursor: pointer;
   opacity: 0.45;
-  transition: background 0.15s, opacity 0.15s;
+  transition: background var(--transition-fast), opacity var(--transition-fast);
 
   &:first-child { border-radius: 4px 0 0 4px; border-right: none; }
   &:last-child  { border-radius: 0 4px 4px 0; }
-  &.active      { background: color-mix(in srgb, var(--fg) 10%, transparent); opacity: 1; }
+  &.active      { background: var(--surface); opacity: 1; }
   &:hover       { opacity: 0.75; }
 }
 

@@ -1,6 +1,6 @@
 import { Component, ElementRef, Input, AfterViewInit, OnChanges, OnDestroy, ViewChild } from '@angular/core';
 import { Chart, BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
-import { ChartRow, resolveFgColor, resolveAccentRedColor } from '../chart-colors';
+import { ChartRow, resolveFgColor, resolveAccentColor } from '../chart-colors';
 
 Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -65,8 +65,8 @@ export class ComparisonChart implements AfterViewInit, OnChanges, OnDestroy {
           {
             label: 'Batch 2',
             data: b2Data,
-            backgroundColor: resolveAccentRedColor(0.18),
-            borderColor: resolveAccentRedColor(0.7),
+            backgroundColor: resolveAccentColor(0.18),
+            borderColor: resolveAccentColor(0.7),
             borderWidth: 1,
             borderRadius: 3,
           },

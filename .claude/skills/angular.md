@@ -45,3 +45,10 @@ Define every reusable unit at the smallest scope that covers all its consumers.
 - Maximize data-to-ink ratio: every rendered element must earn its place
 - Visual elements (spacing, borders, color) should communicate structure, hierarchy, or state
 - Prefer CSS over extra DOM nodes for visual effects
+
+## Design system
+Full system defined in `styles.scss` — read it before styling anything. Key rules:
+- No inline `color-mix()` or raw opacity values in component files; use tokens (`var(--border-faint)`, `var(--opacity-muted)`, etc.)
+- Button classes are global: `btn-primary`, `btn-ghost`, `btn-outline`, `btn-icon` — check styles.scss before writing a new button style
+- `eyebrow`, `code-block`, `code-input` are global utilities — do not redefine in component SCSS
+- Positional/sizing overrides for global classes belong in the component SCSS; visual style does not

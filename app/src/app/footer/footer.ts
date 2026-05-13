@@ -29,7 +29,7 @@ import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons';
       justify-content: space-between;
       height: var(--nav-height);
       padding: 0 3rem;
-      border-top: 1px solid var(--separator);
+      border-top: 1px solid var(--border-faint);
       background: var(--bg);
     }
     .footer-social {

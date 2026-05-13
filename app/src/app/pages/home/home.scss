@@ -19,7 +19,7 @@
 .sub {
   font-size: clamp(0.95rem, 1.5vw, 1.1rem);
   font-weight: 300;
-  opacity: 0.6;
+  opacity: var(--opacity-muted);
   line-height: 1.6;
   max-width: 46ch;
 }
@@ -28,20 +28,4 @@
   display: flex;
   gap: 0.75rem;
   margin-top: 0.5rem;
-}
-
-.cta-btn {
-  display: inline-block;
-  padding: 0.45rem 1rem;
-  border-radius: 5px;
-  border: 1px solid var(--separator);
-  font-size: 0.875rem;
-  font-weight: 500;
-  text-decoration: none;
-  color: inherit;
-  transition: border-color 0.15s ease, opacity 0.15s ease;
-  opacity: 0.7;
-
-  &:hover { opacity: 1; border-color: var(--separator-hover); }
-
 }

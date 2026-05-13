@@ -38,22 +38,14 @@
     margin-top: 0.75rem;
   }
 
+  // .btn-icon provides base; overrides for circular play control
   .play-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     flex-shrink: 0;
     width: 1.75rem;
     height: 1.75rem;
     border-radius: 50%;
-    border: 1px solid var(--separator);
-    background: transparent;
-    color: inherit;
-    cursor: pointer;
-    opacity: 0.6;
-    transition: opacity 0.15s ease;
-
-    &:hover { opacity: 1; }
+    border: 1px solid var(--border-faint);
+    opacity: var(--opacity-muted);
   }
 
   .year-label {
@@ -70,7 +62,7 @@
     accent-color: currentColor;
     cursor: pointer;
     opacity: 0.6;
-    transition: opacity 0.15s ease;
+    transition: opacity var(--transition-fast) ease;
 
     &:hover { opacity: 1; }
   }
@@ -84,30 +76,25 @@
   border-radius: 8px;
   overflow: hidden;
   background: var(--bg);
-  border: 1px solid var(--separator);
+  border: 1px solid var(--border-faint);
 }
 
+// .btn-icon provides base; overrides for positioned map controls
 .info-btn {
   position: absolute;
   top: 0.75rem;
   right: 0.75rem;
   z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: 2rem;
   height: 2rem;
   border-radius: 4px;
-  border: 1px solid var(--separator);
+  border: 1px solid var(--border-faint);
   background: var(--bg);
-  color: inherit;
-  cursor: pointer;
   font-style: italic;
   font-size: 0.9rem;
-  opacity: 0.5;
-  transition: opacity 0.15s ease;
+  opacity: var(--opacity-muted);
 
-  &:hover, &.active { opacity: 1; }
+  &.active { opacity: 1; }
 }
 
 .info-panel {
@@ -118,7 +105,7 @@
   z-index: 1;
   width: 260px;
   background: var(--bg);
-  border-left: 1px solid var(--separator);
+  border-left: 1px solid var(--border-faint);
   display: flex;
   flex-direction: column;
 
@@ -128,7 +115,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 1rem 1.25rem;
-    border-bottom: 1px solid var(--separator);
+    border-bottom: 1px solid var(--border-faint);
   }
 
   .info-panel-body {
@@ -148,22 +135,12 @@
     opacity: 0.5;
   }
 
+  // .btn-icon provides base; sizing scoped here
   .info-close {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     width: 1.75rem;
     height: 1.75rem;
-    border: none;
-    background: transparent;
-    color: inherit;
-    cursor: pointer;
     font-size: 1.25rem;
     line-height: 1;
-    opacity: 0.4;
-    transition: opacity 0.15s ease;
-
-    &:hover { opacity: 1; }
   }
 
   p {
@@ -183,8 +160,8 @@
     gap: 0.75rem;
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
-    border-top: 1px solid var(--separator);
-    border-bottom: 1px solid var(--separator);
+    border-top: 1px solid var(--border-faint);
+    border-bottom: 1px solid var(--border-faint);
   }
 
   .info-insight {
@@ -211,25 +188,18 @@
   }
 }
 
+// .btn-icon provides base; overrides for positioned map control
 .fit-btn {
   position: absolute;
   top: 0.75rem;
   left: 0.75rem;
   z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: 2rem;
   height: 2rem;
   border-radius: 4px;
-  border: 1px solid var(--separator);
+  border: 1px solid var(--border-faint);
   background: var(--bg);
-  color: inherit;
-  cursor: pointer;
-  opacity: 0.5;
-  transition: opacity 0.15s ease;
-
-  &:hover { opacity: 1; }
+  opacity: var(--opacity-muted);
 }
 
 .tooltip {
@@ -237,7 +207,7 @@
   pointer-events: none;
   z-index: 2;
   background: var(--bg);
-  border: 1px solid var(--separator);
+  border: 1px solid var(--border-faint);
   border-radius: 6px;
   padding: 0.6rem 0.75rem;
   min-width: 170px;
@@ -292,7 +262,7 @@
     flex-direction: column;
     gap: 0.2rem;
     padding-top: 0.5rem;
-    border-top: 1px solid var(--separator);
+    border-top: 1px solid var(--border-faint);
   }
 
   .tooltip-delta {
@@ -315,7 +285,7 @@
   letter-spacing: 0.02em;
   color: inherit;
   text-decoration: none;
-  transition: opacity 0.15s ease;
+  transition: opacity var(--transition-fast) ease;
 
   &:hover { opacity: 0.7; }
 }
@@ -326,7 +296,7 @@
   left: 1rem;
   z-index: 1;
   background: var(--bg);
-  border: 1px solid var(--separator);
+  border: 1px solid var(--border-faint);
   border-radius: 6px;
   padding: 0.5rem 0.75rem;
 

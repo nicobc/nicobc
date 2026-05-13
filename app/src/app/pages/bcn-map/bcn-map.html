@@ -2,7 +2,7 @@
   <h1>{{ mapTitle }}</h1>
   <p class="subtitle">{{ subtitle }}</p>
   <div class="timeline">
-    <button class="play-btn" (click)="togglePlay()" [title]="isPlaying() ? 'Pause' : 'Play'">
+    <button class="btn-icon play-btn" (click)="togglePlay()" [title]="isPlaying() ? 'Pause' : 'Play'">
       @if (isPlaying()) {
         <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
           <rect x="2" y="1" width="3" height="10" rx="1"/>
@@ -26,8 +26,8 @@
   </div>
 </div>
 <div class="deck-container" #container>
-  <button class="info-btn" (click)="showInfo.set(!showInfo())" [class.active]="showInfo()" [title]="infoTitle">i</button>
-  <button class="fit-btn" (click)="fitToFrame()" title="Fit to frame">
+  <button class="btn-icon info-btn" (click)="showInfo.set(!showInfo())" [class.active]="showInfo()" [title]="infoTitle">i</button>
+  <button class="btn-icon fit-btn" (click)="fitToFrame()" title="Fit to frame">
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
       <path d="M1 5V1H5"/>
       <path d="M9 1H13V5"/>
@@ -49,7 +49,7 @@
     <div class="info-panel">
       <div class="info-panel-header">
         <h3>{{ infoTitle }}</h3>
-        <button class="info-close" (click)="showInfo.set(false)" title="Close">&times;</button>
+        <button class="btn-icon info-close" (click)="showInfo.set(false)" title="Close">&times;</button>
       </div>
       <div class="info-panel-body">
         <p>{{ infoBody }}</p>

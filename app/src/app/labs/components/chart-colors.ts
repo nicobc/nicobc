@@ -11,8 +11,8 @@ export function resolveFgColor(alpha: number): string {
   return `rgba(${r},${g},${b},${alpha})`;
 }
 
-export function resolveAccentRedColor(alpha: number): string {
-  const hex = getComputedStyle(document.documentElement).getPropertyValue('--accent-red').trim();
+export function resolveAccentColor(alpha: number): string {
+  const hex = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
   const r = parseInt(hex.slice(1, 3), 16);
   const g = parseInt(hex.slice(3, 5), 16);
   const b = parseInt(hex.slice(5, 7), 16);
