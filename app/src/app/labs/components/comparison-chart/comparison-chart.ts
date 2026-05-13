@@ -1,6 +1,6 @@
 import { Component, ElementRef, Input, AfterViewInit, OnChanges, OnDestroy, ViewChild } from '@angular/core';
 import { Chart, BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
-import { ChartRow, resolveFgColor, resolveAccentColor } from '../chart-colors';
+import { ChartRow, resolveTokenColor } from '../chart-colors';
 
 Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -57,16 +57,16 @@ export class ComparisonChart implements AfterViewInit, OnChanges, OnDestroy {
           {
             label: 'Batch 1',
             data: b1Data,
-            backgroundColor: resolveFgColor(0.12),
-            borderColor: resolveFgColor(0.5),
+            backgroundColor: resolveTokenColor('--fg', 0.12),
+            borderColor: resolveTokenColor('--fg', 0.5),
             borderWidth: 1,
             borderRadius: 3,
           },
           {
             label: 'Batch 2',
             data: b2Data,
-            backgroundColor: resolveAccentColor(0.18),
-            borderColor: resolveAccentColor(0.7),
+            backgroundColor: resolveTokenColor('--accent', 0.18),
+            borderColor: resolveTokenColor('--accent', 0.7),
             borderWidth: 1,
             borderRadius: 3,
           },
@@ -78,7 +78,7 @@ export class ComparisonChart implements AfterViewInit, OnChanges, OnDestroy {
         plugins: {
           legend: {
             display: true,
-            labels: { color: resolveFgColor(0.45), font: { size: 11 }, boxWidth: 12 },
+            labels: { color: resolveTokenColor('--fg', 0.45), font: { size: 11 }, boxWidth: 12 },
           },
           tooltip: {
             callbacks: {
@@ -93,11 +93,11 @@ export class ComparisonChart implements AfterViewInit, OnChanges, OnDestroy {
         },
         scales: {
           x: {
-            ticks: { color: resolveFgColor(0.4), font: { size: 11 } },
-            grid:  { color: resolveFgColor(0.06) },
+            ticks: { color: resolveTokenColor('--fg', 0.4), font: { size: 11 } },
+            grid:  { color: resolveTokenColor('--fg', 0.06) },
           },
           y: {
-            ticks: { color: resolveFgColor(0.65), font: { size: 12 } },
+            ticks: { color: resolveTokenColor('--fg', 0.65), font: { size: 12 } },
             grid:  { display: false },
           },
         },

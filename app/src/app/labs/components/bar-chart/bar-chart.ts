@@ -1,6 +1,6 @@
 import { Component, ElementRef, Input, AfterViewInit, OnChanges, OnDestroy, ViewChild } from '@angular/core';
 import { Chart, BarController, BarElement, CategoryScale, LinearScale, Tooltip } from 'chart.js';
-import { ChartRow, resolveFgColor } from '../chart-colors';
+import { ChartRow, resolveTokenColor } from '../chart-colors';
 
 Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip);
 
@@ -52,8 +52,8 @@ export class BarChart implements AfterViewInit, OnChanges, OnDestroy {
         labels,
         datasets: [{
           data,
-          backgroundColor: resolveFgColor(0.15),
-          borderColor: resolveFgColor(0.6),
+          backgroundColor: resolveTokenColor('--fg', 0.15),
+          borderColor: resolveTokenColor('--fg', 0.6),
           borderWidth: 1,
           borderRadius: 3,
         }],
@@ -64,11 +64,11 @@ export class BarChart implements AfterViewInit, OnChanges, OnDestroy {
         plugins: { legend: { display: false }, tooltip: { enabled: true } },
         scales: {
           x: {
-            ticks: { color: resolveFgColor(0.5), font: { size: 12 } },
-            grid: { color: resolveFgColor(0.06) },
+            ticks: { color: resolveTokenColor('--fg', 0.5), font: { size: 12 } },
+            grid: { color: resolveTokenColor('--fg', 0.06) },
           },
           y: {
-            ticks: { color: resolveFgColor(0.7), font: { size: 12 } },
+            ticks: { color: resolveTokenColor('--fg', 0.7), font: { size: 12 } },
             grid: { display: false },
           },
         },
