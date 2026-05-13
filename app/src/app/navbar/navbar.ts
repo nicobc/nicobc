@@ -5,6 +5,11 @@ import { faBars, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { Dropdown, DropdownItem } from '../shared/dropdown/dropdown';
 import { ThemeToggle } from '../theme-toggle/theme-toggle';
 
+interface NavLink {
+  label: string;
+  route: string;
+}
+
 @Component({
   selector: 'app-navbar',
   imports: [RouterLink, RouterLinkActive, FaIconComponent, Dropdown, ThemeToggle],
@@ -12,18 +17,22 @@ import { ThemeToggle } from '../theme-toggle/theme-toggle';
   styleUrl: './navbar.scss',
 })
 export class Navbar {
-  bars = faBars;
-  xmark = faXmark;
+  readonly bars = faBars;
+  readonly xmark = faXmark;
   isOpen = false;
 
-  toggle(): void {
-    this.isOpen = !this.isOpen;
-  }
-
-  mobileItems: DropdownItem[] = [
-    { label: 'Home', route: '/home' },
+  readonly navLinks: NavLink[] = [
     { label: 'About', route: '/about' },
-{ label: 'Lab', route: '/lab' },
+    { label: 'Lab', route: '/lab' },
     { label: 'Contact', route: '/contact' },
   ];
+
+  readonly mobileItems: DropdownItem[] = [
+    { label: 'Home', route: '/home' },
+    ...this.navLinks,
+  ];
+
+  toggleMenu(): void {
+    this.isOpen = !this.isOpen;
+  }
 }

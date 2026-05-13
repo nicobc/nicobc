@@ -3,7 +3,7 @@ import Ajv, { ErrorObject } from 'ajv';
 import { SqlEditor } from '../../labs/components/sql-editor/sql-editor';
 import { BarChart } from '../../labs/components/bar-chart/bar-chart';
 import { ComparisonChart } from '../../labs/components/comparison-chart/comparison-chart';
-import { getDB, query } from '../../labs/utils/duckdb';
+import { getDB, query } from '../../labs/db/duckdb';
 import { dimCustomers, fctOrdersBatch1, fctOrdersBatch2, FctOrder } from '../../labs/data/seed';
 
 // ── schemas ──────────────────────────────────────────────────────────────────
@@ -92,6 +92,20 @@ export class DataContracts implements OnInit {
   readonly solution = SOLUTION;
   readonly skeleton = SKELETON;
   readonly schemaDisplay = JSON.stringify(FCT_ORDERS_SCHEMA, null, 2);
+
+  readonly step1Intro = 'There is a pipeline that runs every night. It pulls raw orders from a source database, loads them into a Kimball model, then runs a mart job that feeds a dashboard. Someone senior watches that dashboard. Wrong numbers erode trust quickly.';
+  readonly step1Task = 'You are writing the mart job. Write a CTE that computes the average order amount per customer name for 2026 and returns the top 5.';
+  readonly step2Intro = 'The pipeline ran again overnight. The upstream team pushed new data. Run your query on the refreshed table and see what comes back.';
+  readonly step3Prose = [
+    'The query did not throw. DuckDB returned rows and the chart rendered. But look at who is in the top 5.',
+    'The upstream team made <code>amount</code> nullable. A batch came through with no amounts for the top customers — DuckDB\'s <code>AVG</code> silently ignored them, and they dropped out of the ranking entirely.',
+    'A stakeholder looking at that dashboard would see their top customers disappear overnight.',
+    'A contract on <code>fct_orders</code> would have caught this at ingestion, before the mart job ran and faulty data reached the dashboard.',
+    'A data contract is a formal agreement between producer and consumer. At minimum, the producing team declares field types, nullability, and constraints; the consuming team validates incoming data against that declaration at the boundary. A batch that violates the contract fails there instead of propagating silently downstream.',
+    'Several formats can express a contract; this lab uses JSON Schema:',
+  ];
+  readonly step3MetaReveal = 'One more thing: this lab validated your query output against a contract before rendering the chart in step 1. That is why a query with wrong column names or types returned a hint instead of a broken chart. The same principle, applied one step earlier in the pipeline.';
+  readonly violationBlockTitle = 'What the contract would have thrown at ingestion';
 
   dbReady    = signal(false);
   step       = signal<1 | 2 | 3>(1);

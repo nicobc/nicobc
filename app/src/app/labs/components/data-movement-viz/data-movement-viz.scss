@@ -104,7 +104,7 @@ $fo-rows: 5;
   border: 1px solid color-mix(in srgb, var(--fg) 20%, transparent);
   color: var(--fg);
   font-size: 0.8rem;
-  font-family: monospace;
+  font-family: var(--font-mono);
   cursor: pointer;
   opacity: 0.45;
   transition: background 0.15s, opacity 0.15s;
@@ -116,7 +116,7 @@ $fo-rows: 5;
 }
 
 .cp-from {
-  font-family: monospace;
+  font-family: var(--font-mono);
   font-size: 0.8rem;
   opacity: 0.5;
   align-self: center;

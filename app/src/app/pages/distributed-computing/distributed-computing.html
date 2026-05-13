@@ -1,8 +1,8 @@
 <div class="lab-page">
 
   <header class="lab-header">
-    <span class="category">Data Engineering · Distributed</span>
-    <h1>What the optimizer won't fix</h1>
+    <span class="category">{{ labCategory }}</span>
+    <h1>{{ labTitle }}</h1>
   </header>
 
   <div class="step-shell">
@@ -32,17 +32,11 @@
 
       @if (step() === 1 && phase() === 'copy') {
         <div class="step-copy">
-          <p>We need two columns from <code>dim_customers</code> to retrieve the top 5 Spanish customers:
-            <code>customer_id</code> to join on, and <code>customer_name</code> for the output. The table may store more
-            — e.g., email and phone number — none of which this query uses.</p>
-          <p><code>SELECT *</code> scans the full width of the table, while <code>SELECT customer_id, customer_name</code>
-            only projects the needed columns.
-            <a href="https://en.wikipedia.org/wiki/Column-oriented_DBMS" target="_blank" rel="noopener">OLAP engines</a>
-            may push this projection down automatically; but they do not always. When a query is slow and you pull up the
-            execution plan, column pruning is one of the first things to check.</p>
+          <p [innerHTML]="copyPara1"></p>
+          <p><span [innerHTML]="copyPara2Before"></span><a [href]="olapEnginesHref" target="_blank" rel="noopener">{{ olapEnginesLabel }}</a>{{ copyPara2After }}</p>
         </div>
         <div class="copy-footer">
-          <button class="btn-back-viz" (click)="backToViz()">&#8592; Back to animation</button>
+          <button class="btn-back-viz" (click)="returnToViz()">&#8592; Back to animation</button>
           <button class="btn-test" (click)="openChallenge()">Test your understanding &#8594;</button>
         </div>
       }
@@ -59,7 +53,7 @@
           <button class="challenge-close" (click)="closeChallenge()">&#x2715;</button>
         }
 
-        <p class="challenge-schema"><code>dim_products</code> — product_id, product_name, category, sku, supplier_id, cost_price, list_price, weight_kg, reorder_threshold, created_at</p>
+        <p class="challenge-schema" [innerHTML]="challengeSchema"></p>
 
         <div class="challenge-code"><span>{{ queryBefore }}</span><input class="code-input"
           type="text" placeholder="col_a, ..." autocomplete="off" spellcheck="false"
@@ -75,14 +69,14 @@
         }
 
         @if (challengeState() === 'wrong') {
-          <p class="challenge-feedback challenge-feedback--wrong">Not quite. Trace which columns the downstream CTEs actually use: <code>product_id</code> goes to the join condition, <code>category</code> to the group-by and final output. Everything else in <code>dim_products</code> travels to the compute node and gets discarded on arrival.</p>
+          <p class="challenge-feedback challenge-feedback--wrong" [innerHTML]="feedbackWrong"></p>
         }
 
         @if (challengeState() === 'correct') {
           @if (solutionRevealed()) {
-            <p class="challenge-feedback">The answer is <code>product_id</code> and <code>category</code>. <code>product_id</code> threads through to the join condition; <code>category</code> goes to the group-by and final output. Everything else in <code>dim_products</code> is dead weight from the scan forward.</p>
+            <p class="challenge-feedback" [innerHTML]="feedbackCorrectRevealed"></p>
           } @else {
-            <p class="challenge-feedback">Right. <code>product_id</code> for the join, <code>category</code> for the group-by. Nothing else makes it to the output.</p>
+            <p class="challenge-feedback" [innerHTML]="feedbackCorrect"></p>
           }
           <div class="challenge-actions">
             <button class="btn-primary" (click)="advanceFromChallenge()">Next &#8594;</button>
