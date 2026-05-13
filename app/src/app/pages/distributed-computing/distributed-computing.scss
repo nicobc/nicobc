@@ -27,8 +27,8 @@
 // .btn-outline provides visual style; overrides for compact replay size
 .btn-replay {
   padding: 0.3rem 1rem;
-  font-size: 0.8rem;
-  opacity: 0.45;
+  font-size: var(--fs-code);
+  opacity: var(--opacity-subtle);
   &:hover:not(:disabled) { opacity: 0.8; }
 }
 
@@ -41,7 +41,7 @@
   align-items: center;
 }
 
-.copy-footer .btn-ghost { font-size: 0.875rem; }
+.copy-footer .btn-ghost { font-size: var(--fs-sm); }
 
 // ── challenge overlay ─────────────────────────────────────────────────────────
 
@@ -62,7 +62,7 @@
   position: relative;
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--br-lg);
   padding: 2rem;
   width: 100%;
   max-width: 640px;
@@ -75,18 +75,18 @@
   position: absolute;
   top: 1rem;
   right: 1rem;
-  font-size: 1.1rem;
+  font-size: var(--fs-lg);
 }
 
 // ── schema hint ────────────────────────────────────────────────────────────────
 
 .challenge-schema {
-  font-size: 0.75rem;
-  opacity: 0.5;
+  font-size: var(--fs-xs);
+  opacity: var(--opacity-subtle);
   margin-bottom: 1.25rem;
   line-height: 1.6;
 
-  code { font-size: 0.75rem; }
+  code { font-size: var(--fs-xs); }
 }
 
 // ── query block with inline input ─────────────────────────────────────────────
@@ -109,12 +109,12 @@
   margin-bottom: 1rem;
 }
 
-.challenge-actions-row .btn-ghost { font-size: 0.8rem; }
+.challenge-actions-row .btn-ghost { font-size: var(--fs-code); }
 
 // ── feedback ──────────────────────────────────────────────────────────────────
 
 .challenge-feedback {
-  font-size: 0.875rem;
+  font-size: var(--fs-sm);
   line-height: 1.65;
   margin-bottom: 1.25rem;
 

@@ -29,12 +29,37 @@
   --overlay-bg:     color-mix(in srgb, var(--bg)   55%, transparent); // backdrop blur overlays
 
   // opacity tiers
-  --opacity-muted: 0.6;  // secondary text, action icons
-  --opacity-faint: 0.35; // ghost elements, close icons, tertiary
+  --opacity-faint:     0.35; // ghost elements, icon rest states, tertiary
+  --opacity-dim:       0.4;  // secondary labels, subtitles, inactive states
+  --opacity-subtle:    0.5;  // medium secondary — metadata, schema hints
+  --opacity-muted:     0.6;  // secondary text, action icons
+  --opacity-secondary: 0.7;  // links and interactive at partial visibility
+  --opacity-strong:    0.8;  // near-full, prominent but not fully active
 
   // motion
   --transition-fast: 0.15s;
   --transition:      0.2s;
+
+  // type scale
+  --fs-xs:   0.75rem;  // eyebrow, step-indicator, small labels
+  --fs-code: 0.8rem;   // code text, monospace UI elements
+  --fs-sm:   0.875rem; // button text, small body
+  --fs-base: 1rem;     // body baseline
+  --fs-lg:   1.1rem;   // mild heading emphasis, intro text
+  --fs-xl:   1.5rem;   // section headings
+  --fs-2xl:  2.25rem;  // page title
+
+  // font weights
+  --fw-light:    300;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+
+  // border radius
+  --br-sm: 3px;  // inline code, pills, scrollbar
+  --br:    4px;  // buttons, nodes, small UI
+  --br-md: 6px;  // code blocks, tooltips, editor
+  --br-lg: 8px;  // cards, panels, overlays
 }
 
 // ── buttons ───────────────────────────────────────────────────────────────────
@@ -45,9 +70,9 @@
   background: var(--fg);
   color: var(--bg);
   border: none;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  font-weight: 600;
+  border-radius: var(--br);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
   cursor: pointer;
   transition: opacity var(--transition-fast);
 
@@ -64,7 +89,7 @@
   opacity: var(--opacity-faint);
   transition: opacity var(--transition-fast);
 
-  &:hover { opacity: 0.7; }
+  &:hover { opacity: var(--opacity-secondary); }
 }
 
 // transparent bg + border — replay, test, check, CTA links
@@ -74,12 +99,12 @@
   border: 1px solid var(--border-strong);
   color: var(--fg);
   padding: 0.45rem 1.25rem;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  font-weight: 500;
+  border-radius: var(--br);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
   text-decoration: none;
   cursor: pointer;
-  opacity: 0.65;
+  opacity: var(--opacity-muted);
   transition: opacity var(--transition-fast);
 
   &:hover:not(:disabled) { opacity: 1; }
@@ -108,8 +133,8 @@
 // small-caps label above a heading
 .eyebrow {
   display: block;
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   opacity: var(--opacity-faint);
@@ -119,11 +144,11 @@
 // monospace display block — SQL snippets, JSON schema, code samples
 .code-block {
   font-family: var(--font-mono);
-  font-size: 0.8rem;
+  font-size: var(--fs-code);
   line-height: 1.6;
   background: var(--surface-faint);
   border: 1px solid var(--border-faint);
-  border-radius: 6px;
+  border-radius: var(--br-md);
   padding: 1rem 1.25rem;
   overflow-x: auto;
   white-space: pre;
@@ -132,7 +157,7 @@
 // monospace inline input — fill-in challenges; component adds width
 .code-input {
   font-family: var(--font-mono);
-  font-size: 0.8rem;
+  font-size: var(--fs-code);
   background: var(--border-faint);
   border: none;
   border-bottom: 1px solid var(--border-emphasis);
@@ -141,7 +166,7 @@
   padding: 0 0.2rem;
   border-radius: 2px 2px 0 0;
 
-  &::placeholder { opacity: 0.3; font-style: italic; }
+  &::placeholder { opacity: var(--opacity-faint); font-style: italic; }
 }
 
 // ── reset ─────────────────────────────────────────────────────────────────────
@@ -156,7 +181,7 @@ code {
   font-family: monospace;
   font-size: 0.875em;
   background: var(--code-bg);
-  border-radius: 3px;
+  border-radius: var(--br-sm);
   padding: 0.15em 0.4em;
 }
 
@@ -168,7 +193,7 @@ html {
   &::-webkit-scrollbar-track { background: transparent; }
   &::-webkit-scrollbar-thumb {
     background: var(--border);
-    border-radius: 3px;
+    border-radius: var(--br-sm);
     &:hover { background: var(--border-strong); }
   }
 }
@@ -194,7 +219,7 @@ nav button,
 footer a {
   color: var(--fg);
   text-decoration: none;
-  font-weight: 600;
+  font-weight: var(--fw-semibold);
   opacity: 0.25;
   transition: opacity var(--transition) ease;
 }
@@ -202,7 +227,7 @@ footer a {
 nav a:hover,
 nav button:hover,
 footer a:hover {
-  opacity: 0.7;
+  opacity: var(--opacity-secondary);
 }
 
 nav a.active {
@@ -238,8 +263,8 @@ main {
   margin-bottom: 2.5rem;
 
   h1 {
-    font-size: 2.25rem;
-    font-weight: 700;
+    font-size: var(--fs-2xl);
+    font-weight: var(--fw-bold);
     line-height: 1.15;
   }
 }
@@ -249,7 +274,7 @@ main {
 .step-copy a {
   color: var(--fg);
   text-underline-offset: 3px;
-  opacity: 0.7;
+  opacity: var(--opacity-secondary);
   transition: opacity var(--transition) ease;
 
   &:hover { opacity: 1; }
@@ -262,14 +287,14 @@ main {
   padding-top: 2rem;
 
   // back arrow: positional layout is step-shell's concern, not the button's
-  > .btn-ghost { position: absolute; top: 0; left: 0; font-size: 1.1rem; }
+  > .btn-ghost { position: absolute; top: 0; left: 0; font-size: var(--fs-lg); }
 }
 
 .step-indicator {
   display: block;
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
   letter-spacing: 0.06em;
-  opacity: 0.3;
+  opacity: var(--opacity-faint);
   margin-bottom: 2rem;
 }

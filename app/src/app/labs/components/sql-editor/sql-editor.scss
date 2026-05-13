@@ -5,7 +5,7 @@
 }
 
 .editor-host {
-  border-radius: 6px;
+  border-radius: var(--br-md);
   overflow: hidden;
   min-height: 160px;
 
@@ -25,4 +25,4 @@
 }
 
 // .btn-ghost provides base; font-size scoped here
-.editor-actions .btn-ghost { font-size: 0.8rem; }
+.editor-actions .btn-ghost { font-size: var(--fs-code); }

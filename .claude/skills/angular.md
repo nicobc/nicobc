@@ -48,7 +48,17 @@ Define every reusable unit at the smallest scope that covers all its consumers.
 
 ## Design system
 Full system defined in `styles.scss` — read it before styling anything. Key rules:
-- No inline `color-mix()` or raw opacity values in component files; use tokens (`var(--border-faint)`, `var(--opacity-muted)`, etc.)
-- Button classes are global: `btn-primary`, `btn-ghost`, `btn-outline`, `btn-icon` — check styles.scss before writing a new button style
-- `eyebrow`, `code-block`, `code-input` are global utilities — do not redefine in component SCSS
-- Positional/sizing overrides for global classes belong in the component SCSS; visual style does not
+
+**Token rule:** all visual style values — opacity, font-size, font-weight, border-radius, transition duration — must use a CSS custom property from `:root`. Raw values for these properties are not allowed in component SCSS files. If the right token doesn't exist, add it to `styles.scss`.
+- Tokens: `--opacity-{faint|dim|subtle|muted|secondary}`, `--fs-{xs|code|sm|base|lg|xl|2xl}`, `--fw-{light|medium|semibold|bold}`, `--br-{sm|·|md|lg}`, `--transition{-fast|}`, border and surface tokens
+- Positional/sizing values (width, height, margin, padding, top, left, gap, clamp() ramps) are component-specific — raw values are fine
+
+**Named carve-outs (raw values allowed):**
+- `@keyframes` opacity (0/1 are animation mechanics, not visual style)
+- `bcn-map` font sizes below `--fs-xs` (0.75rem) — map label hierarchy encodes visual depth; raw values in that file parallel the data-viz color exemption in `data-movement-viz.scss`
+- Hover transition targets above `--opacity-strong` (0.8) — `opacity: 0.85` or `opacity: 1` on `:hover` are directional targets, not style declarations
+- Near-full opacity (0.85) inside button class definitions in `styles.scss` — design system internal
+
+**Button classes:** `btn-primary`, `btn-ghost`, `btn-outline`, `btn-icon` — check `styles.scss` before writing a new button style.
+**Utilities:** `eyebrow`, `code-block`, `code-input` — global; do not redefine in component SCSS.
+**Positional overrides** for global classes belong in the component SCSS; visual style overrides do not.

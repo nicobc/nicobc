@@ -45,7 +45,7 @@
   width: 130px;
   height: 110px;
   border: 1px solid var(--border);
-  border-radius: 4px;
+  border-radius: var(--br);
   background: var(--surface-faint);
 
   &.node-1 { top: 27px; }
@@ -67,7 +67,7 @@ $fo-rows: 5;
 .partition {
   position: absolute;
   opacity: 0;
-  border-radius: 3px;
+  border-radius: var(--br-sm);
 }
 
 .dim-customers {
@@ -103,22 +103,22 @@ $fo-rows: 5;
   background: transparent;
   border: 1px solid var(--border);
   color: var(--fg);
-  font-size: 0.8rem;
+  font-size: var(--fs-code);
   font-family: var(--font-mono);
   cursor: pointer;
-  opacity: 0.45;
+  opacity: var(--opacity-subtle);
   transition: background var(--transition-fast), opacity var(--transition-fast);
 
-  &:first-child { border-radius: 4px 0 0 4px; border-right: none; }
-  &:last-child  { border-radius: 0 4px 4px 0; }
+  &:first-child { border-radius: var(--br) 0 0 var(--br); border-right: none; }
+  &:last-child  { border-radius: 0 var(--br) var(--br) 0; }
   &.active      { background: var(--surface); opacity: 1; }
-  &:hover       { opacity: 0.75; }
+  &:hover       { opacity: var(--opacity-secondary); }
 }
 
 .cp-from {
   font-family: var(--font-mono);
-  font-size: 0.8rem;
-  opacity: 0.5;
+  font-size: var(--fs-code);
+  opacity: var(--opacity-subtle);
   align-self: center;
   margin-left: 0.75rem;
 }
