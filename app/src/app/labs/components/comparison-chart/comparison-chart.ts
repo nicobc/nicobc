@@ -36,8 +36,6 @@ export class ComparisonChart implements AfterViewInit, OnChanges, OnDestroy {
     this.themeObserver?.disconnect();
   }
 
-  private fg(alpha: number): string { return resolveFgColor(alpha); }
-
   private render() {
     const labels = this.batch1.map((_, i) => `#${i + 1}`);
     const b1Data = this.batch1.map(r => r.value);
@@ -59,8 +57,8 @@ export class ComparisonChart implements AfterViewInit, OnChanges, OnDestroy {
           {
             label: 'Batch 1',
             data: b1Data,
-            backgroundColor: this.fg(0.12),
-            borderColor: this.fg(0.5),
+            backgroundColor: resolveFgColor(0.12),
+            borderColor: resolveFgColor(0.5),
             borderWidth: 1,
             borderRadius: 3,
           },
@@ -80,7 +78,7 @@ export class ComparisonChart implements AfterViewInit, OnChanges, OnDestroy {
         plugins: {
           legend: {
             display: true,
-            labels: { color: this.fg(0.45), font: { size: 11 }, boxWidth: 12 },
+            labels: { color: resolveFgColor(0.45), font: { size: 11 }, boxWidth: 12 },
           },
           tooltip: {
             callbacks: {
@@ -95,11 +93,11 @@ export class ComparisonChart implements AfterViewInit, OnChanges, OnDestroy {
         },
         scales: {
           x: {
-            ticks: { color: this.fg(0.4), font: { size: 11 } },
-            grid:  { color: this.fg(0.06) },
+            ticks: { color: resolveFgColor(0.4), font: { size: 11 } },
+            grid:  { color: resolveFgColor(0.06) },
           },
           y: {
-            ticks: { color: this.fg(0.65), font: { size: 12 } },
+            ticks: { color: resolveFgColor(0.65), font: { size: 12 } },
             grid:  { display: false },
           },
         },

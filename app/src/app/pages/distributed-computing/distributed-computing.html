@@ -11,20 +11,20 @@
       <button class="btn-back" (click)="goBack()">&#8592;</button>
     }
 
-    <span class="step-indicator">{{ step() }} / 3 — {{ conceptName }}</span>
+    <span class="step-indicator">{{ step() }} / {{ totalSteps }} — {{ conceptName() }}</span>
 
     <div class="step-content">
 
       @if (phase() === 'viz') {
-        <app-data-movement-viz [scenario]="scenario" (modeChange)="onModeChange($event)" />
+        <app-data-movement-viz [scenario]="scenario()" (modeChange)="onModeChange($event)" />
         <div class="viz-nav">
-          <button class="btn-replay" (click)="replay()">&#8635; Replay</button>
+          <button class="btn-replay" (click)="replay()">&#8635; {{ replayLabel }}</button>
           <div class="viz-nav-right">
             @if (step() === 1 && seenPruning()) {
-              <button class="btn-primary" (click)="advanceVizPhase()">Next</button>
+              <button class="btn-primary" (click)="advanceVizPhase()">{{ nextLabel }}</button>
             }
             @if (step() === 2) {
-              <button class="btn-primary" (click)="goNext()">Next</button>
+              <button class="btn-primary" (click)="goNext()">{{ nextLabel }}</button>
             }
           </div>
         </div>
@@ -36,8 +36,8 @@
           <p><span [innerHTML]="copyPara2Before"></span><a [href]="olapEnginesHref" target="_blank" rel="noopener">{{ olapEnginesLabel }}</a>{{ copyPara2After }}</p>
         </div>
         <div class="copy-footer">
-          <button class="btn-back-viz" (click)="returnToViz()">&#8592; Back to animation</button>
-          <button class="btn-test" (click)="openChallenge()">Test your understanding &#8594;</button>
+          <button class="btn-back-viz" (click)="returnToViz()">&#8592; {{ backToAnimationLabel }}</button>
+          <button class="btn-test" (click)="openChallenge()">{{ testUnderstandingLabel }} &#8594;</button>
         </div>
       }
 
@@ -58,13 +58,13 @@
         <div class="challenge-code"><span>{{ queryBefore }}</span><input class="code-input"
           type="text" placeholder="col_a, ..." autocomplete="off" spellcheck="false"
           [value]="challengeInput()"
-          (input)="challengeInput.set($any($event.target).value)"
+          (input)="onChallengeInput($event)"
           (keyup.enter)="submitChallenge()"><span>{{ queryAfter }}</span></div>
 
         @if (challengeState() !== 'correct') {
           <div class="challenge-actions-row">
-            <button class="btn-check" (click)="submitChallenge()" [disabled]="!challengeInput().trim()">Check</button>
-            <button class="btn-reveal" (click)="revealSolution()">Reveal solution</button>
+            <button class="btn-check" (click)="submitChallenge()" [disabled]="!challengeInput().trim()">{{ checkLabel }}</button>
+            <button class="btn-reveal" (click)="revealSolution()">{{ revealSolutionLabel }}</button>
           </div>
         }
 
@@ -79,7 +79,7 @@
             <p class="challenge-feedback" [innerHTML]="feedbackCorrect"></p>
           }
           <div class="challenge-actions">
-            <button class="btn-primary" (click)="advanceFromChallenge()">Next &#8594;</button>
+            <button class="btn-primary" (click)="advanceFromChallenge()">{{ nextLabel }} &#8594;</button>
           </div>
         }
 

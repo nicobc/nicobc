@@ -17,6 +17,9 @@ export class SqlEditor implements OnInit, OnDestroy {
   @Input() solution = '';
   @Output() run = new EventEmitter<string>();
 
+  readonly runLabel = 'Run';
+  readonly revealLabel = 'reveal solution';
+
   @ViewChild('editorHost', { static: true }) editorHost!: ElementRef<HTMLDivElement>;
 
   private view!: EditorView;

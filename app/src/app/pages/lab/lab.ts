@@ -16,6 +16,8 @@ interface LabProject {
   styleUrl: './lab.scss',
 })
 export class Lab {
+  readonly exploreCta = 'Explore';
+
   readonly projects: LabProject[] = [
     {
       slug: 'bcn-map',

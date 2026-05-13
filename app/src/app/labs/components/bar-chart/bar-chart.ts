@@ -35,8 +35,6 @@ export class BarChart implements AfterViewInit, OnChanges, OnDestroy {
     this.themeObserver?.disconnect();
   }
 
-  private fg(alpha: number): string { return resolveFgColor(alpha); }
-
   private render() {
     const labels = this.rows.map(r => r.label);
     const data = this.rows.map(r => r.value);
@@ -54,8 +52,8 @@ export class BarChart implements AfterViewInit, OnChanges, OnDestroy {
         labels,
         datasets: [{
           data,
-          backgroundColor: this.fg(0.15),
-          borderColor: this.fg(0.6),
+          backgroundColor: resolveFgColor(0.15),
+          borderColor: resolveFgColor(0.6),
           borderWidth: 1,
           borderRadius: 3,
         }],
@@ -66,11 +64,11 @@ export class BarChart implements AfterViewInit, OnChanges, OnDestroy {
         plugins: { legend: { display: false }, tooltip: { enabled: true } },
         scales: {
           x: {
-            ticks: { color: this.fg(0.5), font: { size: 12 } },
-            grid: { color: this.fg(0.06) },
+            ticks: { color: resolveFgColor(0.5), font: { size: 12 } },
+            grid: { color: resolveFgColor(0.06) },
           },
           y: {
-            ticks: { color: this.fg(0.7), font: { size: 12 } },
+            ticks: { color: resolveFgColor(0.7), font: { size: 12 } },
             grid: { display: false },
           },
         },

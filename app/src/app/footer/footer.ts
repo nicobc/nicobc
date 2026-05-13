@@ -14,7 +14,7 @@ import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons';
           </a>
         }
       </div>
-      <span class="footer-copy">&copy; {{ year }} Nicolas Contreras</span>
+      <span class="footer-copy">&copy; {{ year }} {{ copyrightName }}</span>
     </footer>
   `,
   styles: `
@@ -45,6 +45,7 @@ import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons';
 })
 export class Footer {
   readonly year = new Date().getFullYear();
+  readonly copyrightName = 'Nicolas Contreras';
 
   readonly socialLinks = [
     { label: 'GitHub', href: 'https://github.com/nicobc', icon: faGithub },

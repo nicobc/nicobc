@@ -1,4 +1,4 @@
-import { Component, HostListener, ViewChild, signal } from '@angular/core';
+import { Component, computed, HostListener, ViewChild, signal } from '@angular/core';
 import { DataMovementViz, PruningMode, VizScenario } from '../../labs/components/data-movement-viz/data-movement-viz';
 
 const SCENARIOS: VizScenario[] = ['column-pruning', 'predicate-pushdown', 'shuffle'];
@@ -27,6 +27,14 @@ export class DistributedComputing {
   readonly queryBefore = 'WITH enriched_items AS (\n  SELECT ';
   readonly queryAfter = '\n  FROM dim_products\n),\ncategory_revenue AS (\n  SELECT\n    p.category,\n    SUM(i.quantity * i.unit_price) AS revenue\n  FROM enriched_items p\n  JOIN fct_order_items i ON p.product_id = i.product_id\n  GROUP BY p.category\n)\nSELECT category, revenue\nFROM category_revenue\nORDER BY revenue DESC';
 
+  readonly totalSteps = SCENARIOS.length;
+  readonly replayLabel = 'Replay';
+  readonly backToAnimationLabel = 'Back to animation';
+  readonly testUnderstandingLabel = 'Test your understanding';
+  readonly checkLabel = 'Check';
+  readonly revealSolutionLabel = 'Reveal solution';
+  readonly nextLabel = 'Next';
+
   readonly labCategory = 'Data Engineering · Distributed';
   readonly labTitle = "What the optimizer won't fix";
 
@@ -41,13 +49,8 @@ export class DistributedComputing {
   readonly feedbackCorrect = 'Right. <code>product_id</code> for the join, <code>category</code> for the group-by. Nothing else makes it to the output.';
   readonly feedbackCorrectRevealed = 'The answer is <code>product_id</code> and <code>category</code>. <code>product_id</code> threads through to the join condition; <code>category</code> goes to the group-by and final output. Everything else in <code>dim_products</code> is dead weight from the scan forward.';
 
-  get scenario(): VizScenario {
-    return SCENARIOS[this.step() - 1];
-  }
-
-  get conceptName(): string {
-    return CONCEPT_NAMES[this.step() - 1];
-  }
+  readonly scenario = computed<VizScenario>(() => SCENARIOS[this.step() - 1]);
+  readonly conceptName = computed(() => CONCEPT_NAMES[this.step() - 1]);
 
   replay(): void {
     this.viz?.replay();
@@ -95,6 +98,10 @@ export class DistributedComputing {
 
   closeChallenge(): void {
     this.showChallenge.set(false);
+  }
+
+  onChallengeInput(event: Event): void {
+    this.challengeInput.set((event.target as HTMLInputElement).value);
   }
 
   submitChallenge(): void {

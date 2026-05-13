@@ -1,5 +1,5 @@
 <div class="map-header">
-  <h1>Barcelona</h1>
+  <h1>{{ mapTitle }}</h1>
   <p class="subtitle">{{ subtitle }}</p>
   <div class="timeline">
     <button class="play-btn" (click)="togglePlay()" [title]="isPlaying() ? 'Pause' : 'Play'">
@@ -26,7 +26,7 @@
   </div>
 </div>
 <div class="deck-container" #container>
-  <button class="info-btn" (click)="showInfo.set(!showInfo())" [class.active]="showInfo()" title="About this map">i</button>
+  <button class="info-btn" (click)="showInfo.set(!showInfo())" [class.active]="showInfo()" [title]="infoTitle">i</button>
   <button class="fit-btn" (click)="fitToFrame()" title="Fit to frame">
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
       <path d="M1 5V1H5"/>
@@ -35,7 +35,7 @@
       <path d="M5 13H1V9"/>
     </svg>
   </button>
-  <a class="attribution" href="https://habitatge.gencat.cat/ca/dades/indicadors_estadistiques/estadistiques_de_construccio_i_mercat_immobiliari/mercat_de_lloguer/lloguers-barcelona-per-districtes-i-barris/" target="_blank" rel="noopener">Source: Ajuntament de Barcelona · INCASÒL</a>
+  <a class="attribution" [href]="attributionHref" target="_blank" rel="noopener">{{ attributionText }}</a>
   <div class="legend">
     <p class="legend-title">€/m²/month</p>
     <div class="legend-bar"></div>

@@ -64,7 +64,10 @@ export class BcnMap implements OnInit, OnDestroy {
   protected readonly showInfo = signal(false);
   protected insights: Insights | null = null;
 
+  readonly mapTitle = 'Barcelona';
   readonly subtitle = 'Rental price · Neighborhoods · 2014–2025';
+  readonly attributionText = 'Source: Ajuntament de Barcelona · INCASÒL';
+  readonly attributionHref = 'https://habitatge.gencat.cat/ca/dades/indicadors_estadistiques/estadistiques_de_construccio_i_mercat_immobiliari/mercat_de_lloguer/lloguers-barcelona-per-districtes-i-barris/';
   readonly infoTitle = 'About this map';
   readonly infoBody = "Average annual rental price across Barcelona's 73 neighborhoods, sourced from registered rental contracts deposited with INCASÒL. Figures are in €/m²/month.";
   readonly infoCaveat = 'Neighborhoods with fewer than 6 registered contracts in a given year are suppressed by the source. A small number of additional neighborhoods are suppressed because their year-on-year price swings exceed 40% — a signal of thin, unreliable coverage rather than genuine market movement. Both are shown in gray on the map.';

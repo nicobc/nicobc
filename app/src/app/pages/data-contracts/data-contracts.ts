@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, computed, ElementRef, inject, OnInit, signal } from '@angular/core';
 import Ajv, { ErrorObject } from 'ajv';
 import { SqlEditor } from '../../labs/components/sql-editor/sql-editor';
 import { BarChart } from '../../labs/components/bar-chart/bar-chart';
@@ -88,6 +88,10 @@ export class DataContracts implements OnInit {
   readonly solution = SOLUTION;
   readonly skeleton = SKELETON;
   readonly schemaDisplay = JSON.stringify(FCT_ORDERS_SCHEMA, null, 2);
+  readonly loadingText = 'Loading DuckDB...';
+  readonly runStep2Label = 'Run';
+  readonly nextLabel = 'Next';
+  readonly totalSteps = 3;
 
   readonly step1Intro = 'There is a pipeline that runs every night. It pulls raw orders from a source database, loads them into a Kimball model, then runs a mart job that feeds a dashboard. Someone senior watches that dashboard. Wrong numbers erode trust quickly.';
   readonly step1Task = 'You are writing the mart job. Write a CTE that computes the average order amount per customer name for 2026 and returns the top 5.';
@@ -103,17 +107,24 @@ export class DataContracts implements OnInit {
   readonly step3MetaReveal = 'One more thing: this lab validated your query output against a contract before rendering the chart in step 1. That is why a query with wrong column names or types returned a hint instead of a broken chart. The same principle, applied one step earlier in the pipeline.';
   readonly violationBlockTitle = 'What the contract would have thrown at ingestion';
 
-  dbReady    = signal(false);
-  step       = signal<1 | 2 | 3>(1);
-  step1Done  = signal(false);
-  step2Done  = signal(false);
+  private readonly elRef = inject(ElementRef);
 
-  step1Rows      = signal<ChartRow[]>([]);
-  step2Rows      = signal<ChartRow[]>([]);
-  lastSql        = signal<string>('');
-  sqlError       = signal<string | null>(null);
-  outputHint     = signal<string | null>(null);
-  inputViolation = signal<ContractViolation | null>(null);
+  readonly dbReady       = signal(false);
+  readonly step          = signal<1 | 2 | 3>(1);
+  readonly step1Done     = signal(false);
+  readonly step2Done     = signal(false);
+  readonly step1Rows     = signal<ChartRow[]>([]);
+  readonly step2Rows     = signal<ChartRow[]>([]);
+  readonly lastSql       = signal<string>('');
+  readonly sqlError      = signal<string | null>(null);
+  readonly outputHint    = signal<string | null>(null);
+  readonly inputViolation = signal<ContractViolation | null>(null);
+
+  readonly violationDetail = computed(() => {
+    const v = this.inputViolation();
+    if (!v) return '';
+    return `Field <code>${v.field}</code> — ${v.constraint}, received ${v.received}`;
+  });
 
   async ngOnInit() {
     await this.seedBatch(1);
@@ -173,7 +184,7 @@ export class DataContracts implements OnInit {
       this.step1Rows.set(rows);
       if (rows.length > 0) {
         this.step1Done.set(true);
-        setTimeout(() => document.querySelector('.chart-wrap')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 0);
+        setTimeout(() => (this.elRef.nativeElement as HTMLElement).querySelector('.chart-wrap')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 0);
       }
     } catch (e) {
       this.sqlError.set((e as Error).message);
@@ -193,7 +204,7 @@ export class DataContracts implements OnInit {
       }));
       this.step2Rows.set(rows);
       this.step2Done.set(true);
-      setTimeout(() => document.querySelector('.chart-wrap')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 0);
+      setTimeout(() => (this.elRef.nativeElement as HTMLElement).querySelector('.chart-wrap')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 0);
     } catch (e) {
       this.sqlError.set((e as Error).message);
     }

@@ -6,7 +6,7 @@
   </header>
 
   @if (!dbReady()) {
-    <div class="db-loading">Loading DuckDB...</div>
+    <div class="db-loading">{{ loadingText }}</div>
   } @else {
 
     <div class="step-shell">
@@ -15,7 +15,7 @@
         <button class="btn-back" (click)="goBack()">&#8592;</button>
       }
 
-      <span class="step-indicator">{{ step() }} / 3</span>
+      <span class="step-indicator">{{ step() }} / {{ totalSteps }}</span>
 
       <!-- ── step 1 ─────────────────────────────────────────────── -->
       @if (step() === 1) {
@@ -70,7 +70,7 @@
 
           <pre class="sql-readonly">{{ lastSql() }}</pre>
 
-          <button class="btn-primary" (click)="onRunStep2()">Run</button>
+          <button class="btn-primary" (click)="onRunStep2()">{{ runStep2Label }}</button>
 
           @if (sqlError()) {
             <p class="error-sql">{{ sqlError() }}</p>
@@ -104,11 +104,7 @@
           @if (inputViolation()) {
             <div class="violation-block">
               <p class="violation-block__title">{{ violationBlockTitle }}</p>
-              <p class="violation-block__detail">
-                Field <code>{{ inputViolation()!.field }}</code> —
-                {{ inputViolation()!.constraint }},
-                received {{ inputViolation()!.received }}
-              </p>
+              <p class="violation-block__detail" [innerHTML]="violationDetail()"></p>
             </div>
           }
 
@@ -118,7 +114,7 @@
       }
 
       @if (canGoNext()) {
-        <button class="btn-primary" (click)="goNext()">Next</button>
+        <button class="btn-primary" (click)="goNext()">{{ nextLabel }}</button>
       }
 
     </div>

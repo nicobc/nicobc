@@ -13,6 +13,10 @@ export class DataMovementViz implements OnInit, OnChanges {
   @Input({ required: true }) scenario!: VizScenario;
   @Output() readonly modeChange = new EventEmitter<PruningMode>();
 
+  readonly cpToggleUnpruned = 'SELECT *';
+  readonly cpTogglePruned = 'SELECT customer_id, customer_name';
+  readonly cpFromClause = 'FROM dim_customers';
+
   readonly animating = signal(false);
   readonly pruningMode = signal<PruningMode>('unpruned');
 

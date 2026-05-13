@@ -1,9 +1,9 @@
 <div class="editor-wrapper">
   <div #editorHost class="editor-host"></div>
   <div class="editor-actions">
-    <button class="btn-primary" (click)="onRun()">Run</button>
+    <button class="btn-primary" (click)="onRun()">{{ runLabel }}</button>
     @if (solution) {
-      <button class="btn-reveal" (click)="onReveal()">reveal solution</button>
+      <button class="btn-reveal" (click)="onReveal()">{{ revealLabel }}</button>
     }
   </div>
 </div>
