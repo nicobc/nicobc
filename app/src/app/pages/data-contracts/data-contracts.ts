@@ -184,36 +184,18 @@ export class DataContracts implements OnInit {
 
   async onRunStep2() {
     this.sqlError.set(null);
-    const db   = await getDB();
-    const conn = await db.connect();
     try {
-      await conn.query(`DROP TABLE IF EXISTS fct_orders`);
-      await conn.query(`DROP TABLE IF EXISTS dim_customers`);
-      await conn.query(`CREATE TABLE dim_customers (customer_id INTEGER, customer_name VARCHAR)`);
-      await conn.query(`CREATE TABLE fct_orders (order_id INTEGER, customer_id INTEGER, amount INTEGER, order_date VARCHAR)`);
-
-      const customerVals = dimCustomers
-        .map(c => `(${c.customer_id}, '${c.customer_name.replace("'", "''")}')`).join(',');
-      await conn.query(`INSERT INTO dim_customers VALUES ${customerVals}`);
-
-      const orderVals = fctOrdersBatch2
-        .map(o => `(${o.order_id}, ${o.customer_id}, ${o.amount === null ? 'NULL' : o.amount}, '${o.order_date}')`).join(',');
-      await conn.query(`INSERT INTO fct_orders VALUES ${orderVals}`);
-
-      const arrowResult = await conn.query(this.lastSql());
-      const rows: ChartRow[] = arrowResult.toArray().map(row => ({
-        label: row['customer_name'] as string,
-        value: row['avg_order_amount'] as number | null,
+      await this.seedBatch(2);
+      const result = await query(this.lastSql());
+      const rows: ChartRow[] = result.rows.map(r => ({
+        label: r['customer_name'] as string,
+        value: r['avg_order_amount'] as number | null,
       }));
-
-
       this.step2Rows.set(rows);
       this.step2Done.set(true);
       setTimeout(() => document.querySelector('.chart-wrap')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 0);
     } catch (e) {
       this.sqlError.set((e as Error).message);
-    } finally {
-      await conn.close();
     }
   }
 
