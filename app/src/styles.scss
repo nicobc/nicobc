@@ -178,9 +178,10 @@
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+  outline: 1px solid var(--fg);
+  box-shadow: none;
   border-radius: var(--br-sm);
+  opacity: 1;
 }
 
 code {
