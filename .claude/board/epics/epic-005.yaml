@@ -7,11 +7,10 @@ description: Learner maps code smells in a data pipeline to distributed computin
 notes:
   - Dataset: fct_orders + dim_customers batch1 from seed.ts; same KPI as other labs (avg order value per customer name, top 5 for Spain)
   - SQL snippets only, no runtime for animation; challenge steps use DuckDB WASM for output validation (via duckdb.ts + seed.ts); concepts apply to dbt/Snowflake, dbt/Redshift, BigQuery — not Spark-specific
-  - 3 concepts: column pruning, predicate pushdown, shuffle (folds in serialization + join strategy)
-  - Shuffle note: serialization is the hidden cost inside every shuffle (data leaving/arriving a node); also mention UDF-triggered serialization without shuffle (Snowflake UDFs, Spark Python UDFs, etc.)
+  - 3 concepts: column pruning, predicate pushdown, shuffle (minimize data entering each operation)
   - Opening framing: modern engines optimize the logical plan (Catalyst in Spark; analogous in Snowflake, BigQuery, Redshift) — they reduce blast radius but don't eliminate it; understanding the model is how you read an execution plan when something is slow
-  - Format per step: animated viz (toggle pill) → copy → challenge (type varies by concept: fill-in for column pruning, SQL editor for predicate pushdown)
-  - Viz: animated rectangles only, numberless; geometry (size, position) and motion carry meaning; at node boundaries rectangles morph (sharp → rounded → sharp) to represent serialization/deserialization
+  - Format per step: animated viz (toggle pill) → copy → challenge (type varies by concept: fill-in for column pruning, SQL editor for predicate pushdown and shuffle)
+  - Viz: animated rectangles only, numberless; geometry (size, count) and motion carry meaning
   - Goal: mental model update, not technique recall
 
 tickets:
@@ -105,14 +104,32 @@ tickets:
       - DuckDB wiring uses existing app/src/app/labs/db/duckdb.ts and app/src/app/labs/data/seed.ts
 
   - id: T6
-    title: Shuffle — animation + copy + MCQ
+    title: Shuffle — animation + copy + challenge
     type: feat
-    status: IDEATION
-    description: Learner sees the cost of data crossing node boundaries, then picks the better SQL.
+    status: READY
+    description: Learner sees how shuffle cost scales with data volume entering an operation, then proves understanding by rewriting a 3-table query to minimize data shuffled at each step.
+    acceptance_criteria:
+      - toggle pill shows two approaches to the throughline query ("GROUP BY first" / "join first"); animation responds accordingly; auto-replays on switch
+      - "GROUP BY first" animation: full dim_customers and full fct_orders blocks flow toward the GROUP BY node — wide, numerous rectangles
+      - "join first" animation: Spain-filtered dim_customers (narrow, few blocks) joins fct_orders first, reducing it; smaller block set flows to GROUP BY node
+      - no shape morphing; geometry (size, count) carries meaning; no node-boundary effects
+      - step indicator reads "3 / 3 — Shuffle"
+      - viz phase: Next appears only after learner has toggled to "join first" at least once
+      - copy phase: 2 paragraphs — (1) shuffle cost has two levers: data volume entering each operation (illustrated by animation) and number of shuffle operations in the query; (2) optimizer caveat (engines may broadcast small dimension tables; principle extends to fact-to-fact joins and high-cardinality GROUP BY where broadcast is not viable); "Back to animation" left, challenge CTA right
+      - challenge: modal overlay, blurred background; 3-table query over fct_orders + dim_customers + fct_order_items; goal is top 5 Spanish customers by total items ordered
+      - challenge intro states the 1:m cardinality relationship (1 order = multiple items) so relative table sizes are established without numbers
+      - starting query has suboptimal ordering — GROUP BY customer_id on fct_orders before joining dim_customers, then fct_order_items
+      - correct answer: filter and prune dim_customers to Spain (customer_id, customer_name only) first, join fct_orders, join fct_order_items, GROUP BY customer_name; requires applying column pruning (step 1) and predicate pushdown (step 2) alongside correct join ordering
+      - fct_order_items added to seed.ts: schema order_id, product_id, quantity; multiple rows per order_id; 1:m ratio documented in seed comment
+      - validation: (1) run query on DuckDB WASM — surface SQL errors immediately; (2) AST check — verify join ordering and predicate placement are optimal; (3) compare DuckDB output to expected result set; hints and feedback keyed to which layer fails
+      - reveal populates correct query; correct → success; terminal step (no Next)
     notes:
-      - shape morph (sharp → rounded → sharp) at node boundaries represents serialize/deserialize
-      - copy must cover serialization as the hidden cost inside every shuffle
-      - UDF aside: mention UDF-triggered serialization without shuffle (Snowflake UDFs, Spark Python UDFs)
+      - no serialization content; no UDF content; no shape morphing
+      - broadcasting acknowledged in copy as one engine mechanism, not the lesson — copy leads with the general principle
+      - challenge is a capstone: correct solution requires column pruning, predicate pushdown, and shuffle ordering applied together
+      - distractor logic: GROUP BY fct_orders on customer_id first is logically valid (1 id = 1 name) but misses that joining dim_customers first is nearly free and enables filtering fct_orders before the GROUP BY shuffle
+      - 3 shuffles (dim_customers join, fct_order_items join, GROUP BY) prevent answer-by-elimination; learner must reason about ordering, not pick from two options
+      - depends on T2 (animated viz component)
 
   - id: T7
     title: Workshop landing page + lab grid refactor
