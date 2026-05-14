@@ -1,0 +1,12 @@
+<div class="challenge-overlay" (click)="closed.emit()">
+  <div #panel class="challenge-panel" role="dialog" aria-modal="true" aria-label="Challenge"
+       (click)="$event.stopPropagation()" (keydown)="trapFocus($event)">
+
+    @if (showClose) {
+      <button class="btn-icon challenge-close" (click)="closed.emit()">&#x2715;</button>
+    }
+
+    <ng-content />
+
+  </div>
+</div>

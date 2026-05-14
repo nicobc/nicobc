@@ -43,41 +43,6 @@
 
 .copy-footer .btn-ghost { font-size: var(--fs-sm); }
 
-// ── challenge overlay ─────────────────────────────────────────────────────────
-
-.challenge-overlay {
-  position: fixed;
-  inset: 0;
-  background: var(--overlay-bg);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.5rem;
-}
-
-.challenge-panel {
-  position: relative;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--br-lg);
-  padding: 2rem;
-  width: 100%;
-  max-width: 640px;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-// .btn-icon provides visual style; position scoped here
-.challenge-close {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  font-size: var(--fs-lg);
-}
-
 // ── schema hint ────────────────────────────────────────────────────────────────
 
 .challenge-schema {
@@ -126,4 +91,25 @@
 .challenge-actions {
   display: flex;
   justify-content: flex-end;
+}
+
+// ── step 2 SQL editor ─────────────────────────────────────────────────────────
+
+.pp-sql-editor {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: var(--fs-code);
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--br-md);
+  padding: 0.75rem 1rem;
+  color: var(--fg);
+  resize: vertical;
+  min-height: 220px;
+  line-height: 1.6;
+  tab-size: 2;
+  white-space: pre;
+  margin-bottom: 1.25rem;
+
+  &:disabled { opacity: var(--opacity-muted); cursor: default; }
 }
