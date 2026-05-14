@@ -7,8 +7,8 @@ status: READY
 description: Learner refactors poorly tested pipeline function step by step; builds intuition for pytest best practices and I/O isolation.
 notes:
   - Pyodide + duckdb-pyodide; in-browser Python runtime
-  - Dataset: fct_orders + dim_customers batch1 from seed.ts (20 customers, 50 orders, no NULLs); top 5 by avg order value Meridian ~4200, Sable ~3500, Northveil ~2800, Crestline ~2100, Ironclad ~1600
-  - Starting function: get_top_customers_2026() with hardcoded duckdb.connect("orders.duckdb"); smells are hardcoded I/O, hardcoded year in name + SQL, raw tuple return
+  - Dataset: fct_orders + dim_customers batch1 from seed.ts (20 customers, 50 orders, no NULLs); top 5 by avg order value for Spain: Grupo Valera ~4213, Distribuciones Casas ~3500, Comercial Ibérica ~2800, Almacenes del Sur ~2100, Industrias Bernal ~1600
+  - Starting function: get_top_customers() with hardcoded duckdb.connect("orders.duckdb"); smells are hardcoded I/O, hardcoded country filter in SQL, raw tuple return
   - Isolation arc: commit orders.duckdb (dumb) → side-effect fixture creates/seeds/deletes file via monkeypatch.chdir (less dumb) → function accepts conn param (right)
   - Concept progression: fixtures → factory fixtures → side-effect fixtures → monkeypatching → parametrization → testability via isolation
   - Per step: before/after explained example on unrelated snippet, editable test file building on previous step's solution, reveal escape hatch
@@ -48,7 +48,7 @@ tickets:
     status: READY
     description: Lab has a function under test and a skeleton test the learner will refactor through all 6 steps.
     acceptance_criteria:
-      - pipeline.py defines get_top_customers_2026() with hardcoded duckdb.connect("orders.duckdb"), hardcoded year in SQL, raw tuple return
+      - pipeline.py defines get_top_customers() with hardcoded duckdb.connect("orders.duckdb"), hardcoded country filter in SQL (WHERE country = 'Spain'), raw tuple return
       - orders.duckdb committed as test fixture with batch1 data
       - test_pipeline.py skeleton has one test reading from the committed file, no fixtures
       - runner loads and runs the skeleton test successfully
