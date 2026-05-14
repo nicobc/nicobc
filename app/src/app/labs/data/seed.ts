@@ -1,3 +1,25 @@
+export interface DimProduct {
+  product_id: number;
+  product_name: string;
+  category: string;
+}
+
+export const dimProducts: DimProduct[] = [
+  { product_id: 1,  product_name: 'Laptop Pro 15',    category: 'Electronics' },
+  { product_id: 2,  product_name: 'USB-C Hub',         category: 'Electronics' },
+  { product_id: 3,  product_name: 'Wireless Earbuds',  category: 'Electronics' },
+  { product_id: 4,  product_name: 'Power Drill',       category: 'Tools' },
+  { product_id: 5,  product_name: 'Screwdriver Set',   category: 'Tools' },
+  { product_id: 6,  product_name: 'Measuring Tape',    category: 'Tools' },
+  { product_id: 7,  product_name: 'Olive Oil 1L',      category: 'Food' },
+  { product_id: 8,  product_name: 'Canned Tomatoes',   category: 'Food' },
+  { product_id: 9,  product_name: 'Pasta 500g',        category: 'Food' },
+  { product_id: 10, product_name: 'Winter Jacket',     category: 'Clothing' },
+  { product_id: 11, product_name: 'Running Shoes',     category: 'Clothing' },
+  { product_id: 12, product_name: 'Printer Paper',     category: 'Office' },
+];
+
+
 export interface DimCustomer {
   customer_id: number;
   customer_name: string;

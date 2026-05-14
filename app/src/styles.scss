@@ -128,6 +128,40 @@
   &:hover { opacity: 1; }
 }
 
+// ── toggle pill ───────────────────────────────────────────────────────────────
+
+// container — centers the pill group
+.viz-toggle {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+// pill button — SQL snippet selector; first/last get rounded ends
+.toggle-pill {
+  padding: 0.35rem 1rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--fg);
+  font-size: var(--fs-code);
+  font-family: var(--font-mono);
+  cursor: pointer;
+  opacity: var(--opacity-subtle);
+  transition: background var(--transition-fast), opacity var(--transition-fast);
+
+  &:first-child { border-radius: var(--br) 0 0 var(--br); border-right: none; }
+  &:last-child  { border-radius: 0 var(--br) var(--br) 0; }
+  &.active      { background: var(--surface); opacity: 1; }
+  &:hover       { opacity: var(--opacity-secondary); }
+}
+
+// modifier for multi-line SQL snippets (predicate-pushdown and beyond)
+.toggle-pill--multiline {
+  white-space: pre;
+  text-align: left;
+  line-height: 1.5;
+}
+
 // ── utilities ─────────────────────────────────────────────────────────────────
 
 // small-caps label above a heading

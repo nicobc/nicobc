@@ -90,30 +90,7 @@ $fo-rows: 5;
   background-size: $cell-w $cell-h;
 }
 
-// ── toggle pill ───────────────────────────────────────────────────────────────
-
-.cp-toggle {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 1.25rem;
-}
-
-.toggle-pill {
-  padding: 0.35rem 1rem;
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--fg);
-  font-size: var(--fs-code);
-  font-family: var(--font-mono);
-  cursor: pointer;
-  opacity: var(--opacity-subtle);
-  transition: background var(--transition-fast), opacity var(--transition-fast);
-
-  &:first-child { border-radius: var(--br) 0 0 var(--br); border-right: none; }
-  &:last-child  { border-radius: 0 var(--br) var(--br) 0; }
-  &.active      { background: var(--surface); opacity: 1; }
-  &:hover       { opacity: var(--opacity-secondary); }
-}
+// ── toggle label (FROM clause shown beside the pill group) ────────────────────
 
 .cp-from {
   font-family: var(--font-mono);
@@ -191,5 +168,61 @@ $fo-rows: 5;
   6%   { opacity: 1; }
   60%  { left: calc(95% - 120px); top: 173px; opacity: 1; width: $dc-narrow-cols * $cell-w; }
   100% { left: calc(95% - 120px); top: 173px; opacity: 1; width: $dc-narrow-cols * $cell-w; }
+}
+
+// ── predicate-pushdown animations ─────────────────────────────────────────────
+//
+// Toggle shows WHERE placement in the query; animation shows row-count impact.
+// Block width: same as dim_customers (all columns — only rows change).
+// Full height: 5 rows = 50px (all customers, Spain + France).
+// Filtered height: 2 rows = 20px (exaggerated for visual clarity).
+//
+// Unpushed (filter late): full block departs, height shrinks at node arrival.
+// Pushed (filter early): block already short at departure.
+//
+// Node positions: node-1 top:27px, node-2 top:163px; blocks land 10px inside.
+// Departure: right edge of cylinder = calc(5% + 100px), vertically centered.
+
+$pp-full-rows:     5;
+$pp-filtered-rows: 2;
+
+.pp-stage--unpushed.animating {
+  .pp-n1 { animation: pp-unpushed-n1 4.5s ease-in-out 1 forwards; }
+  .pp-n2 { animation: pp-unpushed-n2 4.5s ease-in-out 1 forwards; }
+}
+
+.pp-stage--pushed.animating {
+  .pp-n1 { animation: pp-pushed-n1 4.5s ease-in-out 1 forwards; }
+  .pp-n2 { animation: pp-pushed-n2 4.5s ease-in-out 1 forwards; }
+}
+
+@keyframes pp-unpushed-n1 {
+  0%   { left: calc(5% + 100px); top: calc(50% - 25px); opacity: 0; height: $pp-full-rows * $cell-h; }
+  6%   { opacity: 1; }
+  55%  { left: calc(95% - 120px); top: 37px; height: $pp-full-rows * $cell-h; opacity: 1; }
+  70%  { height: $pp-filtered-rows * $cell-h; }
+  100% { left: calc(95% - 120px); top: 37px; height: $pp-filtered-rows * $cell-h; opacity: 1; }
+}
+
+@keyframes pp-unpushed-n2 {
+  0%   { left: calc(5% + 100px); top: calc(50% - 25px); opacity: 0; height: $pp-full-rows * $cell-h; }
+  6%   { opacity: 1; }
+  55%  { left: calc(95% - 120px); top: 173px; height: $pp-full-rows * $cell-h; opacity: 1; }
+  70%  { height: $pp-filtered-rows * $cell-h; }
+  100% { left: calc(95% - 120px); top: 173px; height: $pp-filtered-rows * $cell-h; opacity: 1; }
+}
+
+@keyframes pp-pushed-n1 {
+  0%   { left: calc(5% + 100px); top: calc(50% - 25px); opacity: 0; height: $pp-filtered-rows * $cell-h; }
+  6%   { opacity: 1; }
+  60%  { left: calc(95% - 120px); top: 37px; height: $pp-filtered-rows * $cell-h; opacity: 1; }
+  100% { left: calc(95% - 120px); top: 37px; height: $pp-filtered-rows * $cell-h; opacity: 1; }
+}
+
+@keyframes pp-pushed-n2 {
+  0%   { left: calc(5% + 100px); top: calc(50% - 25px); opacity: 0; height: $pp-filtered-rows * $cell-h; }
+  6%   { opacity: 1; }
+  60%  { left: calc(95% - 120px); top: 173px; height: $pp-filtered-rows * $cell-h; opacity: 1; }
+  100% { left: calc(95% - 120px); top: 173px; height: $pp-filtered-rows * $cell-h; opacity: 1; }
 }
 
