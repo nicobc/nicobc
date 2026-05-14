@@ -18,6 +18,12 @@ Work on short-lived feature branches cut directly from `main`. Branch name mirro
 
 Each branch gets its own Cloudflare Pages preview deployment.
 
+## Release planning
+
+Releases are planned in `.claude/board/roadmap.yaml`. Each release bundles one or more complete epics and any relevant maintenance tickets. Never ship a partial epic.
+
+A release requires a CalVer tag when the bundle includes non-test files under `app/src/` or `pipelines/`. CI config, spec files, `.claude/`, and documentation changes do not. The `deploy` flag on each roadmap entry records this decision explicitly — check it rather than reasoning from the diff.
+
 ## Process
 
 1. Cut a branch from main:
@@ -40,7 +46,7 @@ Each branch gets its own Cloudflare Pages preview deployment.
    git branch -D type/scope
    ```
    `-D` required — squash merges leave the local branch unrecognised as merged by git.
-9. _(Only if changes require redeploying `app/`)_ Create and push a CalVer tag from main:
+9. _(Only if `deploy: true` for this release in `.claude/board/roadmap.yaml`)_ Create and push a CalVer tag from main:
    ```bash
    git fetch origin main
    git tag vYYYY.MM.N origin/main

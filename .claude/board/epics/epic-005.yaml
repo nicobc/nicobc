@@ -2,7 +2,6 @@ id: EPIC-005
 title: Distributed Computing Intuition Lab
 scope: distributed-computing
 category: workshop
-priority: 3
 status: IN PROGRESS
 description: Learner maps code smells in a data pipeline to distributed computing inefficiencies; builds perf intuition beyond technique names.
 notes:
@@ -21,7 +20,6 @@ tickets:
   - id: T1
     title: Lab page scaffold + routing
     type: feat
-    priority: 1
     status: DONE
     description: Learner navigates to distributed computing lab and sees page structure.
     acceptance_criteria:
@@ -31,7 +29,6 @@ tickets:
   - id: T2
     title: Animated data-movement viz component
     type: feat
-    priority: 1
     status: TESTING
     description: Reusable component that conveys distributed execution concepts through geometry and motion, no numbers.
     acceptance_criteria:
@@ -51,7 +48,6 @@ tickets:
   - id: T3
     title: Lab content — 3 concepts + MCQ navigation
     type: feat
-    priority: 2
     status: DISCARDED
     description: Learner works through 3 concepts; each step explains via viz then confirms via MCQ.
     acceptance_criteria:
@@ -67,7 +63,6 @@ tickets:
   - id: T4
     title: Column pruning — animation + copy + challenge
     type: feat
-    priority: 2
     status: DONE
     description: Learner sees the cost of a full column scan vs a pruned scan, then validates understanding via a fill-in challenge.
     acceptance_criteria:
@@ -87,14 +82,12 @@ tickets:
   - id: T5
     title: Predicate pushdown — animation + copy + MCQ
     type: feat
-    priority: 3
     status: IDEATION
     description: Learner sees the cost of a late filter vs an early one, then picks the better SQL.
 
   - id: T6
     title: Shuffle — animation + copy + MCQ
     type: feat
-    priority: 4
     status: IDEATION
     description: Learner sees the cost of data crossing node boundaries, then picks the better SQL.
     notes:
@@ -105,7 +98,6 @@ tickets:
   - id: T7
     title: Workshop landing page + lab grid refactor
     type: feat
-    priority: 5
     status: READY
     description: Learner lands on a workshop landing page that introduces the through-line scenario before entering any individual lab; the lab grid reflects the new structure.
     acceptance_criteria:

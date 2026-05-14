@@ -26,7 +26,9 @@ DONE: CI passed and ticket is verified working.
 
 CI (Linux) is the authoritative source of truth for test tickets. Local tests passing is not sufficient — set to TESTING when the PR is opened, DONE only after CI passes. Never skip TESTING.
 
-Intermediate commits during IN PROGRESS or TESTING carry no `Closes` footer. The final commit that transitions to DONE carries the `Closes` footer and the board update.
+All commits for a ticket include the fully qualified ticket ID in the title: `type(scope): description [EPIC-XXX/TN]` or `[MAINT/TN]`. This makes git log self-contextualizing without scanning epic files. Board meta-work (`chore(board):`) has no ticket and carries no ID.
+
+Intermediate commits carry no `Closes` footer. The final commit that transitions to DONE carries the `Closes` footer and the board update.
 
 CI tickets requiring a live trigger to validate (tag push, scheduled run, webhook): add `workflow_dispatch:` temporarily during TESTING, remove it in the DONE commit.
 

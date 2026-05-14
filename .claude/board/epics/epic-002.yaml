@@ -2,7 +2,6 @@ id: EPIC-002
 title: Shared Lab Infrastructure
 scope: lab-infra
 category: project
-priority: 1
 status: DONE
 description: Cross-cutting lab utilities in single location so each workshop focuses on teaching content.
 notes:
@@ -15,7 +14,6 @@ tickets:
   - id: T1
     title: DuckDB WASM query runner utility
     type: feat
-    priority: 1
     status: DONE
     description: Shared async query runner; labs don't re-implement DuckDB init.
     acceptance_criteria:
@@ -30,7 +28,6 @@ tickets:
   - id: T2
     title: Seed data design — fct_orders + dim_customers
     type: feat
-    priority: 1
     status: DONE
     description: Shared seed data used by all workshop labs.
     acceptance_criteria:

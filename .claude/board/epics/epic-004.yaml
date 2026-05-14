@@ -2,7 +2,6 @@ id: EPIC-004
 title: Unit Testing for Data Engineers Lab
 scope: unit-testing
 category: workshop
-priority: 2
 status: READY
 description: Learner refactors poorly tested pipeline function step by step; builds intuition for pytest best practices and I/O isolation.
 notes:
@@ -20,7 +19,6 @@ tickets:
   - id: T1
     title: Lab page scaffold + routing
     type: feat
-    priority: 1
     status: READY
     description: Learner navigates to UT lab and sees page structure.
     acceptance_criteria:
@@ -30,7 +28,6 @@ tickets:
   - id: T2
     title: Pyodide + pytest runner
     type: feat
-    priority: 1
     status: READY
     description: As a learner, I want to run pytest in my browser.
     acceptance_criteria:
@@ -44,7 +41,6 @@ tickets:
   - id: T3
     title: Python source files + step-1 starting state
     type: feat
-    priority: 2
     status: READY
     description: Lab has a function under test and a skeleton test the learner will refactor through all 6 steps.
     acceptance_criteria:
@@ -56,7 +52,6 @@ tickets:
   - id: T4
     title: 6-step progressive test refactoring + navigation
     type: feat
-    priority: 3
     status: READY
     description: Learner refactors the test through 6 concepts; each step builds on the previous solution.
     acceptance_criteria:

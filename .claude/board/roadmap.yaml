@@ -1,0 +1,54 @@
+# bundle = complete epics + maintenance tickets. partial epics never ship.
+# deploy: true = non-test files under app/src/ or pipelines/ changed.
+# tag cut from main once all bundled tickets DONE. ~ = tag not yet assigned.
+
+planned:
+
+  - tag: v2026.05.6
+    epics: [EPIC-008, EPIC-005]
+    maintenance: [MAINT/T5, MAINT/T6]
+    deploy: true
+    notes: MAINT/T5 already merged; rides with this release. Cut when all bundled tickets DONE.
+
+  - tag: ~
+    epics: [EPIC-004]
+    maintenance: []
+    deploy: true
+
+  - tag: ~
+    epics: [EPIC-006]
+    maintenance: []
+    deploy: true
+    notes: EPIC-006 in IDEATION; groom before scheduling.
+
+done:
+
+  - tag: v2026.05.1
+    epics: []
+    maintenance: []
+    deploy: true
+    notes: Pre-board. Initial deployment CI.
+
+  - tag: v2026.05.2
+    epics: []
+    maintenance: []
+    deploy: true
+    notes: Pre-board. R2, Pages, pipeline CI, dev environment. EPIC-007 bulk.
+
+  - tag: v2026.05.3
+    epics: []
+    maintenance: [MAINT/T2, MAINT/T3]
+    deploy: true
+    notes: Pre-board. Data contracts light theme + copy fixes.
+
+  - tag: v2026.05.4
+    epics: []
+    maintenance: []
+    deploy: true
+    notes: Pre-board. Favicon.
+
+  - tag: v2026.05.5
+    epics: []
+    maintenance: []
+    deploy: true
+    notes: Pre-board. Tab title. EPIC-001/002/003/007 and MAINT/T1 all in main by this tag; mapping to individual tags not tracked.
