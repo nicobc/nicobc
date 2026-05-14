@@ -2,7 +2,6 @@ id: EPIC-006
 title: Copy Audit
 scope: copy
 category: project
-priority: 2
 status: IDEATION
 description: All site copy reads like a person wrote it.
 notes:

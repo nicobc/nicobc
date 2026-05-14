@@ -2,7 +2,6 @@ id: EPIC-001
 title: BCN Rental Prices Map
 scope: bcn-map
 category: project
-priority: 3
 status: DONE
 description: Visitor explores interactive BCN rental price map; understands geo/temporal pricing across neighbourhoods.
 notes:

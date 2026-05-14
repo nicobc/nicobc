@@ -2,7 +2,6 @@ id: EPIC-008
 title: Test Coverage
 scope: quality
 category: quality
-priority: 2
 status: IN PROGRESS
 description: Establish test coverage across the repo — Python pipeline tests and Angular app tests. Includes testing skill files for both stacks.
 
@@ -11,7 +10,6 @@ tickets:
   - id: T1
     title: Python testing skill
     type: test
-    priority: 1
     status: DONE
     description: Discuss Python testing standards for the repo and produce .claude/skills/python-testing.md.
     acceptance_criteria:
@@ -20,14 +18,12 @@ tickets:
   - id: T2
     title: bcn-map pipeline tests
     type: test
-    priority: 2
     status: DONE
     description: Write unit tests for bcn-map pipeline pure-logic functions per python-testing.md. Groom after T1.
 
   - id: T3
     title: Fix broken Angular specs
     type: fix
-    priority: 3
     status: DONE
     description: Stale specs in app/ fail CI. app.spec.ts has a broken "should render title" test checking for a template that no longer exists.
     acceptance_criteria:
@@ -38,7 +34,6 @@ tickets:
   - id: T4
     title: Angular app quality pass — scoping
     type: chore
-    priority: 4
     status: DONE
     description: Review app/ code and test coverage; create angular-testing.md skill; groom follow-on tickets for Angular tests and any refactoring surfaced.
     acceptance_criteria:
@@ -51,7 +46,6 @@ tickets:
   - id: T5
     title: Python code quality tools — ruff, pyright
     type: ci
-    priority: 5
     status: DONE
     description: Add ruff and pyright to bcn-map pipeline dev dependencies. Set up a .pre-commit-config.yaml with ruff check, ruff format, and pyright hooks for local enforcement. Add a lint/type-check CI job to test-bcn-map-pipeline.yml that runs ruff check, ruff format --check, and pyright (no --fix, no autoformat) before the unit tests job.
     acceptance_criteria:
@@ -63,7 +57,6 @@ tickets:
   - id: T6
     title: Replace pandas with DuckDB in rental prices pipeline
     type: refactor
-    priority: 6
     status: DONE
     description: Replace pandas with DuckDB for all data transformations in the rental prices pipeline. Use openpyxl directly for Excel reading. Implement wide-to-long reshape with UNION ALL and all aggregations (priciest, biggest_surge, city_avg, volatile neighborhoods) as SQL queries. Remove pandas from runtime dependencies and pandas-stubs from dev dependencies.
     acceptance_criteria:
@@ -79,7 +72,6 @@ tickets:
   - id: T7
     title: Angular skill — component conventions
     type: chore
-    priority: 7
     status: DONE
     description: Write .claude/skills/angular.md covering HTML, TS, and SCSS conventions; apply across app/ codebase, adjusting the skill as the refactor surfaces new patterns.
     acceptance_criteria:
@@ -89,7 +81,6 @@ tickets:
   - id: T8
     title: Angular testing skill + test coverage pass
     type: test
-    priority: 8
     status: READY
     description: Write .claude/skills/angular-testing.md; apply across app/ specs, adding and refactoring tests to match the skill, adjusting the skill as the pass surfaces new patterns.
     acceptance_criteria:

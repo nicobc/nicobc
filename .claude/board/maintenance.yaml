@@ -4,7 +4,6 @@ tickets:
     title: Scrollbar + padding scroll fix
     type: fix
     scope: ui
-    priority: 1
     status: DONE
     description: Scrollbar should sit at viewport edge, not at far right of horizontal overflow.
     resolution: >
@@ -19,7 +18,6 @@ tickets:
     title: Data contracts lab light theme visual bugs
     type: fix
     scope: data-contracts
-    priority: 1
     status: DONE
     description: Several elements in the dc lab are invisible or low-contrast in light theme.
     acceptance_criteria:
@@ -32,7 +30,6 @@ tickets:
     title: Data contracts lab copy — define contracts and frame JSON schema
     type: fix
     scope: data-contracts
-    priority: 2
     status: DONE
     description: The narrative jumps from "stakeholder would freak out" to a fake error and a JSON schema with no bridging explanation. Reader has no context for what a data contract is or why JSON schema specifically.
     acceptance_criteria:
@@ -45,7 +42,6 @@ tickets:
     title: Scope Cloudflare preview builds to app/
     type: ci
     scope: deployment
-    priority: 2
     status: DONE
     description: Replace native Cloudflare Pages GitHub integration with a GHA workflow that triggers only on app/ changes. Eliminates spurious preview builds on .claude/ and .md-only PRs.
     acceptance_criteria:
@@ -62,7 +58,6 @@ tickets:
     title: Replace year filter with country filter in workshop through-line scenario
     type: refactor
     scope: labs
-    priority: 2
     status: DONE
     description: The KPI query filters by YEAR(order_date) = 2026, which is arbitrary and adds noise to labs that are not about date handling. Replace with WHERE country = 'Spain' — geographically coherent with the BCN map, semantically intuitive, and keeps order_date on fct_orders as an intentionally unused column for the column pruning illustration. Scenario framing: Spanish e-commerce company expanding to France; KPI targets the Spanish market.
     acceptance_criteria:
@@ -81,7 +76,6 @@ tickets:
     title: Data contracts lab — two-tier output validation
     type: feat
     scope: data-contracts
-    priority: 3
     status: READY
     description: Step 1 currently validates query output loosely. Replace with two explicit tiers — JSON schema for output structure, expected output for business logic — so feedback is precise and mirrors the contract concept the lab teaches.
     acceptance_criteria:

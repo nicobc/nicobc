@@ -2,7 +2,6 @@ id: EPIC-007
 title: Deployment
 scope: deployment
 category: infra
-priority: 1
 status: DONE
 description: Ship the portfolio to a live URL. Vercel hosts the Angular SPA; Cloudflare R2 serves generated data assets. Production deploys are triggered by pushing a CalVer tag (YYYY.MM.N) — the tag is the deploy decision. Data pipeline runs independently on manual dispatch.
 
@@ -11,7 +10,6 @@ tickets:
   - id: T1
     title: Commit seeds.ts
     type: chore
-    priority: 1
     status: DONE
     description: Seed data is now visible after gitignore fix; commit it.
     acceptance_criteria:
@@ -20,7 +18,6 @@ tickets:
   - id: T2
     title: Remove cadastral ownership artifacts
     type: chore
-    priority: 1
     status: DONE
     description: Cadastral metrics were dropped; remove all remaining traces from the repo.
     acceptance_criteria:
@@ -29,7 +26,6 @@ tickets:
   - id: T3
     title: R2 bucket + data upload
     type: chore
-    priority: 2
     status: DONE
     description: Establish R2 as the authoritative source for generated data assets.
     acceptance_criteria:
@@ -44,7 +40,6 @@ tickets:
   - id: T8
     title: Buy domain + connect to Cloudflare
     type: chore
-    priority: 2
     status: DONE
     description: Buy a domain via Cloudflare Registrar and wire it up for both R2 and Vercel.
     acceptance_criteria:
@@ -56,7 +51,6 @@ tickets:
   - id: T4
     title: Environment-aware data URL
     type: feat
-    priority: 3
     status: DONE
     description: Angular app fetches data from R2 in production and from local public/data/ in development.
     acceptance_criteria:
@@ -68,7 +62,6 @@ tickets:
   - id: T5
     title: GitHub Actions PR CI
     type: ci
-    priority: 4
     status: DONE
     description: Path-filtered PR validation using a changes-detection job; each concern tested only when its code changes. Gate job pattern ensures required status checks always report a result.
     acceptance_criteria:
@@ -84,7 +77,6 @@ tickets:
   - id: T6
     title: Cloudflare Pages config + deploy workflow
     type: feat
-    priority: 5
     status: DONE
     description: Configure Cloudflare Pages and ship the first production deploy triggered by a CalVer tag push.
     acceptance_criteria:
@@ -97,7 +89,6 @@ tickets:
   - id: T7
     title: Rental prices pipeline workflow
     type: ci
-    priority: 6
     status: DONE
     description: Run the rental prices pipeline and upload outputs to R2 via manual workflow dispatch; target bucket inferred from git ref.
     acceptance_criteria:
@@ -113,7 +104,6 @@ tickets:
   - id: T9
     title: Migrate R2 buckets to naming convention
     type: chore
-    priority: 7
     status: DONE
     description: Rename prod bucket to nicobc-prd-r2b and create dev bucket nicobc-dev-r2b.
     acceptance_criteria:
@@ -126,7 +116,6 @@ tickets:
   - id: T10
     title: Self-contained dev environment on Cloudflare Pages
     type: chore
-    priority: 8
     status: DONE
     description: Wire up a fully isolated dev environment — preview builds on *.nicobc.pages.dev read from nicobc-dev-r2b via data.dev.nicolascontreras.dev. No-tag pushes use the dev Angular config; CalVer tag pushes use production.
     acceptance_criteria:
@@ -143,7 +132,6 @@ tickets:
   - id: T11
     title: Update dorny/paths-filter to Node 24 compatible version
     type: chore
-    priority: 9
     status: DONE
     description: dorny/paths-filter@v3 runs on Node.js 20, which GitHub Actions forces to Node.js 24 on 2026-06-02. Update before that date or CI will break.
     acceptance_criteria:
