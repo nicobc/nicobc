@@ -1,5 +1,5 @@
 import { Component, computed, ElementRef, ViewChild, signal } from '@angular/core';
-import { Parser, Select } from 'node-sql-parser';
+import { parse } from 'pgsql-ast-parser';
 import { DataMovementViz, VizMode, VizScenario } from '../../labs/components/data-movement-viz/data-movement-viz';
 import { ChallengeModal } from '../../labs/components/challenge-modal/challenge-modal';
 import { ChallengeController } from '../../labs/challenge-controller';
@@ -45,23 +45,21 @@ const PP_EXPECTED_ROWS = [
 type Step1State = 'unanswered' | 'wrong' | 'correct';
 type PPState = 'unanswered' | 'wrong-both-having' | 'wrong-output' | 'wrong-sql' | 'correct';
 
-const sqlParser = new Parser();
-
-function hasColumnRef(expr: unknown, column: string): boolean {
+function hasRef(expr: unknown, name: string): boolean {
   if (!expr || typeof expr !== 'object') return false;
   const node = expr as Record<string, unknown>;
-  if (node['type'] === 'column_ref' && node['column'] === column) return true;
-  return hasColumnRef(node['left'], column) || hasColumnRef(node['right'], column);
+  if (node['type'] === 'ref' && node['name'] === name) return true;
+  return hasRef(node['left'], name) || hasRef(node['right'], name);
 }
 
 function checkPushdownStructure(sql: string): 'correct' | 'both-in-having' | 'other' {
   try {
-    const result = sqlParser.astify(sql);
-    const stmt = Array.isArray(result) ? result[0] : result;
-    if (stmt.type !== 'select' || !stmt.with?.length) return 'other';
-    const cte: Select = stmt.with[0].stmt.ast;
-    const categoryInWhere = hasColumnRef(cte.where, 'category');
-    const categoryInHaving = hasColumnRef(cte.having, 'category');
+    const stmts = parse(sql);
+    if (!stmts.length || stmts[0].type !== 'with') return 'other';
+    const cte = stmts[0].bind[0]?.statement;
+    if (!cte || cte.type !== 'select') return 'other';
+    const categoryInWhere = hasRef(cte.where, 'category');
+    const categoryInHaving = hasRef(cte.having, 'category');
     if (categoryInWhere && !categoryInHaving) return 'correct';
     if (!categoryInWhere && categoryInHaving) return 'both-in-having';
     return 'other';
