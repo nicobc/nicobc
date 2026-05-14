@@ -1,6 +1,7 @@
 export interface DimCustomer {
   customer_id: number;
   customer_name: string;
+  country: string;
 }
 
 export interface FctOrder {
@@ -11,53 +12,54 @@ export interface FctOrder {
 }
 
 export const dimCustomers: DimCustomer[] = [
-  { customer_id: 1,  customer_name: 'Meridian Analytics' },
-  { customer_id: 2,  customer_name: 'Sable & Forge' },
-  { customer_id: 3,  customer_name: 'Northveil Systems' },
-  { customer_id: 4,  customer_name: 'Crestline Digital' },
-  { customer_id: 5,  customer_name: 'Ironclad Data' },
-  { customer_id: 6,  customer_name: 'Luminos Group' },
-  { customer_id: 7,  customer_name: 'Redstone Labs' },
-  { customer_id: 8,  customer_name: 'Waverly Partners' },
-  { customer_id: 9,  customer_name: 'Thornfield Co.' },
-  { customer_id: 10, customer_name: 'Axiom Bridge' },
-  { customer_id: 11, customer_name: 'Duskfield Inc.' },
-  { customer_id: 12, customer_name: 'Solara Ventures' },
-  { customer_id: 13, customer_name: 'Paragon Stack' },
-  { customer_id: 14, customer_name: 'Ember & Co.' },
-  { customer_id: 15, customer_name: 'Kestrel Works' },
-  { customer_id: 16, customer_name: 'Vantage Point' },
-  { customer_id: 17, customer_name: 'Halcyon Tech' },
-  { customer_id: 18, customer_name: 'Drift & Scale' },
-  { customer_id: 19, customer_name: 'Pinnacle IO' },
-  { customer_id: 20, customer_name: 'Foundry Nine' },
+  { customer_id: 1,  customer_name: 'Grupo Valera',          country: 'Spain' },
+  { customer_id: 2,  customer_name: 'Distribuciones Casas',  country: 'Spain' },
+  { customer_id: 3,  customer_name: 'Comercial Ibérica',     country: 'Spain' },
+  { customer_id: 4,  customer_name: 'Almacenes del Sur',     country: 'Spain' },
+  { customer_id: 5,  customer_name: 'Industrias Bernal',     country: 'Spain' },
+  { customer_id: 6,  customer_name: 'Soluciones Moya',       country: 'Spain' },
+  { customer_id: 7,  customer_name: 'Transportes Ruiz',      country: 'Spain' },
+  { customer_id: 8,  customer_name: 'Ferretería Prieto',     country: 'Spain' },
+  { customer_id: 9,  customer_name: 'Construcciones Vega',   country: 'Spain' },
+  { customer_id: 10, customer_name: 'Logística Serrano',     country: 'Spain' },
+  { customer_id: 11, customer_name: 'Materiales Blanco',     country: 'Spain' },
+  { customer_id: 12, customer_name: 'Confecciones Gil',      country: 'Spain' },
+  { customer_id: 13, customer_name: 'Electrónica Marín',     country: 'Spain' },
+  { customer_id: 14, customer_name: 'Alimentación Jiménez',  country: 'Spain' },
+  { customer_id: 15, customer_name: 'Automoción Díaz',       country: 'Spain' },
+  { customer_id: 16, customer_name: 'Consultoría Romero',    country: 'Spain' },
+  { customer_id: 17, customer_name: 'Maison Dupont',         country: 'France' },
+  { customer_id: 18, customer_name: 'Atelier Laurent',       country: 'France' },
+  { customer_id: 19, customer_name: 'Groupe Morel',          country: 'France' },
+  { customer_id: 20, customer_name: 'Société Perrin',        country: 'France' },
 ];
 
 // Batch 1: clean data, amount NOT NULL.
-// Top 5 by avg: Meridian(~4200), Sable(~3500), Northveil(~2800), Crestline(~2100), Ironclad(~1600).
-// Remaining customers cluster between 200-900 to make the top 5 visually distinct.
+// Top 5 by avg (Spain only): Grupo Valera(~4213), Distribuciones Casas(~3500), Comercial Ibérica(~2800), Almacenes del Sur(~2100), Industrias Bernal(~1600).
+// French customers (ids 17-20) avg 175-205, well below the Spanish top 5.
+// Remaining Spanish customers cluster between 200-900 to make the top 5 visually distinct.
 export const fctOrdersBatch1: FctOrder[] = [
-  // Meridian Analytics (id=1) — avg ~4200
+  // Grupo Valera (id=1) — avg ~4213
   { order_id: 1,   customer_id: 1,  amount: 4100, order_date: '2026-01-15' },
   { order_id: 2,   customer_id: 1,  amount: 4300, order_date: '2026-02-10' },
   { order_id: 3,   customer_id: 1,  amount: 4050, order_date: '2026-03-22' },
   { order_id: 4,   customer_id: 1,  amount: 4400, order_date: '2026-04-08' },
-  // Sable & Forge (id=2) — avg ~3500
+  // Distribuciones Casas (id=2) — avg ~3500
   { order_id: 5,   customer_id: 2,  amount: 3400, order_date: '2026-01-20' },
   { order_id: 6,   customer_id: 2,  amount: 3600, order_date: '2026-02-14' },
   { order_id: 7,   customer_id: 2,  amount: 3450, order_date: '2026-03-30' },
   { order_id: 8,   customer_id: 2,  amount: 3550, order_date: '2026-04-25' },
-  // Northveil Systems (id=3) — avg ~2800
+  // Comercial Ibérica (id=3) — avg ~2800
   { order_id: 9,   customer_id: 3,  amount: 2750, order_date: '2026-01-08' },
   { order_id: 10,  customer_id: 3,  amount: 2900, order_date: '2026-02-28' },
   { order_id: 11,  customer_id: 3,  amount: 2700, order_date: '2026-03-15' },
   { order_id: 12,  customer_id: 3,  amount: 2850, order_date: '2026-04-12' },
-  // Crestline Digital (id=4) — avg ~2100
+  // Almacenes del Sur (id=4) — avg ~2100
   { order_id: 13,  customer_id: 4,  amount: 2000, order_date: '2026-01-25' },
   { order_id: 14,  customer_id: 4,  amount: 2200, order_date: '2026-02-18' },
   { order_id: 15,  customer_id: 4,  amount: 2050, order_date: '2026-03-05' },
   { order_id: 16,  customer_id: 4,  amount: 2150, order_date: '2026-04-20' },
-  // Ironclad Data (id=5) — avg ~1600
+  // Industrias Bernal (id=5) — avg ~1600
   { order_id: 17,  customer_id: 5,  amount: 1550, order_date: '2026-01-12' },
   { order_id: 18,  customer_id: 5,  amount: 1650, order_date: '2026-02-22' },
   { order_id: 19,  customer_id: 5,  amount: 1580, order_date: '2026-03-18' },

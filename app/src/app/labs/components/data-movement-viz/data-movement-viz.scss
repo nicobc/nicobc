@@ -57,9 +57,9 @@
 $cell-w: 22px;
 $cell-h: 10px;
 
-$dc-cols:        4;  // dim_customers full width
+$dc-cols:        5;  // dim_customers full width (id, name, country, created_at, updated_at)
 $dc-rows:        3;
-$dc-narrow-cols: 2;  // early-pruning mode
+$dc-narrow-cols: 3;  // pruned: customer_id, customer_name, country
 
 $fo-cols: 5;         // fct_orders
 $fo-rows: 5;

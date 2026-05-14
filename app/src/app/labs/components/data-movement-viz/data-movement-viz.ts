@@ -14,7 +14,7 @@ export class DataMovementViz implements OnInit, OnChanges {
   @Output() readonly modeChange = new EventEmitter<PruningMode>();
 
   readonly cpToggleUnpruned = 'SELECT *';
-  readonly cpTogglePruned = 'SELECT customer_id, customer_name';
+  readonly cpTogglePruned = 'SELECT customer_id, customer_name, country';
   readonly cpFromClause = 'FROM dim_customers';
 
   readonly animating = signal(false);

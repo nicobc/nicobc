@@ -52,7 +52,7 @@ const SOLUTION = `WITH avg_amounts AS (
     AVG(o.amount) AS avg_order_amount
   FROM fct_orders o
   JOIN dim_customers c ON o.customer_id = c.customer_id
-  WHERE EXTRACT(YEAR FROM o.order_date::DATE) = 2026
+  WHERE c.country = 'Spain'
   GROUP BY c.customer_name
 )
 SELECT customer_name, avg_order_amount
@@ -60,9 +60,9 @@ FROM avg_amounts
 ORDER BY avg_order_amount DESC
 LIMIT 5;`;
 
-const SKELETON = `-- Compute average order amount per customer name for 2026
+const SKELETON = `-- Compute average order amount per customer name for Spain
 -- Tables: fct_orders (order_id, customer_id, amount, order_date)
---         dim_customers (customer_id, customer_name)
+--         dim_customers (customer_id, customer_name, country)
 -- Return: customer_name, avg_order_amount — top 5 DESC
 
 `;
@@ -93,7 +93,7 @@ export class DataContracts implements OnInit {
   readonly totalSteps = 3;
 
   readonly step1Intro = 'There is a pipeline that runs every night. It pulls raw orders from a source database, loads them into a Kimball model, then runs a mart job that feeds a dashboard. Someone senior watches that dashboard. Wrong numbers erode trust quickly.';
-  readonly step1Task = 'You are writing the mart job. Write a CTE that computes the average order amount per customer name for 2026 and returns the top 5.';
+  readonly step1Task = 'You are writing the mart job. Write a CTE that computes the average order amount per customer name for Spanish customers and returns the top 5.';
   readonly step2Intro = 'The pipeline ran again overnight. The upstream team pushed new data. Run your query on the refreshed table and see what comes back.';
   readonly step3Prose = [
     'The query did not throw. DuckDB returned rows and the chart rendered. But look at who is in the top 5.',
@@ -137,11 +137,11 @@ export class DataContracts implements OnInit {
     try {
       await conn.query(`DROP TABLE IF EXISTS fct_orders`);
       await conn.query(`DROP TABLE IF EXISTS dim_customers`);
-      await conn.query(`CREATE TABLE dim_customers (customer_id INTEGER, customer_name VARCHAR)`);
+      await conn.query(`CREATE TABLE dim_customers (customer_id INTEGER, customer_name VARCHAR, country VARCHAR)`);
       await conn.query(`CREATE TABLE fct_orders (order_id INTEGER, customer_id INTEGER, amount INTEGER, order_date VARCHAR)`);
 
       const customerVals = dimCustomers
-        .map(c => `(${c.customer_id}, '${c.customer_name.replace("'", "''")}')`).join(',');
+        .map(c => `(${c.customer_id}, '${c.customer_name.replace("'", "''")}', '${c.country}')`).join(',');
       await conn.query(`INSERT INTO dim_customers VALUES ${customerVals}`);
 
       const orderVals = orders
@@ -241,9 +241,9 @@ export class DataContracts implements OnInit {
     setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 0);
   }
 
-  canGoNext(): boolean {
+  readonly canGoNext = computed(() => {
     if (this.step() === 1) return this.step1Done();
     if (this.step() === 2) return this.step2Done();
     return false;
-  }
+  });
 }
