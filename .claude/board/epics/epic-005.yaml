@@ -28,7 +28,7 @@ tickets:
   - id: T2
     title: Animated data-movement viz component
     type: feat
-    status: TESTING
+    status: DONE
     description: Reusable component that conveys distributed execution concepts through geometry and motion, no numbers.
     acceptance_criteria:
       - component accepts a scenario config (nodes, data blocks, movement sequences)
