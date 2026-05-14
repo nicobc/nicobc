@@ -21,14 +21,8 @@ Valid values: IDEATION, READY, IN PROGRESS, TESTING, DONE, DISCARDED.
 
 Lifecycle: READY → IN PROGRESS → TESTING → DONE. All ticket types go through TESTING.
 
-TESTING: code is on dev, PR is open, CI is running or awaiting manual verification.
-DONE: CI passed and ticket is verified working.
-
-CI (Linux) is the authoritative source of truth for test tickets. Local tests passing is not sufficient — set to TESTING when the PR is opened, DONE only after CI passes. Never skip TESTING.
-
-All commits for a ticket include the fully qualified ticket ID in the title: `type(scope): description [EPIC-XXX/TN]` or `[MAINT/TN]`. This makes git log self-contextualizing without scanning epic files. Board meta-work (`chore(board):`) has no ticket and carries no ID.
-
-Intermediate commits carry no `Closes` footer. The final commit that transitions to DONE carries the `Closes` footer and the board update.
+TESTING: PR open, CI running or awaiting manual verification.
+DONE: CI passed and ticket is verified working. Never skip TESTING.
 
 CI tickets requiring a live trigger to validate (tag push, scheduled run, webhook): add `workflow_dispatch:` temporarily during TESTING, remove it in the DONE commit.
 
@@ -52,17 +46,14 @@ Non-`feat` tickets that do belong to a specific epic (e.g. a bug in a feature ar
 New tickets are always appended at the bottom of their file (epic or maintenance.yaml). Never insert mid-file. Numbering must match append order so the file reads chronologically.
 
 ## commit convention
-One ticket = one commit. Before committing, update the ticket status to DONE in the board — this is a non-optional acceptance criterion, not a follow-up. The commit includes both the code changes and the board update.
+Code commits: `type(scope): description [EPIC-XXX/TN]` or `[MAINT/TN]` — ticket ID in the title makes git log self-contextualizing without scanning epic files. `type` and `scope` are taken directly from the ticket; epic tickets inherit scope from the parent epic; maintenance tickets have their own `scope` field.
 
-Commit message: `type(scope): description`
-`type` and `scope` are taken directly from the ticket. Epic tickets inherit scope from the parent epic; maintenance tickets have their own `scope` field.
+Board-only commits (status updates, grooming, meta-work): `chore(board): description`. No ticket ID required. `board` is a reserved scope — nothing else uses it.
 
-Include a `Closes EPIC-XXX/TN` footer (or `Closes MAINT/TN`) for traceability. Place it after `Co-Authored-By` if present.
-
-Exception: board meta-work (structural changes to the board itself, convention updates) uses `chore(board): ...` with no ticket required. `board` is a reserved scope.
+Board status updates can be standalone commits within the branch. The commit that transitions a ticket to DONE carries a `Closes EPIC-XXX/TN` footer (or `Closes MAINT/TN`) for traceability. Place it after `Co-Authored-By` if present.
 
 ## grooming convention
-Each grooming session (moving an epic from IDEATION to READY) is committed separately per epic as `chore(board): groom EPIC-XXX`. No ticket required. The commit includes the epic file and any index.yaml changes for that epic only.
+Grooming commits include the epic file and any corresponding index.yaml changes.
 
 ## maintenance index section
 Open tickets from `maintenance.yaml` plus any open non-`feat` tickets from feature epics appear in the `maintenance:` section of `index.yaml`. Load individual files only when you need ticket detail.

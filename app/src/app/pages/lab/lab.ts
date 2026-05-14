@@ -20,25 +20,18 @@ export class Lab {
 
   readonly projects: LabProject[] = [
     {
+      slug: 'workshops',
+      category: 'Workshop',
+      title: 'Workshop series',
+      description: 'A Spanish e-commerce company is expanding into France. Each workshop uses the same pipeline to examine a different class of data engineering problem.',
+      route: '/lab/workshops',
+    },
+    {
       slug: 'bcn-map',
-      category: 'Data · Visualisation',
+      category: 'Project',
       title: 'Barcelona Rental Map',
       description: 'Rental price dynamics across Barcelona\'s 73 neighborhoods. Track the post-COVID surge that reshaped the city\'s housing market.',
       route: '/lab/bcn-map',
-    },
-    {
-      slug: 'data-contracts',
-      category: 'Data Engineering · Contracts',
-      title: 'When good queries go wrong',
-      description: 'Write a query, see it work, then watch it silently break on the next batch. A hands-on look at schema drift and how data contracts catch it early.',
-      route: '/lab/data-contracts',
-    },
-    {
-      slug: 'distributed-computing',
-      category: 'Data Engineering · Distributed',
-      title: 'What the optimizer won\'t fix',
-      description: 'The optimizer reduces blast radius. It does not eliminate it. Animated diagrams that put distributed execution patterns in front of you before you need to read an execution plan.',
-      route: '/lab/distributed-computing',
     },
   ];
 }

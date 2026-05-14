@@ -26,17 +26,21 @@ A release requires a CalVer tag when the bundle includes non-test files under `a
 
 ## Process
 
-1. Cut a branch from main:
+Before writing any status value to a board file, confirm the ticket's current status and that the intended transition is the immediate next step. The only valid moves are READY → IN PROGRESS (work starts), IN PROGRESS → TESTING (PR created), TESTING → DONE (CI passes). Any other jump is wrong.
+
+1. Mark the ticket IN PROGRESS. Cut a branch from main:
    ```bash
    git fetch origin
    git switch -c type/scope origin/main
    ```
 2. Commit following conventional commits.
 3. `git push origin type/scope`
-4. `/opt/homebrew/bin/gh pr create --base main --head type/scope --repo nicobc/nicobc`
+4. Create the PR and mark the ticket TESTING in a board commit:
+   `/opt/homebrew/bin/gh pr create --base main --head type/scope --repo nicobc/nicobc`
 5. `sleep 5` then watch all PR checks: `/opt/homebrew/bin/gh pr checks <n> --repo nicobc/nicobc --watch`
+   - CI is the authoritative source of truth — local tests passing is not sufficient.
    - CI failure → fix and return to step 2. Never merge a failing PR.
-6. Update the board ticket to DONE and commit the change before merging.
+6. CI passes. Commit the DONE board update with `Closes EPIC-XXX/TN` footer before merging.
 7. Get explicit approval before merging. PR title must follow conventional commits — it becomes the squash commit message on main.
    `/opt/homebrew/bin/gh pr merge <n> --squash --delete-branch --repo nicobc/nicobc`
 8. Clean up local branch:

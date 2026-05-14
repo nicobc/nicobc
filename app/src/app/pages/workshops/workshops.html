@@ -1,0 +1,27 @@
+<div class="lab-page">
+
+  <header class="lab-header">
+    <span class="eyebrow">{{ eyebrow }}</span>
+    <h1>{{ heading }}</h1>
+  </header>
+
+  <div class="scenario">
+    @for (line of scenarioLines; track $index) {
+      <p [innerHTML]="line"></p>
+    }
+  </div>
+
+  <div class="workshop-grid">
+    @for (ws of workshops; track ws.seq) {
+      <a class="project-card" [routerLink]="ws.route">
+        <span class="eyebrow">{{ ws.seq }}</span>
+        <h2>{{ ws.title }}</h2>
+        <p>{{ ws.description }}</p>
+        <span class="cta">{{ exploreCta }} &rarr;</span>
+      </a>
+    }
+  </div>
+
+  <p class="disclaimer">{{ disclaimer }}</p>
+
+</div>

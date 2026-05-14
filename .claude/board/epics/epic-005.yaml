@@ -134,7 +134,7 @@ tickets:
   - id: T7
     title: Workshop landing page + lab grid refactor
     type: feat
-    status: READY
+    status: DONE
     description: Learner lands on a workshop landing page that introduces the through-line scenario before entering any individual lab; the lab grid reflects the new structure.
     acceptance_criteria:
       - /lab/workshops route renders workshop landing page
