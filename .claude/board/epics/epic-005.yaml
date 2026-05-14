@@ -81,7 +81,7 @@ tickets:
   - id: T5
     title: Predicate pushdown — animation + copy + challenge
     type: feat
-    status: TESTING
+    status: DONE
     description: Learner sees the cost of a late filter vs an early one, then proves understanding by correctly splitting pushable from non-pushable predicates in a SQL editor challenge.
     acceptance_criteria:
       - toggle pill shows two truncated KPI query snippets — "filter late" (WHERE country = 'Spain' at top level, after join) vs "filter early" (WHERE country = 'Spain' inside source CTE); animation responds accordingly; auto-replays on switch
