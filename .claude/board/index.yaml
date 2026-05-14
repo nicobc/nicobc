@@ -25,7 +25,5 @@ done:
 maintenance:
   - id: EPIC-008/T8
     title: Angular testing skill + test coverage pass
-  - id: MAINT/T5
-    title: Replace year filter with country filter in workshop through-line scenario
   - id: MAINT/T6
     title: Data contracts lab — two-tier output validation
