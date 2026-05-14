@@ -6,12 +6,11 @@ status: IN PROGRESS
 description: Learner maps code smells in a data pipeline to distributed computing inefficiencies; builds perf intuition beyond technique names.
 notes:
   - Dataset: fct_orders + dim_customers batch1 from seed.ts; same KPI as other labs (avg order value per customer name, top 5 for Spain)
-  - SQL snippets only, no runtime; applies to dbt/Snowflake, dbt/Redshift, BigQuery — not Spark-specific
+  - SQL snippets only, no runtime for animation; challenge steps use DuckDB WASM for output validation (via duckdb.ts + seed.ts); concepts apply to dbt/Snowflake, dbt/Redshift, BigQuery — not Spark-specific
   - 3 concepts: column pruning, predicate pushdown, shuffle (folds in serialization + join strategy)
   - Shuffle note: serialization is the hidden cost inside every shuffle (data leaving/arriving a node); also mention UDF-triggered serialization without shuffle (Snowflake UDFs, Spark Python UDFs, etc.)
   - Opening framing: modern engines optimize the logical plan (Catalyst in Spark; analogous in Snowflake, BigQuery, Redshift) — they reduce blast radius but don't eliminate it; understanding the model is how you read an execution plan when something is slow
-  - Format per step: copy + animated viz → MCQ (two well-formed SQL snippets, pick the better one) → reveal with explanation
-  - MCQ distractors must be plausible near-misses; only difference between options is the concept being tested
+  - Format per step: animated viz (toggle pill) → copy → challenge (type varies by concept: fill-in for column pruning, SQL editor for predicate pushdown)
   - Viz: animated rectangles only, numberless; geometry (size, position) and motion carry meaning; at node boundaries rectangles morph (sharp → rounded → sharp) to represent serialization/deserialization
   - Goal: mental model update, not technique recall
 
@@ -80,10 +79,30 @@ tickets:
       - challenge is decoupled from MAINT/T5; uses dim_products + fct_order_items, not the workshop scenario tables
 
   - id: T5
-    title: Predicate pushdown — animation + copy + MCQ
+    title: Predicate pushdown — animation + copy + challenge
     type: feat
-    status: IDEATION
-    description: Learner sees the cost of a late filter vs an early one, then picks the better SQL.
+    status: READY
+    description: Learner sees the cost of a late filter vs an early one, then proves understanding by correctly splitting pushable from non-pushable predicates in a SQL editor challenge.
+    acceptance_criteria:
+      - toggle pill shows two truncated KPI query snippets — "filter late" (WHERE country = 'Spain' at top level, after join) vs "filter early" (WHERE country = 'Spain' inside source CTE); animation responds accordingly; auto-replays on switch
+      - animation: "filter late" — full-height dim_customers rectangle flows to join, horizontal slice occurs after; "filter early" — rectangle slices immediately (French rows removed), reduced block flows through; no nodes, no morphing
+      - step indicator reads "2 / 3 — Predicate pushdown"
+      - viz phase: Next appears only after learner has selected "filter early" at least once
+      - copy phase: 2 paragraphs — row volume cost of a late filter; optimizer caveat (engines push predicates but not reliably across CTE boundaries — explicit placement matters); "Back to animation" left, challenge CTA right
+      - challenge: modal overlay, blurred background; full query editable; dim_products schema shown
+      - challenge query uses dim_products + fct_order_items; goal is top non-food categories by items sold; starting state has a single HAVING clause with two predicates — COUNT(*) >= N AND category != 'Food'
+      - correct answer: WHERE category != 'Food' pushed into the dim_products source CTE; HAVING COUNT(*) >= N kept after GROUP BY
+      - validation layer 1 (AST, JS SQL parser): category predicate is a WHERE inside the source CTE AND count predicate remains as HAVING
+      - validation layer 2 (DuckDB WASM, via duckdb.ts + seed.ts): executes query and compares output to expected result set
+      - both predicates left in HAVING → "one of these doesn't depend on grouped values — which one can be evaluated before aggregation?"
+      - both predicates pushed to WHERE → SQL error on COUNT(*) → "one of these can only be evaluated after grouping"
+      - category in HAVING, count in WHERE → SQL error + "think about which filter references an aggregated value"
+      - structure correct, wrong output → hint addresses filter value or threshold
+      - reveal populates correct query; correct (structure + output) → success + Next → step 3
+    notes:
+      - depends on T2 (animated viz component)
+      - the two-predicate HAVING is intentional — challenge requires learner to distinguish pushable (category != 'Food') from non-pushable (COUNT(*) >= N), not just "move everything to WHERE"
+      - DuckDB wiring uses existing app/src/app/labs/db/duckdb.ts and app/src/app/labs/data/seed.ts
 
   - id: T6
     title: Shuffle — animation + copy + MCQ
