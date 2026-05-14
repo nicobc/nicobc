@@ -44,9 +44,9 @@
   right: 5%;
   width: 130px;
   height: 110px;
-  border: 1px solid color-mix(in srgb, var(--fg) 20%, transparent);
-  border-radius: 4px;
-  background: color-mix(in srgb, var(--fg) 4%, transparent);
+  border: 1px solid var(--border);
+  border-radius: var(--br);
+  background: var(--surface-faint);
 
   &.node-1 { top: 27px; }
   &.node-2 { top: 163px; }
@@ -67,7 +67,7 @@ $fo-rows: 5;
 .partition {
   position: absolute;
   opacity: 0;
-  border-radius: 3px;
+  border-radius: var(--br-sm);
 }
 
 .dim-customers {
@@ -83,10 +83,10 @@ $fo-rows: 5;
 .fct-orders {
   width: $fo-cols * $cell-w;
   height: $fo-rows * $cell-h;
-  background-color: color-mix(in srgb, var(--accent-red) 55%, transparent);
+  background-color: color-mix(in srgb, var(--accent) 55%, transparent);
   background-image:
-    linear-gradient(color-mix(in srgb, var(--accent-red) 28%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--accent-red) 28%, transparent) 1px, transparent 1px);
+    linear-gradient(color-mix(in srgb, var(--accent) 28%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--accent) 28%, transparent) 1px, transparent 1px);
   background-size: $cell-w $cell-h;
 }
 
@@ -101,24 +101,24 @@ $fo-rows: 5;
 .toggle-pill {
   padding: 0.35rem 1rem;
   background: transparent;
-  border: 1px solid color-mix(in srgb, var(--fg) 20%, transparent);
+  border: 1px solid var(--border);
   color: var(--fg);
-  font-size: 0.8rem;
-  font-family: monospace;
+  font-size: var(--fs-code);
+  font-family: var(--font-mono);
   cursor: pointer;
-  opacity: 0.45;
-  transition: background 0.15s, opacity 0.15s;
+  opacity: var(--opacity-subtle);
+  transition: background var(--transition-fast), opacity var(--transition-fast);
 
-  &:first-child { border-radius: 4px 0 0 4px; border-right: none; }
-  &:last-child  { border-radius: 0 4px 4px 0; }
-  &.active      { background: color-mix(in srgb, var(--fg) 10%, transparent); opacity: 1; }
-  &:hover       { opacity: 0.75; }
+  &:first-child { border-radius: var(--br) 0 0 var(--br); border-right: none; }
+  &:last-child  { border-radius: 0 var(--br) var(--br) 0; }
+  &.active      { background: var(--surface); opacity: 1; }
+  &:hover       { opacity: var(--opacity-secondary); }
 }
 
 .cp-from {
-  font-family: monospace;
-  font-size: 0.8rem;
-  opacity: 0.5;
+  font-family: var(--font-mono);
+  font-size: var(--fs-code);
+  opacity: var(--opacity-subtle);
   align-self: center;
   margin-left: 0.75rem;
 }

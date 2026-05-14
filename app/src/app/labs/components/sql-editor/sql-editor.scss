@@ -5,7 +5,7 @@
 }
 
 .editor-host {
-  border-radius: 6px;
+  border-radius: var(--br-md);
   overflow: hidden;
   min-height: 160px;
 
@@ -24,16 +24,5 @@
   gap: 1rem;
 }
 
-
-.btn-reveal {
-  background: none;
-  border: none;
-  color: inherit;
-  font-size: 0.8rem;
-  opacity: 0.35;
-  cursor: pointer;
-  padding: 0;
-  transition: opacity 0.15s;
-
-  &:hover { opacity: 0.6; }
-}
+// .btn-ghost provides base; font-size scoped here
+.editor-actions .btn-ghost { font-size: var(--fs-code); }

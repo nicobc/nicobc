@@ -1,8 +1,8 @@
 <div class="map-header">
-  <h1>Barcelona</h1>
-  <p class="subtitle">Rental price · Neighborhoods · 2014–2025</p>
+  <h1>{{ mapTitle }}</h1>
+  <p class="subtitle">{{ subtitle }}</p>
   <div class="timeline">
-    <button class="play-btn" (click)="togglePlay()" [title]="isPlaying() ? 'Pause' : 'Play'">
+    <button class="btn-icon play-btn" (click)="togglePlay()" [title]="isPlaying() ? 'Pause' : 'Play'">
       @if (isPlaying()) {
         <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
           <rect x="2" y="1" width="3" height="10" rx="1"/>
@@ -26,8 +26,8 @@
   </div>
 </div>
 <div class="deck-container" #container>
-  <button class="info-btn" (click)="showInfo.set(!showInfo())" [class.active]="showInfo()" title="About this map">i</button>
-  <button class="fit-btn" (click)="fitToFrame()" title="Fit to frame">
+  <button class="btn-icon info-btn" (click)="showInfo.set(!showInfo())" [class.active]="showInfo()" [title]="infoTitle">i</button>
+  <button class="btn-icon fit-btn" (click)="fitToFrame()" title="Fit to frame">
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
       <path d="M1 5V1H5"/>
       <path d="M9 1H13V5"/>
@@ -35,7 +35,7 @@
       <path d="M5 13H1V9"/>
     </svg>
   </button>
-  <a class="attribution" href="https://habitatge.gencat.cat/ca/dades/indicadors_estadistiques/estadistiques_de_construccio_i_mercat_immobiliari/mercat_de_lloguer/lloguers-barcelona-per-districtes-i-barris/" target="_blank" rel="noopener">Source: Ajuntament de Barcelona · INCASÒL</a>
+  <a class="attribution" [href]="attributionHref" target="_blank" rel="noopener">{{ attributionText }}</a>
   <div class="legend">
     <p class="legend-title">€/m²/month</p>
     <div class="legend-bar"></div>
@@ -48,14 +48,11 @@
   @if (showInfo() && insights) {
     <div class="info-panel">
       <div class="info-panel-header">
-        <h3>About this map</h3>
-        <button class="info-close" (click)="showInfo.set(false)" title="Close">&times;</button>
+        <h3>{{ infoTitle }}</h3>
+        <button class="btn-icon info-close" (click)="showInfo.set(false)" title="Close">&times;</button>
       </div>
       <div class="info-panel-body">
-        <p>
-          Average annual rental price across Barcelona's 73 neighborhoods, sourced from registered
-          rental contracts deposited with INCASÒL. Figures are in €/m²/month.
-        </p>
+        <p>{{ infoBody }}</p>
         <div class="info-insights">
           <div class="info-insight">
             <span class="info-insight-label">Priciest in {{ insights.priciest.year }}</span>
@@ -73,12 +70,7 @@
             <span class="info-insight-sub">+{{ insights.city_avg.pct_change }}% since {{ insights.city_avg.pre_covid_year }}</span>
           </div>
         </div>
-        <p class="info-caveat">
-          Neighborhoods with fewer than 6 registered contracts in a given year are suppressed by the
-          source. A small number of additional neighborhoods are suppressed because their year-on-year
-          price swings exceed 40% — a signal of thin, unreliable coverage rather than genuine market
-          movement. Both are shown in gray on the map.
-        </p>
+        <p class="info-caveat">{{ infoCaveat }}</p>
       </div>
     </div>
   }

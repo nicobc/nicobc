@@ -1,10 +1,10 @@
 <div class="lab-grid">
   @for (project of projects; track project.slug) {
     <a class="project-card" [routerLink]="project.route">
-      <span class="category">{{ project.category }}</span>
+      <span class="eyebrow">{{ project.category }}</span>
       <h2>{{ project.title }}</h2>
       <p>{{ project.description }}</p>
-      <span class="cta">Explore &rarr;</span>
+      <span class="cta">{{ exploreCta }} &rarr;</span>
     </a>
   }
 </div>

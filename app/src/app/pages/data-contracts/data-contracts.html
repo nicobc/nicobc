@@ -1,34 +1,27 @@
 <div class="lab-page">
 
   <header class="lab-header">
-    <span class="category">Data Engineering · Contracts</span>
+    <span class="eyebrow">Data Engineering · Contracts</span>
     <h1>When good queries go wrong</h1>
   </header>
 
   @if (!dbReady()) {
-    <div class="db-loading">Loading DuckDB...</div>
+    <div class="db-loading">{{ loadingText }}</div>
   } @else {
 
     <div class="step-shell">
 
-      <!-- back arrow -->
       @if (step() > 1) {
-        <button class="btn-back" (click)="goBack()">&#8592;</button>
+        <button class="btn-ghost step-back" (click)="goBack()">&#8592;</button>
       }
 
-      <!-- step indicator -->
-      <span class="step-indicator">{{ step() }} / 3</span>
+      <span class="step-indicator">{{ step() }} / {{ totalSteps }}</span>
 
       <!-- ── step 1 ─────────────────────────────────────────────── -->
       @if (step() === 1) {
         <div class="step-content">
 
-          <p class="step-intro">
-            There is a pipeline that runs every night. It pulls raw orders from
-            a source database, loads them into a Kimball model, then runs a mart
-            job that feeds a dashboard. Someone senior watches that dashboard.
-            Wrong numbers erode trust quickly.
-          </p>
+          <p class="step-intro">{{ step1Intro }}</p>
 
           <div class="pipeline-dag">
             <div class="dag-node">Source DB</div>
@@ -45,10 +38,7 @@
             <div class="dag-node dag-node--dashboard">Dashboard</div>
           </div>
 
-          <p class="step-task">
-            You are writing the mart job. Write a CTE that computes the average
-            order amount per customer name for 2026 and returns the top 5.
-          </p>
+          <p class="step-task">{{ step1Task }}</p>
 
           <app-sql-editor
             [initialValue]="skeleton"
@@ -76,14 +66,11 @@
       @if (step() === 2) {
         <div class="step-content">
 
-          <p class="step-intro">
-            The pipeline ran again overnight. The upstream team pushed new data.
-            Run your query on the refreshed table and see what comes back.
-          </p>
+          <p class="step-intro">{{ step2Intro }}</p>
 
-          <pre class="sql-readonly">{{ lastSql() }}</pre>
+          <pre class="code-block sql-readonly">{{ lastSql() }}</pre>
 
-          <button class="btn-primary" (click)="onRunStep2()">Run</button>
+          <button class="btn-primary" (click)="onRunStep2()">{{ runStep2Label }}</button>
 
           @if (sqlError()) {
             <p class="error-sql">{{ sqlError() }}</p>
@@ -102,69 +89,32 @@
       @if (step() === 3) {
         <div class="step-content">
 
-          <p class="step-intro">
-            The query did not throw. DuckDB returned rows and the chart rendered.
-            But look at who is in the top 5.
-          </p>
-
           @if (step1Rows().length > 0 && step2Rows().length > 0) {
             <div class="chart-wrap">
-              <app-comparison-chart [batch1]="step1Rows()" [batch2]="step2Rows()" />
+              <app-bar-chart [rows]="step1Rows()" [comparisonRows]="step2Rows()" />
             </div>
           }
 
-          <p>
-            The upstream team made <code>amount</code> nullable. A batch came
-            through with no amounts for the top customers — DuckDB's
-            <code>AVG</code> silently ignored them, and they dropped out of
-            the ranking entirely.
-          </p>
+          @for (p of step3Prose; track $index) {
+            <p [innerHTML]="p"></p>
+          }
 
-          <p>
-            A stakeholder looking at that dashboard would see their top customers disappear overnight.
-          </p>
-
-          <p>
-            A contract on <code>fct_orders</code> would have caught this at
-            ingestion, before the mart job ran and faulty data reached the dashboard.
-          </p>
-
-          <p>
-            A data contract is a formal agreement between producer and consumer.
-            At minimum, the producing team declares field types, nullability, and constraints;
-            the consuming team validates incoming data against that declaration at
-            the boundary. A batch that violates the contract fails there instead
-            of propagating silently downstream.
-          </p>
-
-          <p>Several formats can express a contract; this lab uses JSON Schema:</p>
-
-          <pre class="contract-block">{{ schemaDisplay }}</pre>
+          <pre class="code-block contract-block">{{ schemaDisplay }}</pre>
 
           @if (inputViolation()) {
             <div class="violation-block">
-              <p class="violation-block__title">What the contract would have thrown at ingestion</p>
-              <p class="violation-block__detail">
-                Field <code>{{ inputViolation()!.field }}</code> —
-                {{ inputViolation()!.constraint }},
-                received {{ inputViolation()!.received }}
-              </p>
+              <p class="violation-block__title">{{ violationBlockTitle }}</p>
+              <p class="violation-block__detail" [innerHTML]="violationDetail()"></p>
             </div>
           }
 
-          <p class="meta-reveal">
-            One more thing: this lab validated your query output against a contract
-            before rendering the chart in step 1. That is why a query with wrong
-            column names or types returned a hint instead of a broken chart.
-            The same principle, applied one step earlier in the pipeline.
-          </p>
+          <p class="meta-reveal">{{ step3MetaReveal }}</p>
 
         </div>
       }
 
-      <!-- next button -->
       @if (canGoNext()) {
-        <button class="btn-primary" (click)="goNext()">Next</button>
+        <button class="btn-primary" (click)="goNext()">{{ nextLabel }}</button>
       }
 
     </div>

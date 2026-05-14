@@ -1,9 +1,9 @@
 @if (scenario === 'column-pruning') {
 
   <div class="cp-toggle">
-    <button class="toggle-pill" [class.active]="pruningMode() === 'unpruned'" (click)="setPruningMode('unpruned')">SELECT *</button>
-    <button class="toggle-pill" [class.active]="pruningMode() === 'pruned'" (click)="setPruningMode('pruned')">SELECT customer_id, customer_name</button>
-    <span class="cp-from">FROM dim_customers</span>
+    <button class="toggle-pill" [class.active]="pruningMode() === 'unpruned'" (click)="setPruningMode('unpruned')">{{ cpToggleUnpruned }}</button>
+    <button class="toggle-pill" [class.active]="pruningMode() === 'pruned'" (click)="setPruningMode('pruned')">{{ cpTogglePruned }}</button>
+    <span class="cp-from">{{ cpFromClause }}</span>
   </div>
 
   <div class="stage cp-stage"

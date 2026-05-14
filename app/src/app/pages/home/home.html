@@ -1,8 +1,9 @@
 <div class="hero">
-  <p class="tagline">Nicolas &mdash; data engineer.</p>
-  <p class="sub">I build platforms, teach teams, and occasionally ship things like this.</p>
+  <p class="tagline">{{ tagline }}</p>
+  <p class="sub">{{ sub }}</p>
   <div class="ctas">
-    <a class="cta-btn" routerLink="/lab">Lab &rarr;</a>
-    <a class="cta-btn" routerLink="/about">About &rarr;</a>
+    @for (cta of ctas; track cta.route) {
+      <a class="btn-outline" [routerLink]="cta.route">{{ cta.label }}</a>
+    }
   </div>
 </div>

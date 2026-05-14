@@ -2,23 +2,67 @@
 [data-theme='dark'] {
   --bg: #1a1b1e;
   --fg: #ffffff;
-  --separator: rgba(255, 255, 255, 0.08);
-  --separator-hover: color-mix(in srgb, var(--fg) 35%, transparent);
   --code-bg: color-mix(in srgb, var(--fg) 16%, transparent);
 }
 
 [data-theme='light'] {
   --bg: #f4f4f6;
   --fg: #1a1b1e;
-  --separator: rgba(0, 0, 0, 0.1);
-  --separator-hover: color-mix(in srgb, var(--fg) 35%, transparent);
   --code-bg: color-mix(in srgb, var(--fg) 9%, transparent);
 }
 
 :root {
   --nav-height: 56px;
-  --accent-red: #f87171;
+  --accent: #f87171;
+  --font-mono: 'Fira Code', 'Courier New', monospace;
+
+  // borders — derive from --fg; adapt to both themes automatically
+  --border-faint:    color-mix(in srgb, var(--fg)  8%, transparent); // dividers, code block borders
+  --border:          color-mix(in srgb, var(--fg) 15%, transparent); // panels, cards
+  --border-strong:   color-mix(in srgb, var(--fg) 25%, transparent); // interactive, outline buttons
+  --border-emphasis: color-mix(in srgb, var(--fg) 40%, transparent); // input underlines, highlights
+
+  // surfaces — fills lighter than --code-bg
+  --surface-faint:  color-mix(in srgb, var(--fg)   4%, transparent); // code blocks, viz node fills
+  --surface:        color-mix(in srgb, var(--fg)  10%, transparent); // active toggle states
+  --accent-surface: color-mix(in srgb, var(--accent) 6%, transparent); // accent-tinted backgrounds
+  --overlay-bg:     color-mix(in srgb, var(--bg)   55%, transparent); // backdrop blur overlays
+
+  // opacity tiers
+  --opacity-faint:     0.35; // ghost elements, icon rest states, tertiary
+  --opacity-dim:       0.4;  // secondary labels, subtitles, inactive states
+  --opacity-subtle:    0.5;  // medium secondary — metadata, schema hints
+  --opacity-muted:     0.6;  // secondary text, action icons
+  --opacity-secondary: 0.7;  // links and interactive at partial visibility
+  --opacity-strong:    0.8;  // near-full, prominent but not fully active
+
+  // motion
+  --transition-fast: 0.15s;
+  --transition:      0.2s;
+
+  // type scale
+  --fs-xs:   0.75rem;  // eyebrow, step-indicator, small labels
+  --fs-code: 0.8rem;   // code text, monospace UI elements
+  --fs-sm:   0.875rem; // button text, small body
+  --fs-base: 1rem;     // body baseline
+  --fs-lg:   1.1rem;   // mild heading emphasis, intro text
+  --fs-xl:   1.5rem;   // section headings
+  --fs-2xl:  2.25rem;  // page title
+
+  // font weights
+  --fw-light:    300;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+
+  // border radius
+  --br-sm: 3px;  // inline code, pills, scrollbar
+  --br:    4px;  // buttons, nodes, small UI
+  --br-md: 6px;  // code blocks, tooltips, editor
+  --br-lg: 8px;  // cards, panels, overlays
 }
+
+// ── buttons ───────────────────────────────────────────────────────────────────
 
 .btn-primary {
   display: inline-block;
@@ -26,14 +70,106 @@
   background: var(--fg);
   color: var(--bg);
   border: none;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  font-weight: 600;
+  border-radius: var(--br);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
   cursor: pointer;
-  transition: opacity 0.15s;
+  transition: opacity var(--transition-fast);
 
   &:hover { opacity: 0.85; }
 }
+
+// no bg, no border — back arrows, reveal links, secondary text actions
+.btn-ghost {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 0;
+  opacity: var(--opacity-faint);
+  transition: opacity var(--transition-fast);
+
+  &:hover { opacity: var(--opacity-secondary); }
+}
+
+// transparent bg + border — replay, test, check, CTA links
+.btn-outline {
+  display: inline-block;
+  background: none;
+  border: 1px solid var(--border-strong);
+  color: var(--fg);
+  padding: 0.45rem 1.25rem;
+  border-radius: var(--br);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  text-decoration: none;
+  cursor: pointer;
+  opacity: var(--opacity-muted);
+  transition: opacity var(--transition-fast);
+
+  &:hover:not(:disabled) { opacity: 1; }
+  &:disabled { opacity: 0.25; cursor: default; }
+}
+
+// icon-only — play, fit, info, close
+.btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  opacity: var(--opacity-faint);
+  transition: opacity var(--transition-fast);
+
+  &:hover { opacity: 1; }
+}
+
+// ── utilities ─────────────────────────────────────────────────────────────────
+
+// small-caps label above a heading
+.eyebrow {
+  display: block;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: var(--opacity-faint);
+  margin-bottom: 0.75rem;
+}
+
+// monospace display block — SQL snippets, JSON schema, code samples
+.code-block {
+  font-family: var(--font-mono);
+  font-size: var(--fs-code);
+  line-height: 1.6;
+  background: var(--surface-faint);
+  border: 1px solid var(--border-faint);
+  border-radius: var(--br-md);
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+// monospace inline input — fill-in challenges; component adds width
+.code-input {
+  font-family: var(--font-mono);
+  font-size: var(--fs-code);
+  background: var(--border-faint);
+  border: none;
+  border-bottom: 1px solid var(--border-emphasis);
+  color: var(--fg);
+  outline: none;
+  padding: 0 0.2rem;
+  border-radius: 2px 2px 0 0;
+
+  &::placeholder { opacity: var(--opacity-faint); font-style: italic; }
+}
+
+// ── reset ─────────────────────────────────────────────────────────────────────
 
 * {
   margin: 0;
@@ -41,24 +177,31 @@
   box-sizing: border-box;
 }
 
+:focus-visible {
+  outline: 1px solid var(--fg);
+  box-shadow: none;
+  border-radius: var(--br-sm);
+  opacity: 1;
+}
+
 code {
   font-family: monospace;
   font-size: 0.875em;
   background: var(--code-bg);
-  border-radius: 3px;
+  border-radius: var(--br-sm);
   padding: 0.15em 0.4em;
 }
 
 html {
   scrollbar-width: thin;
-  scrollbar-color: color-mix(in srgb, var(--fg) 20%, transparent) transparent;
+  scrollbar-color: var(--border) transparent;
 
   &::-webkit-scrollbar { width: 8px; }
   &::-webkit-scrollbar-track { background: transparent; }
   &::-webkit-scrollbar-thumb {
-    background: color-mix(in srgb, var(--fg) 20%, transparent);
-    border-radius: 3px;
-    &:hover { background: var(--separator-hover); }
+    background: var(--border);
+    border-radius: var(--br-sm);
+    &:hover { background: var(--border-strong); }
   }
 }
 
@@ -69,32 +212,36 @@ body {
   padding-top: var(--nav-height);
   padding-bottom: var(--nav-height);
   min-height: 100vh;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition: background var(--transition) ease, color var(--transition) ease;
 }
 
 app-root {
   display: contents;
 }
 
+// ── nav + footer ──────────────────────────────────────────────────────────────
+
 nav a,
 nav button,
 footer a {
   color: var(--fg);
   text-decoration: none;
-  font-weight: 600;
+  font-weight: var(--fw-semibold);
   opacity: 0.25;
-  transition: opacity 0.2s ease;
+  transition: opacity var(--transition) ease;
 }
 
 nav a:hover,
 nav button:hover,
 footer a:hover {
-  opacity: 0.7;
+  opacity: var(--opacity-secondary);
 }
 
 nav a.active {
   opacity: 1;
 }
+
+// ── layout ────────────────────────────────────────────────────────────────────
 
 main {
   min-height: calc(100vh - 2 * var(--nav-height));
@@ -117,22 +264,49 @@ main {
   padding: 3rem 1.5rem 6rem;
 }
 
+// ── lab header ────────────────────────────────────────────────────────────────
+
 .lab-header {
   margin-bottom: 2.5rem;
 
-  .category {
-    display: block;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    opacity: 0.4;
-    margin-bottom: 0.75rem;
-  }
-
   h1 {
-    font-size: 2.25rem;
-    font-weight: 700;
+    font-size: var(--fs-2xl);
+    font-weight: var(--fw-bold);
     line-height: 1.15;
   }
+}
+
+// ── lab step content ──────────────────────────────────────────────────────────
+
+.step-copy a {
+  color: var(--fg);
+  text-underline-offset: 3px;
+  opacity: var(--opacity-secondary);
+  transition: opacity var(--transition) ease;
+
+  &:hover { opacity: 1; }
+}
+
+// ── lab step navigation ───────────────────────────────────────────────────────
+
+.step-shell {
+  position: relative;
+  padding-top: 2rem;
+}
+
+// back arrow inside any step-shell; position is step-shell's concern
+.step-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: var(--fs-lg);
+}
+
+.step-indicator {
+  display: block;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.06em;
+  opacity: var(--opacity-faint);
+  margin-bottom: 2rem;
 }

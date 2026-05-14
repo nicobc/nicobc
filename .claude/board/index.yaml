@@ -23,8 +23,6 @@ done:
     title: Deployment
 
 maintenance:
-  - id: EPIC-008/T7
-    title: Angular skill — component conventions
   - id: EPIC-008/T8
     title: Angular testing skill + test coverage pass
   - id: MAINT/T5

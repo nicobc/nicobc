@@ -3,14 +3,14 @@
     <a routerLink="/home" routerLinkActive="active">
       <span class="first-name">Nicolas</span> <span class="last-name">Contreras</span>
     </a>
-    <a routerLink="/about" routerLinkActive="active">About</a>
-<a routerLink="/lab" routerLinkActive="active">Lab</a>
-    <a routerLink="/contact" routerLinkActive="active">Contact</a>
+    @for (link of navLinks; track link.route) {
+      <a [routerLink]="link.route" routerLinkActive="active">{{ link.label }}</a>
+    }
   </div>
 
   <div class="nav-right">
     <div class="nav-hamburger">
-      <button (click)="toggle()" [class.is-open]="isOpen" [attr.aria-expanded]="isOpen" aria-label="Menu">
+      <button (click)="toggleMenu()" [class.is-open]="isOpen" [attr.aria-expanded]="isOpen" aria-label="Menu">
         <fa-icon [icon]="bars" class="icon-bars" />
         <fa-icon [icon]="xmark" class="icon-xmark" />
       </button>

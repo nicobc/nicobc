@@ -20,14 +20,14 @@
   }
 
   h1 {
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-size: var(--fs-xl);
+    font-weight: var(--fw-bold);
     margin-bottom: 0.25rem;
   }
 
   .subtitle {
-    font-size: 0.8rem;
-    opacity: 0.4;
+    font-size: var(--fs-code);
+    opacity: var(--opacity-dim);
     letter-spacing: 0.02em;
   }
 
@@ -38,30 +38,22 @@
     margin-top: 0.75rem;
   }
 
+  // .btn-icon provides base; overrides for circular play control
   .play-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     flex-shrink: 0;
     width: 1.75rem;
     height: 1.75rem;
     border-radius: 50%;
-    border: 1px solid var(--separator);
-    background: transparent;
-    color: inherit;
-    cursor: pointer;
-    opacity: 0.6;
-    transition: opacity 0.15s ease;
-
-    &:hover { opacity: 1; }
+    border: 1px solid var(--border-faint);
+    opacity: var(--opacity-muted);
   }
 
   .year-label {
-    font-size: 0.8rem;
-    font-weight: 600;
+    font-size: var(--fs-code);
+    font-weight: var(--fw-semibold);
     font-variant-numeric: tabular-nums;
     min-width: 2.5rem;
-    opacity: 0.8;
+    opacity: var(--opacity-strong);
   }
 
   .year-slider {
@@ -69,8 +61,8 @@
     max-width: 280px;
     accent-color: currentColor;
     cursor: pointer;
-    opacity: 0.6;
-    transition: opacity 0.15s ease;
+    opacity: var(--opacity-muted);
+    transition: opacity var(--transition-fast) ease;
 
     &:hover { opacity: 1; }
   }
@@ -81,33 +73,28 @@
   flex: 1;
   min-height: 0;
   margin: 0 0.75rem 0;
-  border-radius: 8px;
+  border-radius: var(--br-lg);
   overflow: hidden;
   background: var(--bg);
-  border: 1px solid var(--separator);
+  border: 1px solid var(--border-faint);
 }
 
+// .btn-icon provides base; overrides for positioned map controls
 .info-btn {
   position: absolute;
   top: 0.75rem;
   right: 0.75rem;
   z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: 2rem;
   height: 2rem;
-  border-radius: 4px;
-  border: 1px solid var(--separator);
+  border-radius: var(--br);
+  border: 1px solid var(--border-faint);
   background: var(--bg);
-  color: inherit;
-  cursor: pointer;
   font-style: italic;
-  font-size: 0.9rem;
-  opacity: 0.5;
-  transition: opacity 0.15s ease;
+  font-size: var(--fs-sm);
+  opacity: var(--opacity-muted);
 
-  &:hover, &.active { opacity: 1; }
+  &.active { opacity: 1; }
 }
 
 .info-panel {
@@ -118,7 +105,7 @@
   z-index: 1;
   width: 260px;
   background: var(--bg);
-  border-left: 1px solid var(--separator);
+  border-left: 1px solid var(--border-faint);
   display: flex;
   flex-direction: column;
 
@@ -128,7 +115,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 1rem 1.25rem;
-    border-bottom: 1px solid var(--separator);
+    border-bottom: 1px solid var(--border-faint);
   }
 
   .info-panel-body {
@@ -141,40 +128,32 @@
   }
 
   h3 {
-    font-size: 0.8rem;
-    font-weight: 700;
+    font-size: var(--fs-code);
+    font-weight: var(--fw-bold);
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    opacity: 0.5;
+    opacity: var(--opacity-subtle);
   }
 
+  // .btn-icon provides base; sizing scoped here
   .info-close {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     width: 1.75rem;
     height: 1.75rem;
-    border: none;
-    background: transparent;
-    color: inherit;
-    cursor: pointer;
     font-size: 1.25rem;
     line-height: 1;
-    opacity: 0.4;
-    transition: opacity 0.15s ease;
-
-    &:hover { opacity: 1; }
   }
 
+  // bcn-map micro-typography: sizes below --fs-xs encode label hierarchy in the
+  // map panel; raw values are a named exception, parallel to data-movement-viz colors.
   p {
     font-size: 0.78rem;
     line-height: 1.6;
-    opacity: 0.65;
+    opacity: var(--opacity-muted);
   }
 
   .info-caveat {
     font-size: 0.72rem;
-    opacity: 0.4;
+    opacity: var(--opacity-dim);
   }
 
   .info-insights {
@@ -183,8 +162,8 @@
     gap: 0.75rem;
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
-    border-top: 1px solid var(--separator);
-    border-bottom: 1px solid var(--separator);
+    border-top: 1px solid var(--border-faint);
+    border-bottom: 1px solid var(--border-faint);
   }
 
   .info-insight {
@@ -195,41 +174,34 @@
 
   .info-insight-label {
     font-size: 0.68rem;
-    opacity: 0.4;
+    opacity: var(--opacity-dim);
     letter-spacing: 0.03em;
   }
 
   .info-insight-value {
     font-size: 0.9rem;
-    font-weight: 700;
+    font-weight: var(--fw-bold);
     font-variant-numeric: tabular-nums;
   }
 
   .info-insight-sub {
     font-size: 0.7rem;
-    opacity: 0.5;
+    opacity: var(--opacity-subtle);
   }
 }
 
+// .btn-icon provides base; overrides for positioned map control
 .fit-btn {
   position: absolute;
   top: 0.75rem;
   left: 0.75rem;
   z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: 2rem;
   height: 2rem;
-  border-radius: 4px;
-  border: 1px solid var(--separator);
+  border-radius: var(--br);
+  border: 1px solid var(--border-faint);
   background: var(--bg);
-  color: inherit;
-  cursor: pointer;
-  opacity: 0.5;
-  transition: opacity 0.15s ease;
-
-  &:hover { opacity: 1; }
+  opacity: var(--opacity-muted);
 }
 
 .tooltip {
@@ -237,8 +209,8 @@
   pointer-events: none;
   z-index: 2;
   background: var(--bg);
-  border: 1px solid var(--separator);
-  border-radius: 6px;
+  border: 1px solid var(--border-faint);
+  border-radius: var(--br-md);
   padding: 0.6rem 0.75rem;
   min-width: 170px;
   transform: translateY(-50%);
@@ -251,39 +223,39 @@
   }
 
   .tooltip-neighborhood {
-    font-size: 0.8rem;
-    font-weight: 600;
+    font-size: var(--fs-code);
+    font-weight: var(--fw-semibold);
   }
 
+  // bcn-map micro-typography: see info-panel comment above
   .tooltip-district {
     font-size: 0.7rem;
-    opacity: 0.5;
+    opacity: var(--opacity-subtle);
   }
 
   .tooltip-year {
     font-size: 0.7rem;
-    opacity: 0.4;
+    opacity: var(--opacity-dim);
     margin-bottom: 0.5rem;
     letter-spacing: 0.04em;
   }
 
   .tooltip-price {
-    font-size: 0.85rem;
-    font-weight: 600;
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
     font-variant-numeric: tabular-nums;
   }
 
   .tooltip-total {
-    font-size: 0.75rem;
-    opacity: 0.7;
+    font-size: var(--fs-xs);
+    opacity: var(--opacity-secondary);
     font-variant-numeric: tabular-nums;
     margin-top: 0.15rem;
   }
 
   .tooltip-unit {
-    font-weight: 400;
     font-size: 0.7rem;
-    opacity: 0.6;
+    opacity: var(--opacity-muted);
   }
 
   .tooltip-deltas {
@@ -292,12 +264,12 @@
     flex-direction: column;
     gap: 0.2rem;
     padding-top: 0.5rem;
-    border-top: 1px solid var(--separator);
+    border-top: 1px solid var(--border-faint);
   }
 
   .tooltip-delta {
     font-size: 0.72rem;
-    font-weight: 600;
+    font-weight: var(--fw-semibold);
     font-variant-numeric: tabular-nums;
 
     &.up   { color: rgb(239, 68, 68); }
@@ -305,19 +277,21 @@
   }
 }
 
+// attribution uses --opacity-faint (0.35) and stays at 0.6rem intentionally —
+// the smallest text on the page to minimise visual noise on the map canvas.
 .attribution {
   position: absolute;
   bottom: 0.6rem;
   right: 0.75rem;
   z-index: 1;
   font-size: 0.6rem;
-  opacity: 0.35;
+  opacity: var(--opacity-faint);
   letter-spacing: 0.02em;
   color: inherit;
   text-decoration: none;
-  transition: opacity 0.15s ease;
+  transition: opacity var(--transition-fast) ease;
 
-  &:hover { opacity: 0.7; }
+  &:hover { opacity: var(--opacity-secondary); }
 }
 
 .legend {
@@ -326,13 +300,13 @@
   left: 1rem;
   z-index: 1;
   background: var(--bg);
-  border: 1px solid var(--separator);
-  border-radius: 6px;
+  border: 1px solid var(--border-faint);
+  border-radius: var(--br-md);
   padding: 0.5rem 0.75rem;
 
   .legend-title {
     font-size: 0.7rem;
-    opacity: 0.5;
+    opacity: var(--opacity-subtle);
     letter-spacing: 0.02em;
     margin-bottom: 0.4rem;
   }
@@ -340,7 +314,7 @@
   .legend-bar {
     width: 120px;
     height: 6px;
-    border-radius: 3px;
+    border-radius: var(--br-sm);
     // rgb values must match interpolateColor() in bcn-map.ts
     background: linear-gradient(to right, rgb(59, 130, 246), rgb(239, 68, 68));
     margin-bottom: 0.3rem;
@@ -351,6 +325,6 @@
     justify-content: space-between;
     width: 120px;
     font-size: 0.65rem;
-    opacity: 0.4;
+    opacity: var(--opacity-dim);
   }
 }

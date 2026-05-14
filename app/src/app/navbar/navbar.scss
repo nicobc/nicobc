@@ -9,7 +9,7 @@ nav {
   justify-content: space-between;
   padding: 0 3rem;
   background: var(--bg);
-  border-bottom: 1px solid var(--separator);
+  border-bottom: 1px solid var(--border-faint);
   z-index: 1000;
 }
 
@@ -21,16 +21,16 @@ nav {
 }
 
 .nav-links a {
-  font-size: 1rem;
+  font-size: var(--fs-base);
 }
 
 .first-name {
-  font-weight: 300;
+  font-weight: var(--fw-light);
   margin-right: .33rem;
 }
 
 .last-name {
-  font-weight: 700;
+  font-weight: var(--fw-bold);
 }
 
 .nav-hamburger {
