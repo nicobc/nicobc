@@ -40,8 +40,8 @@ export class DistributedComputing {
   readonly labCategory = 'Data Engineering · Distributed';
   readonly labTitle = "What the optimizer won't fix";
 
-  readonly copyPara1 = 'We need two columns from <code>dim_customers</code> to retrieve the top 5 Spanish customers: <code>customer_id</code> to join on, and <code>customer_name</code> for the output. The table may store more — e.g., email and phone number — none of which this query uses.';
-  readonly copyPara2Before = '<code>SELECT *</code> scans the full width of the table, while <code>SELECT customer_id, customer_name</code> only projects the needed columns. ';
+  readonly copyPara1 = 'We need three columns from <code>dim_customers</code> to retrieve the top 5 Spanish customers: <code>customer_id</code> to join on, <code>customer_name</code> for the output, and <code>country</code> for the filter. The table also stores <code>created_at</code> and <code>updated_at</code> — none of which this query uses.';
+  readonly copyPara2Before = '<code>SELECT *</code> scans the full width of the table, while <code>SELECT customer_id, customer_name, country</code> only projects the needed columns. ';
   readonly copyPara2After = ' may push this projection down automatically; but they do not always. When a query is slow and you pull up the execution plan, column pruning is one of the first things to check.';
   readonly olapEnginesHref = 'https://en.wikipedia.org/wiki/Column-oriented_DBMS';
   readonly olapEnginesLabel = 'OLAP engines';
