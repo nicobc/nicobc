@@ -80,7 +80,7 @@ tickets:
     title: Angular skill — component conventions
     type: chore
     priority: 7
-    status: TESTING
+    status: DONE
     description: Write .claude/skills/angular.md covering HTML, TS, and SCSS conventions; apply across app/ codebase, adjusting the skill as the refactor surfaces new patterns.
     acceptance_criteria:
       - .claude/skills/angular.md created; covers component structure, TS patterns, SCSS split (styles.scss vs component.scss), data-to-ink ratio principle
