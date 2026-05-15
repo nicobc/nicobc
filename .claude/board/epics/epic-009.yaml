@@ -1,0 +1,22 @@
+id: EPIC-009
+title: Spark UI Literacy Lab
+scope: spark-ui
+category: workshop
+status: IDEATION
+description: Learner browses a frozen Spark History Server UI and answers diagnostic questions about execution plans, shuffle operations, and task parallelism. Bridges the distributed computing mental model to what practitioners see in production.
+notes:
+  - format: frozen Spark History Server pages (static HTML captured from real History Server, served from R2/Pages) embedded via iframe; no persistent server required
+  - feasibility spike needed first: check whether the SQL tab plan page is self-contained (no post-load API calls) or requires API response capture + service worker shim to redirect JS calls to static JSON
+  - framing: "the KPI computation is running slowly — you're given access to the Spark logs, diagnose and optimize"; learner is the engineer, not the student
+  - forensic arc is the core signal: observe symptom → locate in UI → connect to code → fix; this process is what the lab teaches, anti-patterns are the vehicle
+  - two-part structure:
+      (1) demonstration — familiar KPI from EPIC-005 (top 5 customers); learner already knows the SQL so can focus entirely on reading the UI; short and guided; establishes how to navigate the History Server
+      (2) exercise — different KPI with anti-patterns embedded naturally; learner diagnoses independently
+  - lazy evaluation introduced via discovery, not as a primer: learner sees two jobs in the UI where one is expected, asks why — that moment introduces lazy evaluation; .isEmpty before a heavy collect is the hook
+  - anti-pattern list is not final; current candidates: .isEmpty (two jobs, lazy eval) + excessive shuffling (exchange nodes, wide stage fan-out); anti-patterns must feel naturally embedded, not artificially obvious; well-chosen over exhaustive
+  - exercise KPI TBD: needs real design before grooming — the KPI determines which anti-patterns can be embedded naturally
+  - reveals: screenshots showing exact location of the answer in the UI
+  - jobs: curated Spark jobs run in local mode (GHA or local) against workshop scenario data; anti-pattern and optimized versions per concept
+  - sequel to EPIC-005: assumes learner has the distributed computing mental model
+
+tickets: []

@@ -11,6 +11,8 @@ ready:
 ideation:
   - id: EPIC-006
     title: Copy Audit
+  - id: EPIC-009
+    title: Spark UI Literacy Lab
 
 done:
   - id: EPIC-001

@@ -104,18 +104,15 @@ tickets:
       - DuckDB wiring uses existing app/src/app/labs/db/duckdb.ts and app/src/app/labs/data/seed.ts
 
   - id: T6
-    title: Shuffle — animation + copy + challenge
+    title: Capstone — copy + challenge + production patterns
     type: feat
     status: IN PROGRESS
-    description: Learner sees how shuffle cost scales with data volume entering an operation, then proves understanding by rewriting a 3-table query to minimize data shuffled at each step.
+    description: Learner synthesizes column pruning and predicate pushdown into a unified mental model of data movement cost, proves understanding via a 3-table capstone challenge, then explores production SQL anti-patterns illustrating pass and shuffle minimization.
     acceptance_criteria:
-      - toggle pill shows two approaches to the throughline query ("GROUP BY first" / "join first"); animation responds accordingly; auto-replays on switch
-      - "GROUP BY first" animation: full dim_customers and full fct_orders blocks flow toward the GROUP BY node — wide, numerous rectangles
-      - "join first" animation: Spain-filtered dim_customers (narrow, few blocks) joins fct_orders first, reducing it; smaller block set flows to GROUP BY node
-      - no shape morphing; geometry (size, count) carries meaning; no node-boundary effects
-      - step indicator reads "3 / 3 — Shuffle"
-      - viz phase: Next appears only after learner has toggled to "join first" at least once
-      - copy phase: 2 paragraphs — (1) shuffle cost has two levers: data volume entering each operation (illustrated by animation) and number of shuffle operations in the query; (2) optimizer caveat (engines may broadcast small dimension tables; principle extends to fact-to-fact joins and high-cardinality GROUP BY where broadcast is not viable); "Back to animation" left, challenge CTA right
+      - step 1 animation: fact table (red rectangles) removed; only dim_customers column width illustrates the concept; nodes resized to fit single-table content
+      - step indicator reads "3 / 3 — Minimizing data movement"
+      - step 3 has no animation; opens directly to copy phase
+      - copy: 2 paragraphs — (1) CP and PP both reduce data volume entering each operation, which directly limits shuffle cost; (2) broadcast reframed as payoff: taken far enough, volume reduction makes tables small enough to broadcast — this is what gives the optimizer the option, not a guarantee that replaces the technique; challenge CTA right
       - challenge: modal overlay, blurred background; 3-table query over fct_orders + dim_customers + fct_order_items; goal is top 5 Spanish customers by total items ordered
       - challenge intro states the 1:m cardinality relationship (1 order = multiple items) so relative table sizes are established without numbers
       - starting query has suboptimal ordering — GROUP BY customer_id on fct_orders before joining dim_customers, then fct_order_items
@@ -124,12 +121,10 @@ tickets:
       - validation: (1) run query on DuckDB WASM — surface SQL errors immediately; (2) AST check — verify join ordering and predicate placement are optimal; (3) compare DuckDB output to expected result set; hints and feedback keyed to which layer fails
       - reveal populates correct query; correct → success; terminal step (no Next)
     notes:
-      - no serialization content; no UDF content; no shape morphing
-      - broadcasting acknowledged in copy as one engine mechanism, not the lesson — copy leads with the general principle
-      - challenge is a capstone: correct solution requires column pruning, predicate pushdown, and shuffle ordering applied together
+      - broadcast reframed from caveat to payoff — the technique enables the optimizer option, it doesn't compete with it
+      - challenge is a capstone: correct solution requires column pruning, predicate pushdown, and correct join ordering applied together
       - distractor logic: GROUP BY fct_orders on customer_id first is logically valid (1 id = 1 name) but misses that joining dim_customers first is nearly free and enables filtering fct_orders before the GROUP BY shuffle
       - 3 shuffles (dim_customers join, fct_order_items join, GROUP BY) prevent answer-by-elimination; learner must reason about ordering, not pick from two options
-      - depends on T2 (animated viz component)
 
   - id: T7
     title: Workshop landing page + lab grid refactor
