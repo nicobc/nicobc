@@ -2,7 +2,7 @@ id: EPIC-005
 title: Distributed Computing Intuition Lab
 scope: distributed-computing
 category: workshop
-status: IN PROGRESS
+status: DONE
 description: Learner maps code smells in a data pipeline to distributed computing inefficiencies; builds perf intuition beyond technique names.
 notes:
   - Dataset: fct_orders + dim_customers batch1 from seed.ts; same KPI as other labs (avg order value per customer name, top 5 for Spain)
@@ -106,7 +106,7 @@ tickets:
   - id: T6
     title: Capstone — copy + challenge
     type: feat
-    status: TESTING
+    status: DONE
     description: Learner synthesizes column pruning and predicate pushdown into a unified mental model of data movement cost and proves understanding via a 3-table capstone challenge.
     acceptance_criteria:
       - step indicator reads "3 / 3 — Minimizing data movement"

@@ -27,10 +27,7 @@ export class Navbar {
     { label: 'Contact', route: '/contact' },
   ];
 
-  readonly mobileItems: DropdownItem[] = [
-    { label: 'Home', route: '/home' },
-    ...this.navLinks,
-  ];
+  readonly mobileItems: DropdownItem[] = [{ label: 'Home', route: '/home' }, ...this.navLinks];
 
   toggleMenu(): void {
     this.isOpen = !this.isOpen;

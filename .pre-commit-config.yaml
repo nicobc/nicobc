@@ -7,6 +7,13 @@ repos:
 
   - repo: local
     hooks:
+      - id: format-app
+        name: format app (prettier + stylelint)
+        entry: npm --prefix app run format
+        language: system
+        files: ^app/src/.*\.(ts|html|scss)$
+        pass_filenames: false
+
       - id: pyright
         name: pyright
         entry: uv run --directory pipelines/bcn-map pyright

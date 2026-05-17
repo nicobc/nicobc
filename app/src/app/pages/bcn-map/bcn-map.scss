@@ -1,12 +1,14 @@
 :host {
   display: flex;
   flex-direction: column;
+
   // Fill exactly the space inside main's padding: viewport minus fixed navbar, footer, and main's vertical padding
   height: calc(100vh - var(--nav-height) * 2 - 8rem);
+
   // Escape main's horizontal padding only
   margin: 0 -3rem;
 
-  @media (max-width: 768px) {
+  @media (width <= 768px) {
     margin: 0 -1.5rem;
     height: calc(100vh - var(--nav-height) * 2 - 5rem);
   }
@@ -15,7 +17,8 @@
 .map-header {
   padding: 0 3rem 1.25rem;
   flex-shrink: 0;
-  @media (max-width: 768px) {
+
+  @media (width <= 768px) {
     padding: 0 1.5rem 1rem;
   }
 
@@ -59,12 +62,14 @@
   .year-slider {
     flex: 1;
     max-width: 280px;
-    accent-color: currentColor;
+    accent-color: currentcolor;
     cursor: pointer;
     opacity: var(--opacity-muted);
     transition: opacity var(--transition-fast) ease;
 
-    &:hover { opacity: 1; }
+    &:hover {
+      opacity: 1;
+    }
   }
 }
 
@@ -72,7 +77,7 @@
   position: relative;
   flex: 1;
   min-height: 0;
-  margin: 0 0.75rem 0;
+  margin: 0 0.75rem;
   border-radius: var(--br-lg);
   overflow: hidden;
   background: var(--bg);
@@ -94,7 +99,9 @@
   font-size: var(--fs-sm);
   opacity: var(--opacity-muted);
 
-  &.active { opacity: 1; }
+  &.active {
+    opacity: 1;
+  }
 }
 
 .info-panel {
@@ -272,8 +279,13 @@
     font-weight: var(--fw-semibold);
     font-variant-numeric: tabular-nums;
 
-    &.up   { color: rgb(239, 68, 68); }
-    &.down { color: rgb(59, 130, 246); }
+    &.up {
+      color: rgb(239 68 68);
+    }
+
+    &.down {
+      color: rgb(59 130 246);
+    }
   }
 }
 
@@ -291,7 +303,9 @@
   text-decoration: none;
   transition: opacity var(--transition-fast) ease;
 
-  &:hover { opacity: var(--opacity-secondary); }
+  &:hover {
+    opacity: var(--opacity-secondary);
+  }
 }
 
 .legend {
@@ -315,8 +329,9 @@
     width: 120px;
     height: 6px;
     border-radius: var(--br-sm);
+
     // rgb values must match interpolateColor() in bcn-map.ts
-    background: linear-gradient(to right, rgb(59, 130, 246), rgb(239, 68, 68));
+    background: linear-gradient(to right, rgb(59 130 246), rgb(239 68 68));
     margin-bottom: 0.3rem;
   }
 

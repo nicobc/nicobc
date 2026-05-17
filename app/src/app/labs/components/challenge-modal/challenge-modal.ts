@@ -1,4 +1,13 @@
-import { Component, AfterViewInit, ElementRef, HostListener, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import {
+  Component,
+  AfterViewInit,
+  ElementRef,
+  HostListener,
+  Input,
+  Output,
+  EventEmitter,
+  ViewChild,
+} from '@angular/core';
 
 @Component({
   selector: 'app-challenge-modal',
@@ -14,7 +23,7 @@ export class ChallengeModal implements AfterViewInit {
 
   ngAfterViewInit(): void {
     const first = this.panel?.nativeElement.querySelector<HTMLElement>(
-      'button:not([disabled]), input:not([disabled]), textarea:not([disabled])'
+      'button:not([disabled]), input:not([disabled]), textarea:not([disabled])',
     );
     first?.focus();
   }
@@ -29,7 +38,9 @@ export class ChallengeModal implements AfterViewInit {
     const panel = this.panel?.nativeElement;
     if (!panel) return;
     const focusable = Array.from(
-      panel.querySelectorAll<HTMLElement>('button:not([disabled]), input:not([disabled]), textarea:not([disabled]), a[href]')
+      panel.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), input:not([disabled]), textarea:not([disabled]), a[href]',
+      ),
     );
     if (focusable.length === 0) return;
     const first = focusable[0];

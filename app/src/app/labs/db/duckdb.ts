@@ -15,7 +15,11 @@ async function init(): Promise<duckdb.AsyncDuckDB> {
 
 export async function getDB(): Promise<duckdb.AsyncDuckDB> {
   if (db) return db;
-  if (!initPromise) initPromise = init().then(instance => { db = instance; return instance; });
+  if (!initPromise)
+    initPromise = init().then((instance) => {
+      db = instance;
+      return instance;
+    });
   return initPromise;
 }
 
@@ -29,8 +33,8 @@ export async function query(sql: string): Promise<QueryResult> {
   const conn = await instance.connect();
   try {
     const result = await conn.query(sql);
-    const columns = result.schema.fields.map(f => f.name);
-    const rows = result.toArray().map(row => Object.fromEntries(columns.map(col => [col, row[col]])));
+    const columns = result.schema.fields.map((f) => f.name);
+    const rows = result.toArray().map((row) => Object.fromEntries(columns.map((col) => [col, row[col]])));
     return { columns, rows };
   } finally {
     await conn.close();

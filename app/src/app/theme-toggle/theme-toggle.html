@@ -1,11 +1,6 @@
 <div class="theme-toggle">
   <fa-icon [icon]="sun" />
-  <button
-    class="track"
-    [class.dark]="theme.theme() === 'dark'"
-    (click)="theme.toggle()"
-    aria-label="Toggle theme"
-  >
+  <button class="track" [class.dark]="theme.theme() === 'dark'" (click)="theme.toggle()" aria-label="Toggle theme">
     <span class="knob"></span>
   </button>
   <fa-icon [icon]="moon" />

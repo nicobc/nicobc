@@ -25,8 +25,20 @@ interface MetricRecord {
 
 interface Insights {
   priciest: { neighborhood: string; price_per_sqm: number; year: number };
-  biggest_surge: { neighborhood: string; delta_monthly_80sqm: number; pct_change: number; pre_covid_year: number; year: number };
-  city_avg: { price_per_sqm: number; pre_covid_price_per_sqm: number; pct_change: number; pre_covid_year: number; year: number };
+  biggest_surge: {
+    neighborhood: string;
+    delta_monthly_80sqm: number;
+    pct_change: number;
+    pre_covid_year: number;
+    year: number;
+  };
+  city_avg: {
+    price_per_sqm: number;
+    pre_covid_price_per_sqm: number;
+    pct_change: number;
+    pre_covid_year: number;
+    year: number;
+  };
   suppressed_neighborhoods: number[];
 }
 
@@ -67,16 +79,19 @@ export class BcnMap implements OnInit, OnDestroy {
   readonly mapTitle = 'Barcelona';
   readonly subtitle = 'Rental price · Neighborhoods · 2014–2025';
   readonly attributionText = 'Source: Ajuntament de Barcelona · INCASÒL';
-  readonly attributionHref = 'https://habitatge.gencat.cat/ca/dades/indicadors_estadistiques/estadistiques_de_construccio_i_mercat_immobiliari/mercat_de_lloguer/lloguers-barcelona-per-districtes-i-barris/';
+  readonly attributionHref =
+    'https://habitatge.gencat.cat/ca/dades/indicadors_estadistiques/estadistiques_de_construccio_i_mercat_immobiliari/mercat_de_lloguer/lloguers-barcelona-per-districtes-i-barris/';
   readonly infoTitle = 'About this map';
-  readonly infoBody = "Average annual rental price across Barcelona's 73 neighborhoods, sourced from registered rental contracts deposited with INCASÒL. Figures are in €/m²/month.";
-  readonly infoCaveat = 'Neighborhoods with fewer than 6 registered contracts in a given year are suppressed by the source. A small number of additional neighborhoods are suppressed because their year-on-year price swings exceed 40% — a signal of thin, unreliable coverage rather than genuine market movement. Both are shown in gray on the map.';
+  readonly infoBody =
+    "Average annual rental price across Barcelona's 73 neighborhoods, sourced from registered rental contracts deposited with INCASÒL. Figures are in €/m²/month.";
+  readonly infoCaveat =
+    'Neighborhoods with fewer than 6 registered contracts in a given year are suppressed by the source. A small number of additional neighborhoods are suppressed because their year-on-year price swings exceed 40% — a signal of thin, unreliable coverage rather than genuine market movement. Both are shown in gray on the map.';
 
   private deck?: Deck;
   private geojson: any;
   private metricsLookup: MetricsLookup = new Map();
-  private districtNames: Map<number, string> = new Map();
-  private suppressedNeighborhoods: Set<number> = new Set();
+  private districtNames = new Map<number, string>();
+  private suppressedNeighborhoods = new Set<number>();
   private valueMin = 0;
   private valueMax = 1;
   private playInterval?: ReturnType<typeof setInterval>;
@@ -96,9 +111,9 @@ export class BcnMap implements OnInit, OnDestroy {
   ngOnInit(): void {
     const base = environment.dataBaseUrl;
     Promise.all([
-      fetch(`${base}/bcn-admin.geojson`).then(r => r.json()),
-      fetch(`${base}/rental-prices.json`).then(r => r.json()),
-      fetch(`${base}/rental-insights.json`).then(r => r.json()),
+      fetch(`${base}/bcn-admin.geojson`).then((r) => r.json()),
+      fetch(`${base}/rental-prices.json`).then((r) => r.json()),
+      fetch(`${base}/rental-insights.json`).then((r) => r.json()),
     ]).then(([geojson, metrics, insights]) => this.initDeck(geojson, metrics, insights));
   }
 
@@ -118,7 +133,11 @@ export class BcnMap implements OnInit, OnDestroy {
   }
 
   protected togglePlay(): void {
-    this.isPlaying() ? this.pause() : this.play();
+    if (this.isPlaying()) {
+      this.pause();
+    } else {
+      this.play();
+    }
   }
 
   protected onSliderInput(event: Event): void {
@@ -152,7 +171,7 @@ export class BcnMap implements OnInit, OnDestroy {
         this.deck?.setProps({ viewState });
       },
       controller: true,
-      getCursor: ({ isDragging, isHovering }: any) => isDragging ? 'grabbing' : isHovering ? 'pointer' : 'grab',
+      getCursor: ({ isDragging, isHovering }: any) => (isDragging ? 'grabbing' : isHovering ? 'pointer' : 'grab'),
       style: { background: 'transparent' },
       layers: this.buildLayers(this.themeService.theme(), this.selectedYear()),
     });
@@ -160,7 +179,8 @@ export class BcnMap implements OnInit, OnDestroy {
 
   private buildMetricsLookup(metrics: MetricRecord[]): MetricsLookup {
     const lookup: MetricsLookup = new Map();
-    let min = Infinity, max = -Infinity;
+    let min = Infinity,
+      max = -Infinity;
     for (const record of metrics) {
       if (!lookup.has(record.year)) lookup.set(record.year, new Map());
       lookup.get(record.year)!.set(record.neighborhood_code, record);
@@ -211,17 +231,18 @@ export class BcnMap implements OnInit, OnDestroy {
             return;
           }
           const prevRecord = this.metricsLookup.get(year - 1)?.get(code);
-          const yoy = prevRecord?.price_per_sqm != null
-            ? (record.price_per_sqm - prevRecord.price_per_sqm) / prevRecord.price_per_sqm * 100
-            : null;
-          const preCovidRecord = year > PRE_COVID_YEAR
-            ? this.metricsLookup.get(PRE_COVID_YEAR)?.get(code)
-            : null;
-          const preCovidDelta = preCovidRecord?.price_per_sqm != null
-            ? Math.round((record.price_per_sqm - preCovidRecord.price_per_sqm) * 80)
-            : null;
+          const yoy =
+            prevRecord?.price_per_sqm != null
+              ? ((record.price_per_sqm - prevRecord.price_per_sqm) / prevRecord.price_per_sqm) * 100
+              : null;
+          const preCovidRecord = year > PRE_COVID_YEAR ? this.metricsLookup.get(PRE_COVID_YEAR)?.get(code) : null;
+          const preCovidDelta =
+            preCovidRecord?.price_per_sqm != null
+              ? Math.round((record.price_per_sqm - preCovidRecord.price_per_sqm) * 80)
+              : null;
           this.tooltip.set({
-            x, y,
+            x,
+            y,
             neighborhood: object.properties.name,
             district: this.districtNames.get(parseInt(object.properties.district_code)) ?? '',
             year,
@@ -229,9 +250,10 @@ export class BcnMap implements OnInit, OnDestroy {
             priceFor80sqm: `€${Math.round(record.price_per_sqm * 80).toLocaleString('en-GB')}`,
             yoy: yoy != null ? `${yoy > 0 ? '+' : ''}${yoy.toFixed(1)}% vs ${year - 1}` : null,
             yoyUp: yoy != null && yoy >= 0,
-            vsPreCovid: preCovidDelta != null
-              ? `${preCovidDelta >= 0 ? '+' : ''}€${Math.abs(preCovidDelta).toLocaleString('en-GB')}/month since ${PRE_COVID_YEAR}`
-              : null,
+            vsPreCovid:
+              preCovidDelta != null
+                ? `${preCovidDelta >= 0 ? '+' : ''}€${Math.abs(preCovidDelta).toLocaleString('en-GB')}/month since ${PRE_COVID_YEAR}`
+                : null,
             vsPreCovidUp: preCovidDelta != null && preCovidDelta >= 0,
           });
         },
@@ -245,19 +267,27 @@ export class BcnMap implements OnInit, OnDestroy {
         parameters: { depthTest: false },
         getLineColor: (f: any) => {
           switch (f.properties.level) {
-            case 'city':         return [r, g, b, 80];
-            case 'district':     return [r, g, b, 50];
-            case 'neighborhood': return [r, g, b, 30];
-            default:             return [0, 0, 0, 0];
+            case 'city':
+              return [r, g, b, 80];
+            case 'district':
+              return [r, g, b, 50];
+            case 'neighborhood':
+              return [r, g, b, 30];
+            default:
+              return [0, 0, 0, 0];
           }
         },
         updateTriggers: { getLineColor: theme },
         getLineWidth: (f: any) => {
           switch (f.properties.level) {
-            case 'city':         return 2;
-            case 'district':     return 1;
-            case 'neighborhood': return 0.5;
-            default:             return 0;
+            case 'city':
+              return 2;
+            case 'district':
+              return 1;
+            case 'neighborhood':
+              return 0.5;
+            default:
+              return 0;
           }
         },
         lineWidthMinPixels: 0.5,

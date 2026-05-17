@@ -31,6 +31,8 @@
     opacity: var(--opacity-secondary);
     transition: opacity var(--transition) ease;
 
-    &:hover { opacity: 1; }
+    &:hover {
+      opacity: 1;
+    }
   }
 }

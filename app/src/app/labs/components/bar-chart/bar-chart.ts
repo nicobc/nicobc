@@ -44,44 +44,44 @@ export class BarChart implements AfterViewInit, OnChanges, OnDestroy {
     if (!this.rows.length) return;
     if (this.isComparison && !this.comparisonRows!.length) return;
 
-    const labels = this.isComparison
-      ? this.rows.map((_, i) => `#${i + 1}`)
-      : this.rows.map(r => r.label);
+    const labels = this.isComparison ? this.rows.map((_, i) => `#${i + 1}`) : this.rows.map((r) => r.label);
 
     if (this.chart) {
       this.chart.data.labels = labels;
-      this.chart.data.datasets[0].data = this.rows.map(r => r.value);
-      if (this.isComparison) this.chart.data.datasets[1].data = this.comparisonRows!.map(r => r.value);
+      this.chart.data.datasets[0].data = this.rows.map((r) => r.value);
+      if (this.isComparison) this.chart.data.datasets[1].data = this.comparisonRows!.map((r) => r.value);
       this.chart.update();
       return;
     }
 
-    const datasets = this.isComparison ? [
-      {
-        label: 'Batch 1',
-        data: this.rows.map(r => r.value),
-        backgroundColor: resolveTokenColor('--fg', 0.12),
-        borderColor: resolveTokenColor('--fg', 0.5),
-        borderWidth: 1,
-        borderRadius: 3,
-      },
-      {
-        label: 'Batch 2',
-        data: this.comparisonRows!.map(r => r.value),
-        backgroundColor: resolveTokenColor('--accent', 0.18),
-        borderColor: resolveTokenColor('--accent', 0.7),
-        borderWidth: 1,
-        borderRadius: 3,
-      },
-    ] : [
-      {
-        data: this.rows.map(r => r.value),
-        backgroundColor: resolveTokenColor('--fg', 0.15),
-        borderColor: resolveTokenColor('--fg', 0.6),
-        borderWidth: 1,
-        borderRadius: 3,
-      },
-    ];
+    const datasets = this.isComparison
+      ? [
+          {
+            label: 'Batch 1',
+            data: this.rows.map((r) => r.value),
+            backgroundColor: resolveTokenColor('--fg', 0.12),
+            borderColor: resolveTokenColor('--fg', 0.5),
+            borderWidth: 1,
+            borderRadius: 3,
+          },
+          {
+            label: 'Batch 2',
+            data: this.comparisonRows!.map((r) => r.value),
+            backgroundColor: resolveTokenColor('--accent', 0.18),
+            borderColor: resolveTokenColor('--accent', 0.7),
+            borderWidth: 1,
+            borderRadius: 3,
+          },
+        ]
+      : [
+          {
+            data: this.rows.map((r) => r.value),
+            backgroundColor: resolveTokenColor('--fg', 0.15),
+            borderColor: resolveTokenColor('--fg', 0.6),
+            borderWidth: 1,
+            borderRadius: 3,
+          },
+        ];
 
     const fg = (a: number) => resolveTokenColor('--fg', a);
 
@@ -97,14 +97,16 @@ export class BarChart implements AfterViewInit, OnChanges, OnDestroy {
             labels: { color: fg(0.45), font: { size: 11 }, boxWidth: 12 },
           },
           tooltip: {
-            callbacks: this.isComparison ? {
-              label: (ctx) => {
-                const rows = ctx.datasetIndex === 0 ? this.rows : this.comparisonRows!;
-                const row = rows[ctx.dataIndex];
-                if (!row || row.value == null) return `${row?.label ?? '—'}: no data`;
-                return `${row.label}: ${Math.round(row.value).toLocaleString()}`;
-              },
-            } : {},
+            callbacks: this.isComparison
+              ? {
+                  label: (ctx) => {
+                    const rows = ctx.datasetIndex === 0 ? this.rows : this.comparisonRows!;
+                    const row = rows[ctx.dataIndex];
+                    if (!row || row.value == null) return `${row?.label ?? '—'}: no data`;
+                    return `${row.label}: ${Math.round(row.value).toLocaleString()}`;
+                  },
+                }
+              : {},
           },
         },
         scales: {
