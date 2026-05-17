@@ -28,21 +28,25 @@ export class Workshops {
   readonly workshops: Workshop[] = [
     {
       seq: '1 of 3',
-      title: 'When good queries go wrong',
-      description: 'Write a query, see it work, then watch it silently break on the next batch. A hands-on look at schema drift and how data contracts catch it early.',
-      route: '/lab/data-contracts',
-    },
-    {
-      seq: '2 of 3',
-      title: "What the optimizer won't fix",
-      description: "The optimizer reduces blast radius. It does not eliminate it. Animated diagrams that put distributed execution patterns in front of you before you need to read an execution plan.",
+      title: 'Minimizing data movement',
+      description:
+        'Build a mental model for distributed computing from simple optimization techniques, ' +
+        'using animated walkthroughs and SQL challenges.',
       route: '/lab/distributed-computing',
     },
     {
-      seq: '3 of 3',
+      seq: '2 of 3',
       title: 'The test that always passes',
-      description: "Refactor a pytest suite in six steps, from a test that reads a committed database file to one that doesn't need to know where the database lives.",
+      description:
+        "Refactor a pytest suite in six steps, from a test that reads a committed database file to one that doesn't need to know where the database lives.",
       route: '/lab/unit-testing',
+    },
+    {
+      seq: ' of 3',
+      title: 'When good queries go wrong',
+      description:
+        'Write a query, see it work, then watch it silently break on the next batch. A hands-on look at schema drift and how data contracts catch it early.',
+      route: '/lab/data-contracts',
     },
   ];
 }

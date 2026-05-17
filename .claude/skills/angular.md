@@ -18,6 +18,10 @@ HTML arranges structure. TS owns all content.
 ## Encapsulation and factorization
 Define every reusable unit at the smallest scope that covers all its consumers.
 
+- Repeated template structure (same layout, different data across N steps or items) → extract a sub-component with a config `@Input()`. The parent becomes a coordinator: it holds state, builds configs, and routes `@Output()` events. One instance of the template, driven by data.
+- A component that handles page layout, per-step logic, and modal lifecycle simultaneously is a god object — split it. Each component should have one clear job.
+- When extracting a sub-component, prefer a single config interface `@Input()` over many individual `@Input()` fields when the inputs are logically cohesive and always set together. This keeps the parent template flat and makes step-indexed config arrays natural.
+- Separate data from behavior: SQL strings, expected-output fixtures, label arrays, and other pure data belong in a sibling `component.data.ts` file. The component file should contain only types, helpers, and the class. You don't need to read the data to understand the logic; keeping them together inflates the file and adds noise.
 - Always use `templateUrl` and `styleUrl` — no inline `template` or `styles`; keeps the class clean and HTML/SCSS independently editable
 - Reuse existing styles before defining new ones — style consistency is the default
 - New styles defined with reusability in mind; if reusable, they go in `styles.scss`

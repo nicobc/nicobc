@@ -1,272 +1,241 @@
-import { Component, computed, ElementRef, ViewChild, signal } from '@angular/core';
-import { parse } from 'pgsql-ast-parser';
-import { DataMovementViz, VizMode, VizScenario } from '../../labs/components/data-movement-viz/data-movement-viz';
-import { ChallengeModal } from '../../labs/components/challenge-modal/challenge-modal';
+import { Component, computed, OnInit, signal, Signal } from '@angular/core';
+import { parse, Statement } from 'pgsql-ast-parser';
+import { checkPruningStructure, checkPushdownStructure, checkCapstoneStructure } from './challenge-validators';
+import { WorkshopStep, WorkshopStepConfig } from './workshop-step';
 import { ChallengeController } from '../../labs/challenge-controller';
 import { execute, query, QueryResult } from '../../labs/db/duckdb';
-import { dimProducts } from '../../labs/data/seed';
+import { dimProducts, dimCustomers, fctOrdersBatch1, fctOrderItems } from '../../labs/data/seed';
+import {
+  CP_STARTING_SQL,
+  CP_SOLUTION_SQL,
+  PP_STARTING_SQL,
+  PP_SOLUTION_SQL,
+  CAPSTONE_STARTING_SQL,
+  CAPSTONE_SOLUTION_SQL,
+  CP_EXPECTED_ROWS,
+  PP_EXPECTED_ROWS,
+  CAPSTONE_EXPECTED_ROWS,
+  CONCEPT_NAMES,
+} from './distributed-computing.data';
 
-const SCENARIOS: VizScenario[] = ['column-pruning', 'predicate-pushdown', 'shuffle'];
-const CONCEPT_NAMES = ['Column pruning', 'Predicate pushdown', 'Shuffle'];
+// ── state types ───────────────────────────────────────────────────────────────
 
-const CHALLENGE_ANSWER = new Set(['product_id', 'category']);
-const CHALLENGE_ANSWER_TEXT = 'product_id, category';
+type ChallengeState = 'unanswered' | 'unsafe-sql' | 'wrong-sql' | 'wrong-output' | 'not-optimized' | 'correct';
+type FeedbackMap = Record<Exclude<ChallengeState, 'unanswered'> | 'revealed', string>;
 
-const PP_STARTING_SQL =
-`WITH product_counts AS (
-  SELECT category, COUNT(*) AS product_count
-  FROM dim_products
-  GROUP BY category
-  HAVING COUNT(*) >= 2
-    AND category != 'Food'
-)
-SELECT category, product_count
-FROM product_counts
-ORDER BY product_count DESC`;
+// ── validation pipeline ───────────────────────────────────────────────────────
 
-const PP_SOLUTION_SQL =
-`WITH product_counts AS (
-  SELECT category, COUNT(*) AS product_count
-  FROM dim_products
-  WHERE category != 'Food'
-  GROUP BY category
-  HAVING COUNT(*) >= 2
-)
-SELECT category, product_count
-FROM product_counts
-ORDER BY product_count DESC`;
-
-const PP_EXPECTED_ROWS = [
-  { category: 'Electronics', product_count: 3 },
-  { category: 'Tools',       product_count: 3 },
-  { category: 'Clothing',    product_count: 2 },
-];
-
-type Step1State = 'unanswered' | 'wrong' | 'correct';
-type PPState = 'unanswered' | 'wrong-both-having' | 'wrong-output' | 'wrong-sql' | 'correct';
-
-function hasRef(expr: unknown, name: string): boolean {
-  if (!expr || typeof expr !== 'object') return false;
-  const node = expr as Record<string, unknown>;
-  if (node['type'] === 'ref' && node['name'] === name) return true;
-  return hasRef(node['left'], name) || hasRef(node['right'], name);
-}
-
-function checkPushdownStructure(sql: string): 'correct' | 'both-in-having' | 'other' {
+async function runQuery(sql: string): Promise<QueryResult['rows'] | null> {
   try {
-    const stmts = parse(sql);
-    if (!stmts.length || stmts[0].type !== 'with') return 'other';
-    const cte = stmts[0].bind[0]?.statement;
-    if (!cte || cte.type !== 'select') return 'other';
-    const categoryInWhere = hasRef(cte.where, 'category');
-    const categoryInHaving = hasRef(cte.having, 'category');
-    if (categoryInWhere && !categoryInHaving) return 'correct';
-    if (!categoryInWhere && categoryInHaving) return 'both-in-having';
-    return 'other';
+    return (await query(sql)).rows;
   } catch {
-    return 'other';
+    return null;
   }
 }
 
-function matchesPPExpected(rows: QueryResult['rows']): boolean {
-  if (rows.length !== PP_EXPECTED_ROWS.length) return false;
-  return PP_EXPECTED_ROWS.every((exp, i) =>
-    String(rows[i]['category']) === exp.category &&
-    Number(rows[i]['product_count']) === exp.product_count
+function matchesExpected(rows: QueryResult['rows'], expected: Record<string, unknown>[]): boolean {
+  if (rows.length !== expected.length) return false;
+  return expected.every((exp, i) =>
+    Object.entries(exp).every(([key, val]) =>
+      typeof val === 'number' ? Math.abs(Number(rows[i][key]) - val) < 0.01 : String(rows[i][key]) === String(val),
+    ),
   );
 }
 
+function makeValidator(
+  sql: Signal<string>,
+  controller: ChallengeController<ChallengeState>,
+  checkStructure: (stmts: Statement[]) => 'not-optimized' | 'correct',
+  expectedRows: Record<string, unknown>[],
+): () => Promise<void> {
+  return async () => {
+    const s = sql();
+    let stmts: Statement[] | undefined;
+    try {
+      const parsed = parse(s);
+      if (!parsed.length || !parsed.every((st) => st.type === 'select' || st.type === 'with')) {
+        controller.state.set('unsafe-sql');
+        return;
+      }
+      stmts = parsed;
+    } catch {
+      /* malformed SQL — runQuery will surface the error */
+    }
+    const rows = await runQuery(s);
+    if (!rows) {
+      controller.state.set('wrong-sql');
+      return;
+    }
+    if (!matchesExpected(rows, expectedRows)) {
+      controller.state.set('wrong-output');
+      return;
+    }
+    controller.state.set(stmts ? checkStructure(stmts) : 'correct');
+  };
+}
+
+// ── component ─────────────────────────────────────────────────────────────────
+
 @Component({
   selector: 'app-distributed-computing',
-  imports: [DataMovementViz, ChallengeModal],
+  imports: [WorkshopStep],
   templateUrl: './distributed-computing.html',
   styleUrl: './distributed-computing.scss',
 })
-export class DistributedComputing {
-  @ViewChild(DataMovementViz) private viz?: DataMovementViz;
-  @ViewChild('challengeTrigger') private challengeTrigger?: ElementRef<HTMLButtonElement>;
-  @ViewChild('ppChallengeTrigger') private ppChallengeTrigger?: ElementRef<HTMLButtonElement>;
-
+export class DistributedComputing implements OnInit {
   readonly step = signal<1 | 2 | 3>(1);
-  readonly phase = signal<'viz' | 'copy'>('viz');
-  readonly seenPruning = signal(false);
-  readonly seenFilterPushed = signal(false);
-
-  readonly step1Challenge = new ChallengeController<Step1State>('unanswered');
-  readonly step2Challenge = new ChallengeController<PPState>('unanswered');
-
-  readonly challengeInput = signal('');
-  readonly ppChallengeSQL = signal(PP_STARTING_SQL);
-
-  readonly totalSteps = SCENARIOS.length;
-  readonly replayLabel = 'Replay';
-  readonly backToAnimationLabel = 'Back to animation';
-  readonly testUnderstandingLabel = 'Test your understanding';
-  readonly checkLabel = 'Check';
-  readonly checkingLabel = 'Checking…';
-  readonly revealSolutionLabel = 'Reveal solution';
-  readonly nextLabel = 'Next';
-
+  readonly totalSteps = 3;
   readonly labCategory = 'Data Engineering · Distributed';
-  readonly labTitle = "What the optimizer won’t fix";
+  readonly labTitle = 'Minimizing data movement';
 
-  readonly copyPara1 = 'We need three columns from <code>dim_customers</code> to retrieve the top 5 Spanish customers: <code>customer_id</code> to join on, <code>customer_name</code> for the output, and <code>country</code> for the filter. The table also stores <code>created_at</code> and <code>updated_at</code> — none of which this query uses.';
-  readonly copyPara2Before = '<code>SELECT *</code> scans the full width of the table, while <code>SELECT customer_id, customer_name, country</code> only projects the needed columns. ';
-  readonly copyPara2After = ' may push this projection down automatically; but they do not always. When a query is slow and you pull up the execution plan, column pruning is one of the first things to check.';
-  readonly olapEnginesHref = 'https://en.wikipedia.org/wiki/Column-oriented_DBMS';
-  readonly olapEnginesLabel = 'OLAP engines';
-
-  readonly challengeSchema = '<code>dim_products</code> — product_id, product_name, category, sku, supplier_id, cost_price, list_price, weight_kg, reorder_threshold, created_at';
-  readonly queryBefore = 'WITH enriched_items AS (\n  SELECT ';
-  readonly queryAfter = '\n  FROM dim_products\n),\ncategory_revenue AS (\n  SELECT\n    p.category,\n    SUM(i.quantity * i.unit_price) AS revenue\n  FROM enriched_items p\n  JOIN fct_order_items i ON p.product_id = i.product_id\n  GROUP BY p.category\n)\nSELECT category, revenue\nFROM category_revenue\nORDER BY revenue DESC';
-  readonly feedbackWrong = 'Not quite. Trace which columns the downstream CTEs actually use: <code>product_id</code> goes to the join condition, <code>category</code> to the group-by and final output. Everything else in <code>dim_products</code> travels to the compute node and gets discarded on arrival.';
-  readonly feedbackCorrect = 'Right. <code>product_id</code> for the join, <code>category</code> for the group-by. Nothing else makes it to the output.';
-  readonly feedbackCorrectRevealed = 'The answer is <code>product_id</code> and <code>category</code>. <code>product_id</code> threads through to the join condition; <code>category</code> goes to the group-by and final output. Everything else in <code>dim_products</code> is dead weight from the scan forward.';
-
-  readonly ppCopyPara1 = '<code>WHERE country = \'Spain\'</code> at the top level runs after the CTE closes — all 20 customers join with <code>fct_orders</code> before the French rows are dropped. That filter doesn\'t depend on any aggregated value, so it belongs inside the CTE, before the join. Same result, less data in motion.';
-  readonly ppCopyPara2 = 'Query optimisers detect this kind of pushdown and apply it automatically when the query is simple and statistics are fresh. But it can fail across CTE boundaries in some engines, or when the planner\'s cost model is stale. Writing <code>WHERE country = \'Spain\'</code> inside the CTE makes the intent explicit, and keeps it efficient when the optimiser guesses wrong.';
-  readonly ppChallengeSchema = '<code>dim_products</code> — product_id, product_name, category, sku, supplier_id, cost_price, list_price, weight_kg, reorder_threshold, created_at';
-  readonly ppFeedbackBothHaving = 'Both predicates are in <code>HAVING</code>, which runs after <code>GROUP BY</code>. One of them doesn\'t depend on any aggregated value — which one can be evaluated before the rows are grouped?';
-  readonly ppFeedbackWrongOutput = 'Structure looks right, but the result doesn\'t match. Check the filter value or the threshold.';
-  readonly ppFeedbackWrongSQL = 'The query could not run. Check your SQL and try again.';
-  readonly ppFeedbackCorrect = 'Right. <code>category != \'Food\'</code> belongs in <code>WHERE</code> — it filters rows before aggregation. <code>COUNT(*) >= 2</code> stays in <code>HAVING</code> — it needs the grouped result.';
-  readonly ppFeedbackCorrectRevealed = 'The <code>category</code> filter belongs in <code>WHERE</code>: it doesn\'t depend on aggregated values and evaluating it before <code>GROUP BY</code> reduces the rows that enter the aggregation. <code>COUNT(*) >= 2</code> is a post-aggregation predicate — it can\'t move.';
-
-  readonly scenario = computed<VizScenario>(() => SCENARIOS[this.step() - 1]);
   readonly conceptName = computed(() => CONCEPT_NAMES[this.step() - 1]);
+  readonly stepCleared = computed(() => {
+    if (this.step() === 1) return this.step1Challenge.state() === 'correct';
+    if (this.step() === 2) return this.step2Challenge.state() === 'correct';
+    return false;
+  });
 
-  private ppDbReady = false;
+  private readonly step1Challenge = new ChallengeController<ChallengeState>('unanswered');
+  private readonly step2Challenge = new ChallengeController<ChallengeState>('unanswered');
+  private readonly step3Challenge = new ChallengeController<ChallengeState>('unanswered');
 
-  replay(): void {
-    this.viz?.replay();
-  }
+  private readonly cpChallengeSQL = signal(CP_STARTING_SQL);
+  private readonly ppChallengeSQL = signal(PP_STARTING_SQL);
+  private readonly capstoneChallengeSQL = signal(CAPSTONE_STARTING_SQL);
 
-  onModeChange(mode: VizMode): void {
-    if (mode === 'pruned') this.seenPruning.set(true);
-    if (mode === 'pushed') this.seenFilterPushed.set(true);
-  }
+  private dbReady = false;
 
-  advanceVizPhase(): void {
-    this.phase.set('copy');
-    if (this.step() === 2) this.setupPPDatabase().catch(() => {});
-    setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 0);
-  }
+  readonly stepConfigs: WorkshopStepConfig[] = [
+    {
+      vizScenario: 'column-pruning',
+      isFinalStep: false,
+      paragraphs: [
+        'We need three columns from <code>dim_customers</code> to retrieve the top 5 Spanish customers: <code>customer_id</code> to join on, <code>customer_name</code> for the output, and <code>country</code> for the filter. The table also stores <code>created_at</code> and <code>updated_at</code> — none of which this query uses.',
+        '<code>SELECT *</code> scans the full width of the table, while <code>SELECT customer_id, customer_name, country</code> only projects the needed columns. OLAP engines may push this projection down automatically; but they do not always. When a query is slow and you pull up the execution plan, column pruning is one of the first things to check.',
+      ],
+      controller: this.step1Challenge,
+      sql: this.cpChallengeSQL,
+      startingSql: CP_STARTING_SQL,
+      solutionSql: CP_SOLUTION_SQL,
+      schema:
+        '<code>dim_products</code> — product_id, product_name, category, unit_price, sku, supplier_id, weight_kg, reorder_threshold, created_at',
+      intro: 'Use column pruning to optimize the query below.',
+      feedback: {
+        'unsafe-sql': 'Only SELECT queries are allowed here.',
+        'wrong-sql': 'The query could not run. Check your SQL and try again.',
+        'wrong-output': "The first CTE looks right, but the result doesn't match.",
+        'not-optimized':
+          'Not quite. Trace what <code>category_revenue</code> needs from <code>enriched_items</code> — only project those columns.',
+        correct:
+          'Right. <code>product_id</code> for the join, <code>category</code> for the group-by, <code>unit_price</code> for the aggregation.',
+        revealed:
+          'The answer is <code>product_id</code> for the join, <code>category</code> for the group-by, <code>unit_price</code> for the aggregation. Everything else in <code>dim_products</code> is unnecessary.',
+      } satisfies FeedbackMap,
+      validate: makeValidator(this.cpChallengeSQL, this.step1Challenge, checkPruningStructure, CP_EXPECTED_ROWS),
+    },
+    {
+      vizScenario: 'predicate-pushdown',
+      isFinalStep: false,
+      paragraphs: [
+        "<code>WHERE country = 'Spain'</code> at the top level runs after the CTE closes — all 20 customers join with <code>fct_orders</code> before the French rows are dropped. That filter doesn't depend on any aggregated value, so it belongs inside the CTE, before the join. Same result, less data in motion.",
+        "Query optimisers detect this kind of pushdown and apply it automatically when the query is simple and statistics are fresh. But it can fail across CTE boundaries in some engines, or when the planner's cost model is stale. Writing <code>WHERE country = 'Spain'</code> inside the CTE makes the intent explicit, and keeps it efficient when the optimiser guesses wrong.",
+      ],
+      controller: this.step2Challenge,
+      sql: this.ppChallengeSQL,
+      startingSql: PP_STARTING_SQL,
+      solutionSql: PP_SOLUTION_SQL,
+      schema:
+        '<code>dim_products</code> — product_id, product_name, category, sku, supplier_id, cost_price, list_price, weight_kg, reorder_threshold, created_at',
+      intro: 'Use predicate pushdown to optimize the query below.',
+      feedback: {
+        'unsafe-sql': 'Only SELECT queries are allowed here.',
+        'wrong-sql': 'The query could not run. Check your SQL and try again.',
+        'wrong-output': "Structure looks right, but the result doesn't match. Check the filter value or the threshold.",
+        'not-optimized':
+          "Both predicates are in <code>HAVING</code>, which runs after <code>GROUP BY</code>. One of them doesn't depend on any aggregated value — which one can be evaluated before the rows are grouped?",
+        correct:
+          "Right. <code>category != 'Food'</code> belongs in <code>WHERE</code> — it filters rows before aggregation. <code>COUNT(*) >= 2</code> stays in <code>HAVING</code> — it needs the grouped result.",
+        revealed:
+          "The <code>category</code> filter belongs in <code>WHERE</code>: it doesn't depend on aggregated values and evaluating it before <code>GROUP BY</code> reduces the rows that enter the aggregation. <code>COUNT(*) >= 2</code> is a post-aggregation predicate — it can't move.",
+      } satisfies FeedbackMap,
+      validate: makeValidator(this.ppChallengeSQL, this.step2Challenge, checkPushdownStructure, PP_EXPECTED_ROWS),
+    },
+    {
+      isFinalStep: true,
+      paragraphs: [
+        'Both column pruning and predicate pushdown minimize data scanning. They can also make shuffles more manageable by reducing the data that enters a join or an aggregation.',
+        'The principle generalizes: distributed computing optimization is about minimizing data movement. In practice this is achieved via scan, shuffle and pass minimization: use as little data as possible, avoid moving it across nodes — but if you must, do it as late as possible — and always try to compute as much as possible in one go.',
+      ],
+      controller: this.step3Challenge,
+      sql: this.capstoneChallengeSQL,
+      startingSql: CAPSTONE_STARTING_SQL,
+      solutionSql: CAPSTONE_SOLUTION_SQL,
+      schema:
+        '<code>fct_orders</code> — order_id, customer_id &nbsp;|&nbsp; <code>fct_order_items</code> — order_id, product_id, quantity &nbsp;|&nbsp; <code>dim_customers</code> — customer_id, customer_name, country',
+      intro:
+        'Each order has multiple line items — one row in <code>fct_orders</code> maps to several in <code>fct_order_items</code>. Goal: top 5 Spanish customers by total items ordered.',
+      feedback: {
+        'unsafe-sql': 'Only SELECT queries are allowed here.',
+        'wrong-sql': 'The query could not run. Check your SQL and try again.',
+        'wrong-output': "Structure looks right, but the result doesn't match. Check your join keys and column names.",
+        'not-optimized':
+          'Think about minimizing data movement. Which table can be filtered and pruned first, before the joins?',
+        correct:
+          'Right. Filter and prune <code>dim_customers</code> first, join the fact tables after, group last. Each step carries only the rows the next step actually needs.',
+        revealed:
+          "<code>WHERE country = 'Spain'</code> and <code>SELECT customer_id, customer_name</code> go inside the first CTE. That gives the engine a small set to join against <code>fct_orders</code>, which then feeds <code>fct_order_items</code>. <code>GROUP BY</code> runs last on the already-reduced data.",
+      } satisfies FeedbackMap,
+      validate: makeValidator(
+        this.capstoneChallengeSQL,
+        this.step3Challenge,
+        checkCapstoneStructure,
+        CAPSTONE_EXPECTED_ROWS,
+      ),
+    },
+  ];
 
-  returnToViz(): void {
-    this.phase.set('viz');
-    setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 0);
-  }
+  readonly currentStepConfig = computed<WorkshopStepConfig>(() => this.stepConfigs[this.step() - 1]);
 
   goNext(): void {
-    const next = (this.step() + 1) as 2 | 3;
-    this.step.set(next);
-    this.phase.set('viz');
+    this.step.set((this.step() + 1) as 2 | 3);
     setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 0);
   }
 
   goBack(): void {
-    const prev = (this.step() - 1) as 1 | 2;
-    this.step.set(prev);
-    this.phase.set('copy');
+    this.step.set((this.step() - 1) as 1 | 2);
     setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 0);
   }
 
-  // ── step 1 challenge ──────────────────────────────────────────────────────────
-
-  openChallenge(): void {
-    this.challengeInput.set('');
-    this.step1Challenge.open();
+  onStepAdvance(): void {
+    if (this.step() < this.totalSteps) this.goNext();
   }
 
-  closeChallenge(): void {
-    this.step1Challenge.close();
-    this.challengeTrigger?.nativeElement.focus();
+  ngOnInit(): void {
+    this.setupDatabase().catch(() => {});
   }
 
-  onChallengeInput(event: Event): void {
-    this.challengeInput.set((event.target as HTMLInputElement).value);
-  }
-
-  submitChallenge(): void {
-    const tokens = this.challengeInput()
-      .split(',')
-      .map(s => s.trim().toLowerCase())
-      .filter(s => s.length > 0);
-    const actual = new Set(tokens);
-    const correct = actual.size === CHALLENGE_ANSWER.size && [...CHALLENGE_ANSWER].every(c => actual.has(c));
-    this.step1Challenge.state.set(correct ? 'correct' : 'wrong');
-  }
-
-  revealSolution(): void {
-    this.challengeInput.set(CHALLENGE_ANSWER_TEXT);
-    this.step1Challenge.solutionRevealed.set(true);
-    this.step1Challenge.state.set('correct');
-  }
-
-  advanceFromChallenge(): void {
-    this.step1Challenge.close();
-    this.goNext();
-  }
-
-  // ── step 2 challenge ──────────────────────────────────────────────────────────
-
-  openPPChallenge(): void {
-    this.ppChallengeSQL.set(PP_STARTING_SQL);
-    this.step2Challenge.open();
-    this.setupPPDatabase().catch(() => {});
-  }
-
-  closePPChallenge(): void {
-    this.step2Challenge.close();
-    this.ppChallengeTrigger?.nativeElement.focus();
-  }
-
-  onPPChallengeInput(event: Event): void {
-    this.ppChallengeSQL.set((event.target as HTMLTextAreaElement).value);
-  }
-
-  async submitPPChallenge(): Promise<void> {
-    this.step2Challenge.checking.set(true);
-    try {
-      const sql = this.ppChallengeSQL();
-
-      await this.setupPPDatabase();
-      let rows: QueryResult['rows'];
-      try {
-        rows = (await query(sql)).rows;
-      } catch {
-        this.step2Challenge.state.set('wrong-sql');
-        return;
-      }
-
-      const structure = checkPushdownStructure(sql);
-      if (structure === 'both-in-having') {
-        this.step2Challenge.state.set('wrong-both-having');
-        return;
-      }
-
-      this.step2Challenge.state.set(matchesPPExpected(rows) ? 'correct' : 'wrong-output');
-    } finally {
-      this.step2Challenge.checking.set(false);
-    }
-  }
-
-  revealPPSolution(): void {
-    this.ppChallengeSQL.set(PP_SOLUTION_SQL);
-    this.step2Challenge.solutionRevealed.set(true);
-    this.step2Challenge.state.set('correct');
-  }
-
-  advanceFromPPChallenge(): void {
-    this.step2Challenge.close();
-    this.goNext();
-  }
-
-  private async setupPPDatabase(): Promise<void> {
-    if (this.ppDbReady) return;
-    await execute('CREATE OR REPLACE TABLE dim_products (product_id INTEGER, product_name VARCHAR, category VARCHAR)');
-    const productValues = dimProducts.map(p => `(${p.product_id}, '${p.product_name}', '${p.category}')`).join(', ');
-    await execute(`INSERT INTO dim_products VALUES ${productValues}`);
-    this.ppDbReady = true;
+  private async setupDatabase(): Promise<void> {
+    if (this.dbReady) return;
+    await execute(
+      'CREATE OR REPLACE TABLE dim_products (product_id INTEGER, product_name VARCHAR, category VARCHAR, unit_price INTEGER)',
+    );
+    await execute(
+      `INSERT INTO dim_products VALUES ${dimProducts.map((p) => `(${p.product_id}, '${p.product_name}', '${p.category}', ${p.unit_price})`).join(', ')}`,
+    );
+    await execute('CREATE OR REPLACE TABLE fct_order_items (order_id INTEGER, product_id INTEGER, quantity INTEGER)');
+    await execute(
+      `INSERT INTO fct_order_items VALUES ${fctOrderItems.map((i) => `(${i.order_id}, ${i.product_id}, ${i.quantity})`).join(', ')}`,
+    );
+    await execute(
+      'CREATE OR REPLACE TABLE dim_customers (customer_id INTEGER, customer_name VARCHAR, country VARCHAR)',
+    );
+    await execute(
+      `INSERT INTO dim_customers VALUES ${dimCustomers.map((c) => `(${c.customer_id}, '${c.customer_name}', '${c.country}')`).join(', ')}`,
+    );
+    await execute('CREATE OR REPLACE TABLE fct_orders (order_id INTEGER, customer_id INTEGER)');
+    await execute(
+      `INSERT INTO fct_orders VALUES ${fctOrdersBatch1.map((o) => `(${o.order_id}, ${o.customer_id})`).join(', ')}`,
+    );
+    this.dbReady = true;
   }
 }

@@ -1,0 +1,118 @@
+.step-copy {
+  margin-top: 2rem;
+
+  p {
+    line-height: 1.7;
+  }
+
+  p + p {
+    margin-top: 1rem;
+  }
+}
+
+// ── viz nav row (replay left, next right) ─────────────────────────────────────
+
+.viz-nav {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 0.75rem;
+}
+
+.viz-nav-right {
+  position: absolute;
+  right: 0;
+}
+
+// .btn-outline provides visual style; overrides for compact replay size
+.btn-replay {
+  padding: 0.3rem 1rem;
+  font-size: var(--fs-code);
+  opacity: var(--opacity-subtle);
+
+  &:hover:not(:disabled) {
+    opacity: 0.8;
+  }
+}
+
+// ── copy phase footer ─────────────────────────────────────────────────────────
+
+.copy-footer {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.copy-footer .btn-ghost {
+  font-size: var(--fs-sm);
+}
+
+.copy-footer--end {
+  justify-content: flex-end;
+}
+
+// ── schema hint ────────────────────────────────────────────────────────────────
+
+.challenge-schema {
+  font-size: var(--fs-xs);
+  opacity: var(--opacity-subtle);
+  margin-bottom: 1.25rem;
+  line-height: 1.6;
+
+  code {
+    font-size: var(--fs-xs);
+  }
+}
+
+// ── check / reveal row ────────────────────────────────────────────────────────
+
+.challenge-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.challenge-actions-row .btn-ghost {
+  font-size: var(--fs-code);
+}
+
+.challenge-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+// ── challenge intro line ──────────────────────────────────────────────────────
+
+.challenge-intro {
+  font-size: var(--fs-sm);
+  opacity: var(--opacity-dim);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+// ── SQL editor ────────────────────────────────────────────────────────────────
+
+.lab-sql-editor {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: var(--fs-code);
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--br-md);
+  padding: 0.75rem 1rem;
+  color: var(--fg);
+  resize: vertical;
+  min-height: 220px;
+  line-height: 1.6;
+  tab-size: 2;
+  white-space: pre;
+  margin-bottom: 1.25rem;
+
+  &:disabled {
+    opacity: var(--opacity-muted);
+    cursor: default;
+  }
+}

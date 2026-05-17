@@ -1,0 +1,53 @@
+@if (phase() === 'viz' && config.vizScenario) {
+<app-data-movement-viz [scenario]="config.vizScenario" (modeChange)="onModeChange($event)" />
+<div class="viz-nav">
+  <button class="btn-outline btn-replay" (click)="replay()">&#8635; {{ replayLabel }}</button>
+  <div class="viz-nav-right">
+    @if (seenUnlockMode()) {
+    <button class="btn-primary" (click)="advanceVizPhase()">{{ nextLabel }}</button>
+    }
+  </div>
+</div>
+} @if (phase() === 'copy') {
+<div class="step-copy">
+  @for (para of config.paragraphs; track $index) {
+  <p [innerHTML]="para"></p>
+  }
+</div>
+<div class="copy-footer" [class.copy-footer--end]="!config.vizScenario">
+  @if (config.vizScenario) {
+  <button class="btn-ghost" (click)="returnToViz()">&#8592; {{ backToAnimationLabel }}</button>
+  }
+  <button #challengeTrigger class="btn-outline" (click)="openChallenge()">{{ testUnderstandingLabel }} &#8594;</button>
+</div>
+} @if (config.controller.show()) {
+<app-challenge-modal [showClose]="config.controller.state() !== 'correct'" (closed)="closeChallenge()">
+  <p class="challenge-schema" [innerHTML]="config.schema"></p>
+  <p class="challenge-intro" [innerHTML]="config.intro"></p>
+
+  <textarea
+    class="lab-sql-editor"
+    spellcheck="false"
+    autocomplete="off"
+    [value]="config.sql()"
+    (input)="onChallengeInput($event)"
+    [disabled]="config.controller.state() === 'correct'"
+  >
+  </textarea>
+
+  @if (config.controller.state() !== 'correct') {
+  <div class="challenge-actions-row">
+    <button class="btn-outline" (click)="submitChallenge()" [disabled]="config.controller.checking()">
+      {{ config.controller.checking() ? checkingLabel : checkLabel }}
+    </button>
+    <button class="btn-ghost" (click)="revealSolution()">{{ revealSolutionLabel }}</button>
+  </div>
+  } @if (feedbackMessage) {
+  <div [class]="feedbackClass"><p [innerHTML]="feedbackMessage"></p></div>
+  } @if (config.controller.state() === 'correct') {
+  <div class="challenge-actions">
+    <button class="btn-primary" (click)="onTerminalAction()">{{ terminalLabel }}</button>
+  </div>
+  }
+</app-challenge-modal>
+}

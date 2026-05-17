@@ -21,6 +21,12 @@ planned:
     deploy: true
     notes: EPIC-006 in IDEATION; groom before scheduling.
 
+  - tag: ~
+    epics: [EPIC-009]
+    maintenance: []
+    deploy: true
+    notes: EPIC-009 in IDEATION; feasibility spike + exercise KPI design needed before grooming.
+
 done:
 
   - tag: v2026.05.1
