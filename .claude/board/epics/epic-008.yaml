@@ -91,7 +91,7 @@ tickets:
   - id: T9
     title: Linting + formatting toolchain
     type: chore
-    status: TESTING
+    status: DONE
     description: Add ESLint, Prettier, and Stylelint with npm scripts so the full lint suite is runnable locally before commit.
     acceptance_criteria:
       - ng lint passes with zero errors (angular-eslint + typescript-eslint + eslint-config-prettier)
