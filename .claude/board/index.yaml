@@ -22,6 +22,4 @@ done:
   - id: EPIC-007
     title: Deployment
 
-maintenance:
-  - id: MAINT/T6
-    title: Data contracts lab — two-tier output validation
+maintenance: []

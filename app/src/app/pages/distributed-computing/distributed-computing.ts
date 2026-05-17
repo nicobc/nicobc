@@ -3,7 +3,8 @@ import { parse, Statement } from 'pgsql-ast-parser';
 import { checkPruningStructure, checkPushdownStructure, checkCapstoneStructure } from './challenge-validators';
 import { WorkshopStep, WorkshopStepConfig } from './workshop-step';
 import { ChallengeController } from '../../labs/challenge-controller';
-import { execute, query, QueryResult } from '../../labs/db/duckdb';
+import { execute } from '../../labs/db/duckdb';
+import { runQuery, matchesExpected } from '../../labs/validation';
 import { dimProducts, dimCustomers, fctOrdersBatch1, fctOrderItems } from '../../labs/data/seed';
 import {
   CP_STARTING_SQL,
@@ -24,23 +25,6 @@ type ChallengeState = 'unanswered' | 'unsafe-sql' | 'wrong-sql' | 'wrong-output'
 type FeedbackMap = Record<Exclude<ChallengeState, 'unanswered'> | 'revealed', string>;
 
 // ── validation pipeline ───────────────────────────────────────────────────────
-
-async function runQuery(sql: string): Promise<QueryResult['rows'] | null> {
-  try {
-    return (await query(sql)).rows;
-  } catch {
-    return null;
-  }
-}
-
-function matchesExpected(rows: QueryResult['rows'], expected: Record<string, unknown>[]): boolean {
-  if (rows.length !== expected.length) return false;
-  return expected.every((exp, i) =>
-    Object.entries(exp).every(([key, val]) =>
-      typeof val === 'number' ? Math.abs(Number(rows[i][key]) - val) < 0.01 : String(rows[i][key]) === String(val),
-    ),
-  );
-}
 
 function makeValidator(
   sql: Signal<string>,
