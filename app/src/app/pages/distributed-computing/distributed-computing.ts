@@ -5,7 +5,6 @@ import { WorkshopStep, WorkshopStepConfig } from './workshop-step';
 import { ChallengeController } from '../../labs/challenge-controller';
 import { execute } from '../../labs/db/duckdb';
 import { runQuery, matchesExpected } from '../../labs/validation';
-import type { QueryResult } from '../../labs/db/duckdb';
 import { dimProducts, dimCustomers, fctOrdersBatch1, fctOrderItems } from '../../labs/data/seed';
 import {
   CP_STARTING_SQL,

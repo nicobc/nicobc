@@ -7,6 +7,13 @@ repos:
 
   - repo: local
     hooks:
+      - id: lint-app
+        name: lint app (ng lint)
+        entry: npm --prefix app run lint
+        language: system
+        files: ^app/src/.*\.(ts|html|scss)$
+        pass_filenames: false
+
       - id: format-app
         name: format app (prettier + stylelint)
         entry: npm --prefix app run format
