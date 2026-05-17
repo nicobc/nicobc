@@ -58,3 +58,7 @@ Before writing any status value to a board file, confirm the ticket's current st
    ```
    Increment the patch number within the month (e.g. `v2026.05.6` follows `v2026.05.5`).
    Watch deploy: `/opt/homebrew/bin/gh run watch <run-id> --repo nicobc/nicobc`. Report success or failure.
+
+## GHA workflow testing
+
+When iterating on a GHA workflow: commit and push the change, dispatch with `gh workflow run <file> --ref <branch> --repo nicobc/nicobc`, then immediately watch with `gh run watch <run-id> --repo nicobc/nicobc`. On failure, fetch logs with `gh run view <run-id> --log-failed --repo nicobc/nicobc`, diagnose, fix, and repeat — without waiting for the user to paste output. `gh` is at `/opt/homebrew/bin/gh`.

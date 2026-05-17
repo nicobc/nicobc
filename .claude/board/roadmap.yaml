@@ -4,12 +4,6 @@
 
 planned:
 
-  - tag: v2026.05.6
-    epics: [EPIC-008, EPIC-005]
-    maintenance: [MAINT/T5, MAINT/T6]
-    deploy: true
-    notes: MAINT/T5 already merged; rides with this release. Cut when all bundled tickets DONE.
-
   - tag: ~
     epics: [EPIC-004]
     maintenance: []
@@ -58,3 +52,8 @@ done:
     maintenance: []
     deploy: true
     notes: Pre-board. Tab title. EPIC-001/002/003/007 and MAINT/T1 all in main by this tag; mapping to individual tags not tracked.
+
+  - tag: v2026.05.6
+    epics: [EPIC-008, EPIC-005]
+    maintenance: [MAINT/T5, MAINT/T6, MAINT/T7]
+    deploy: true
