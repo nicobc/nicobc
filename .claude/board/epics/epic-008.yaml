@@ -81,7 +81,7 @@ tickets:
   - id: T8
     title: Angular testing skill + test coverage pass
     type: test
-    status: IN PROGRESS
+    status: TESTING
     description: Write .claude/skills/angular-testing.md; apply across app/ specs, adding and refactoring tests to match the skill, adjusting the skill as the pass surfaces new patterns.
     acceptance_criteria:
       - .claude/skills/angular-testing.md created; covers what to test, fixture patterns, async handling, what not to test
