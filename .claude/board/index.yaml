@@ -1,8 +1,6 @@
 in_progress:
   - id: EPIC-008
     title: Test Coverage
-  - id: EPIC-005
-    title: Distributed Computing Intuition Lab
 
 ready:
   - id: EPIC-004
@@ -15,6 +13,8 @@ ideation:
     title: Spark UI Literacy Lab
 
 done:
+  - id: EPIC-005
+    title: Distributed Computing Intuition Lab
   - id: EPIC-001
     title: BCN Rental Prices Map
   - id: EPIC-002
