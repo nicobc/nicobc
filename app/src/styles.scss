@@ -1,7 +1,7 @@
 :root,
 [data-theme='dark'] {
   --bg: #1a1b1e;
-  --fg: #ffffff;
+  --fg: #fff;
   --code-bg: color-mix(in srgb, var(--fg) 16%, transparent);
 }
 
@@ -14,52 +14,56 @@
 :root {
   --nav-height: 56px;
   --accent: #f87171;
+  --info: #60a5fa;
+  --success: #4ade80;
   --font-mono: 'Fira Code', 'Courier New', monospace;
 
   // borders — derive from --fg; adapt to both themes automatically
-  --border-faint:    color-mix(in srgb, var(--fg)  8%, transparent); // dividers, code block borders
-  --border:          color-mix(in srgb, var(--fg) 15%, transparent); // panels, cards
-  --border-strong:   color-mix(in srgb, var(--fg) 25%, transparent); // interactive, outline buttons
+  --border-faint: color-mix(in srgb, var(--fg) 8%, transparent); // dividers, code block borders
+  --border: color-mix(in srgb, var(--fg) 15%, transparent); // panels, cards
+  --border-strong: color-mix(in srgb, var(--fg) 25%, transparent); // interactive, outline buttons
   --border-emphasis: color-mix(in srgb, var(--fg) 40%, transparent); // input underlines, highlights
 
   // surfaces — fills lighter than --code-bg
-  --surface-faint:  color-mix(in srgb, var(--fg)   4%, transparent); // code blocks, viz node fills
-  --surface:        color-mix(in srgb, var(--fg)  10%, transparent); // active toggle states
+  --surface-faint: color-mix(in srgb, var(--fg) 4%, transparent); // code blocks, viz node fills
+  --surface: color-mix(in srgb, var(--fg) 10%, transparent); // active toggle states
   --accent-surface: color-mix(in srgb, var(--accent) 6%, transparent); // accent-tinted backgrounds
-  --overlay-bg:     color-mix(in srgb, var(--bg)   55%, transparent); // backdrop blur overlays
+  --info-surface: color-mix(in srgb, var(--info) 6%, transparent);
+  --success-surface: color-mix(in srgb, var(--success) 6%, transparent);
+  --overlay-bg: color-mix(in srgb, var(--bg) 55%, transparent); // backdrop blur overlays
 
   // opacity tiers
-  --opacity-faint:     0.35; // ghost elements, icon rest states, tertiary
-  --opacity-dim:       0.4;  // secondary labels, subtitles, inactive states
-  --opacity-subtle:    0.5;  // medium secondary — metadata, schema hints
-  --opacity-muted:     0.6;  // secondary text, action icons
-  --opacity-secondary: 0.7;  // links and interactive at partial visibility
-  --opacity-strong:    0.8;  // near-full, prominent but not fully active
+  --opacity-faint: 0.35; // ghost elements, icon rest states, tertiary
+  --opacity-dim: 0.4; // secondary labels, subtitles, inactive states
+  --opacity-subtle: 0.5; // medium secondary — metadata, schema hints
+  --opacity-muted: 0.6; // secondary text, action icons
+  --opacity-secondary: 0.7; // links and interactive at partial visibility
+  --opacity-strong: 0.8; // near-full, prominent but not fully active
 
   // motion
   --transition-fast: 0.15s;
-  --transition:      0.2s;
+  --transition: 0.2s;
 
   // type scale
-  --fs-xs:   0.75rem;  // eyebrow, step-indicator, small labels
-  --fs-code: 0.8rem;   // code text, monospace UI elements
-  --fs-sm:   0.875rem; // button text, small body
-  --fs-base: 1rem;     // body baseline
-  --fs-lg:   1.1rem;   // mild heading emphasis, intro text
-  --fs-xl:   1.5rem;   // section headings
-  --fs-2xl:  2.25rem;  // page title
+  --fs-xs: 0.75rem; // eyebrow, step-indicator, small labels
+  --fs-code: 0.8rem; // code text, monospace UI elements
+  --fs-sm: 0.875rem; // button text, small body
+  --fs-base: 1rem; // body baseline
+  --fs-lg: 1.1rem; // mild heading emphasis, intro text
+  --fs-xl: 1.5rem; // section headings
+  --fs-2xl: 2.25rem; // page title
 
   // font weights
-  --fw-light:    300;
-  --fw-medium:   500;
+  --fw-light: 300;
+  --fw-medium: 500;
   --fw-semibold: 600;
-  --fw-bold:     700;
+  --fw-bold: 700;
 
   // border radius
-  --br-sm: 3px;  // inline code, pills, scrollbar
-  --br:    4px;  // buttons, nodes, small UI
-  --br-md: 6px;  // code blocks, tooltips, editor
-  --br-lg: 8px;  // cards, panels, overlays
+  --br-sm: 3px; // inline code, pills, scrollbar
+  --br: 4px; // buttons, nodes, small UI
+  --br-md: 6px; // code blocks, tooltips, editor
+  --br-lg: 8px; // cards, panels, overlays
 }
 
 // ── buttons ───────────────────────────────────────────────────────────────────
@@ -76,7 +80,9 @@
   cursor: pointer;
   transition: opacity var(--transition-fast);
 
-  &:hover { opacity: 0.85; }
+  &:hover {
+    opacity: 0.85;
+  }
 }
 
 // no bg, no border — back arrows, reveal links, secondary text actions
@@ -89,7 +95,9 @@
   opacity: var(--opacity-faint);
   transition: opacity var(--transition-fast);
 
-  &:hover { opacity: var(--opacity-secondary); }
+  &:hover {
+    opacity: var(--opacity-secondary);
+  }
 }
 
 // transparent bg + border — replay, test, check, CTA links
@@ -107,8 +115,14 @@
   opacity: var(--opacity-muted);
   transition: opacity var(--transition-fast);
 
-  &:hover:not(:disabled) { opacity: 1; }
-  &:disabled { opacity: 0.25; cursor: default; }
+  &:hover:not(:disabled) {
+    opacity: 1;
+  }
+
+  &:disabled {
+    opacity: 0.25;
+    cursor: default;
+  }
 }
 
 // icon-only — play, fit, info, close
@@ -125,7 +139,9 @@
   opacity: var(--opacity-faint);
   transition: opacity var(--transition-fast);
 
-  &:hover { opacity: 1; }
+  &:hover {
+    opacity: 1;
+  }
 }
 
 // ── toggle pill ───────────────────────────────────────────────────────────────
@@ -147,19 +163,27 @@
   font-family: var(--font-mono);
   cursor: pointer;
   opacity: var(--opacity-subtle);
-  transition: background var(--transition-fast), opacity var(--transition-fast);
+  transition:
+    background var(--transition-fast),
+    opacity var(--transition-fast);
 
-  &:first-child { border-radius: var(--br) 0 0 var(--br); border-right: none; }
-  &:last-child  { border-radius: 0 var(--br) var(--br) 0; }
-  &.active      { background: var(--surface); opacity: 1; }
-  &:hover       { opacity: var(--opacity-secondary); }
-}
+  &:first-child {
+    border-radius: var(--br) 0 0 var(--br);
+    border-right: none;
+  }
 
-// modifier for multi-line SQL snippets (predicate-pushdown and beyond)
-.toggle-pill--multiline {
-  white-space: pre;
-  text-align: left;
-  line-height: 1.5;
+  &:last-child {
+    border-radius: 0 var(--br) var(--br) 0;
+  }
+
+  &.active {
+    background: var(--surface);
+    opacity: 1;
+  }
+
+  &:hover {
+    opacity: var(--opacity-secondary);
+  }
 }
 
 // ── utilities ─────────────────────────────────────────────────────────────────
@@ -200,7 +224,10 @@
   padding: 0 0.2rem;
   border-radius: 2px 2px 0 0;
 
-  &::placeholder { opacity: var(--opacity-faint); font-style: italic; }
+  &::placeholder {
+    opacity: var(--opacity-faint);
+    font-style: italic;
+  }
 }
 
 // ── reset ─────────────────────────────────────────────────────────────────────
@@ -230,12 +257,21 @@ html {
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
 
-  &::-webkit-scrollbar { width: 8px; }
-  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
   &::-webkit-scrollbar-thumb {
     background: var(--border);
     border-radius: var(--br-sm);
-    &:hover { background: var(--border-strong); }
+
+    &:hover {
+      background: var(--border-strong);
+    }
   }
 }
 
@@ -246,7 +282,9 @@ body {
   padding-top: var(--nav-height);
   padding-bottom: var(--nav-height);
   min-height: 100vh;
-  transition: background var(--transition) ease, color var(--transition) ease;
+  transition:
+    background var(--transition) ease,
+    color var(--transition) ease;
 }
 
 app-root {
@@ -285,7 +323,9 @@ nav a.active {
   border-radius: var(--br-lg);
   text-decoration: none;
   color: var(--fg);
-  transition: border-color var(--transition) ease, transform var(--transition) ease;
+  transition:
+    border-color var(--transition) ease,
+    transform var(--transition) ease;
 
   &:hover {
     border-color: var(--border-strong);
@@ -330,7 +370,7 @@ main {
   padding: 4rem 3rem;
 }
 
-@media (max-width: 768px) {
+@media (width <= 768px) {
   main {
     padding: 2.5rem 1.5rem;
   }
@@ -362,7 +402,9 @@ main {
   opacity: var(--opacity-secondary);
   transition: opacity var(--transition) ease;
 
-  &:hover { opacity: 1; }
+  &:hover {
+    opacity: 1;
+  }
 }
 
 // ── lab step navigation ───────────────────────────────────────────────────────
@@ -372,11 +414,18 @@ main {
   padding-top: 2rem;
 }
 
-// back arrow inside any step-shell; position is step-shell's concern
+// back/forward arrows inside any step-shell; position is step-shell's concern
 .step-back {
   position: absolute;
   top: 0;
   left: 0;
+  font-size: var(--fs-lg);
+}
+
+.step-forward {
+  position: absolute;
+  top: 0;
+  right: 0;
   font-size: var(--fs-lg);
 }
 
@@ -387,4 +436,39 @@ main {
   letter-spacing: 0.06em;
   opacity: var(--opacity-faint);
   margin-bottom: 2rem;
+}
+
+// ── challenge feedback block ──────────────────────────────────────────────────
+
+.feedback-block {
+  border-left: 3px solid;
+  padding: 0.875rem 1.25rem;
+  border-radius: 0 var(--br) var(--br) 0;
+  margin-bottom: 1.25rem;
+  font-size: var(--fs-sm);
+  line-height: 1.65;
+
+  p {
+    margin: 0;
+  }
+
+  code {
+    font-size: 0.85em;
+    font-family: var(--font-mono);
+  }
+
+  &--error {
+    border-color: var(--accent);
+    background: var(--accent-surface);
+  }
+
+  &--reveal {
+    border-color: var(--info);
+    background: var(--info-surface);
+  }
+
+  &--success {
+    border-color: var(--success);
+    background: var(--success-surface);
+  }
 }

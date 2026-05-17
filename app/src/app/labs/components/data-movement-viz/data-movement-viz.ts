@@ -1,6 +1,16 @@
-import { Component, computed, EventEmitter, Input, OnInit, OnChanges, Output, SimpleChanges, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  EventEmitter,
+  Input,
+  OnInit,
+  OnChanges,
+  Output,
+  SimpleChanges,
+  signal,
+} from '@angular/core';
 
-export type VizScenario = 'column-pruning' | 'predicate-pushdown' | 'shuffle';
+export type VizScenario = 'column-pruning' | 'predicate-pushdown';
 export type PruningMode = 'unpruned' | 'pruned';
 export type PushdownMode = 'unpushed' | 'pushed';
 export type VizMode = PruningMode | PushdownMode;
@@ -19,11 +29,8 @@ export class DataMovementViz implements OnInit, OnChanges {
   readonly cpTogglePruned = 'SELECT customer_id, customer_name, country';
   readonly cpFromClause = 'FROM dim_customers';
 
-  readonly pushdownToggleUnpushed = "WITH kpi AS (\n  SELECT … FROM dim_customers\n  …\n)\nSELECT … FROM kpi\nWHERE country = 'Spain'";
-  readonly pushdownTogglePushed = "WITH kpi AS (\n  SELECT … FROM dim_customers\n  WHERE country = 'Spain'\n  …\n)\nSELECT … FROM kpi";
-
-  readonly unpushed: PushdownMode = 'unpushed';
-  readonly pushed: PushdownMode = 'pushed';
+  readonly ppSelectFrom = 'SELECT *\nFROM dim_customers';
+  readonly ppWhereClause = "WHERE country = 'Spain'";
 
   readonly animating = signal(false);
   readonly pruningMode = signal<PruningMode>('unpruned');
@@ -61,7 +68,11 @@ export class DataMovementViz implements OnInit, OnChanges {
     setTimeout(() => this.animating.set(true), 20);
   }
 
-  replay() {
+  togglePushdown(): void {
+    this.setPushdownMode(this.pushdownMode() === 'pushed' ? 'unpushed' : 'pushed');
+  }
+
+  replay(): void {
     this.animating.set(false);
     setTimeout(() => this.animating.set(true), 20);
   }

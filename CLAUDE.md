@@ -1,6 +1,12 @@
 # nicobc — project conventions
 
-Personal portfolio built to signal staff-level data engineering to hiring managers, CTOs, and CDOs. Quality bar is high.
+Personal portfolio built to signal staff-level data engineering to hiring managers, CTOs, and CDOs. Quality bar is high — every file touched must leave the codebase in better shape than it was found.
+
+## Code quality
+
+Before editing any file, read the files you will touch and surface any structural problems that constitute tech debt. Raise these to the user as a proposed pre-implementation cleanup. Do not start implementing until the structural picture is clear. Tech debt is paid immediately, not deferred.
+
+Apply all relevant skills to every file you touch, regardless of how small the change. No edit is too trivial to skip skill checks. A one-line fix in a component file still requires the angular skill to be active and applied.
 
 ## Copy
 Write copy that sounds like a person, not a language model. Avoid "not just X but Y", triple enumerations, dash-separated punchlines, and broetry patterns in general. When in doubt, refer to the about page or the BCN map copy as the reference register.

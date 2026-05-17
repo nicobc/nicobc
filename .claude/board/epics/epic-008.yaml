@@ -87,3 +87,18 @@ tickets:
       - .claude/skills/angular-testing.md created; covers what to test, fixture patterns, async handling, what not to test
       - existing specs refactored to match skill; new specs added where coverage is missing
       - ng test exits cleanly
+
+  - id: T9
+    title: Linting + formatting toolchain
+    type: chore
+    status: IN PROGRESS
+    description: Add ESLint, Prettier, and Stylelint with npm scripts so the full lint suite is runnable locally before commit.
+    acceptance_criteria:
+      - ng lint passes with zero errors (angular-eslint + typescript-eslint + eslint-config-prettier)
+      - prettier --check passes across all ts/html/scss files (printWidth 120)
+      - stylelint passes across all scss files (standard-scss config)
+      - npm run lint runs all three checks in sequence
+      - npm run format auto-fixes formatting (prettier --write + stylelint --fix)
+      - all pre-existing violations fixed at time of introduction
+      - npm run lint added as a CI step in test-app.yml (runs after build and test)
+      - format-app pre-commit hook added to .pre-commit-config.yaml (runs npm run format on staged ts/html/scss files)

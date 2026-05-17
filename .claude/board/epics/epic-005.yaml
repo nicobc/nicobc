@@ -104,32 +104,26 @@ tickets:
       - DuckDB wiring uses existing app/src/app/labs/db/duckdb.ts and app/src/app/labs/data/seed.ts
 
   - id: T6
-    title: Shuffle — animation + copy + challenge
+    title: Capstone — copy + challenge
     type: feat
-    status: READY
-    description: Learner sees how shuffle cost scales with data volume entering an operation, then proves understanding by rewriting a 3-table query to minimize data shuffled at each step.
+    status: TESTING
+    description: Learner synthesizes column pruning and predicate pushdown into a unified mental model of data movement cost and proves understanding via a 3-table capstone challenge.
     acceptance_criteria:
-      - toggle pill shows two approaches to the throughline query ("GROUP BY first" / "join first"); animation responds accordingly; auto-replays on switch
-      - "GROUP BY first" animation: full dim_customers and full fct_orders blocks flow toward the GROUP BY node — wide, numerous rectangles
-      - "join first" animation: Spain-filtered dim_customers (narrow, few blocks) joins fct_orders first, reducing it; smaller block set flows to GROUP BY node
-      - no shape morphing; geometry (size, count) carries meaning; no node-boundary effects
-      - step indicator reads "3 / 3 — Shuffle"
-      - viz phase: Next appears only after learner has toggled to "join first" at least once
-      - copy phase: 2 paragraphs — (1) shuffle cost has two levers: data volume entering each operation (illustrated by animation) and number of shuffle operations in the query; (2) optimizer caveat (engines may broadcast small dimension tables; principle extends to fact-to-fact joins and high-cardinality GROUP BY where broadcast is not viable); "Back to animation" left, challenge CTA right
-      - challenge: modal overlay, blurred background; 3-table query over fct_orders + dim_customers + fct_order_items; goal is top 5 Spanish customers by total items ordered
-      - challenge intro states the 1:m cardinality relationship (1 order = multiple items) so relative table sizes are established without numbers
-      - starting query has suboptimal ordering — GROUP BY customer_id on fct_orders before joining dim_customers, then fct_order_items
-      - correct answer: filter and prune dim_customers to Spain (customer_id, customer_name only) first, join fct_orders, join fct_order_items, GROUP BY customer_name; requires applying column pruning (step 1) and predicate pushdown (step 2) alongside correct join ordering
-      - fct_order_items added to seed.ts: schema order_id, product_id, quantity; multiple rows per order_id; 1:m ratio documented in seed comment
-      - validation: (1) run query on DuckDB WASM — surface SQL errors immediately; (2) AST check — verify join ordering and predicate placement are optimal; (3) compare DuckDB output to expected result set; hints and feedback keyed to which layer fails
-      - reveal populates correct query; correct → success; terminal step (no Next)
+      - step indicator reads "3 / 3 — Minimizing data movement"
+      - step 3 has no animation; opens directly to copy phase
+      - copy: 2 paragraphs — (1) CP and PP minimize data scanning and reduce data entering joins and aggregations; (2) principle generalizes to scan/shuffle/pass minimization — use as little data as possible, avoid moving it across nodes, compute in one go
+      - step 1 animation revised: fact table removed; only dim_customers column width (wide vs narrow) illustrates the concept
+      - CP challenge revised: uses dim_products + fct_order_items; expects product_id, category, unit_price; output validated first, then AST checks for SELECT * and wrong column set
+      - capstone challenge: modal overlay; 3-table query over fct_orders + dim_customers + fct_order_items; goal is top 5 Spanish customers by total items ordered
+      - challenge intro states 1:m cardinality (one order → multiple line items)
+      - starting query: GROUP BY customer_id on fct_orders before joining dim_customers, suboptimal join ordering
+      - correct answer: filter and prune dim_customers to Spain (customer_id, customer_name) first, join fct_orders, join fct_order_items, GROUP BY customer_name
+      - fct_order_items in seed.ts: order_id, product_id, quantity; multiple rows per order_id
+      - validation order: wrong-sql → wrong-output → not-optimized / correct
+      - reveal populates correct query; terminal step (Done label, no Next)
     notes:
-      - no serialization content; no UDF content; no shape morphing
-      - broadcasting acknowledged in copy as one engine mechanism, not the lesson — copy leads with the general principle
-      - challenge is a capstone: correct solution requires column pruning, predicate pushdown, and shuffle ordering applied together
-      - distractor logic: GROUP BY fct_orders on customer_id first is logically valid (1 id = 1 name) but misses that joining dim_customers first is nearly free and enables filtering fct_orders before the GROUP BY shuffle
-      - 3 shuffles (dim_customers join, fct_order_items join, GROUP BY) prevent answer-by-elimination; learner must reason about ordering, not pick from two options
-      - depends on T2 (animated viz component)
+      - isCapstoneOptimized (capstone-validator.ts): true when at least one CTE scans dim_customers directly (no joins), has country in WHERE, does not project country or SELECT *; flat queries without WITH always return false; covered by capstone-validator.spec.ts
+      - capstone expected values (SUM quantity, top 5 Spain): Grupo Valera 32, Distribuciones Casas 28, Comercial Ibérica 24, Almacenes del Sur 20, Industrias Bernal 16
 
   - id: T7
     title: Workshop landing page + lab grid refactor
