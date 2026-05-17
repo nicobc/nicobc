@@ -1,140 +1,22 @@
 <div class="lab-page">
-
   <header class="lab-header">
     <span class="eyebrow">{{ labCategory }}</span>
     <h1>{{ labTitle }}</h1>
   </header>
 
   <div class="step-shell">
-
     @if (step() > 1) {
-      <button class="btn-ghost step-back" (click)="goBack()">&#8592;</button>
+    <button class="btn-ghost step-back" (click)="goBack()">&#8592;</button>
     }
 
     <span class="step-indicator">{{ step() }} / {{ totalSteps }} — {{ conceptName() }}</span>
 
+    @if (step() < totalSteps && stepCleared()) {
+    <button class="btn-ghost step-forward" (click)="goNext()">&#8594;</button>
+    }
+
     <div class="step-content">
-
-      @if (phase() === 'viz') {
-        <app-data-movement-viz [scenario]="scenario()" (modeChange)="onModeChange($event)" />
-        <div class="viz-nav">
-          <button class="btn-outline btn-replay" (click)="replay()">&#8635; {{ replayLabel }}</button>
-          <div class="viz-nav-right">
-            @if (step() === 1 && seenPruning()) {
-              <button class="btn-primary" (click)="advanceVizPhase()">{{ nextLabel }}</button>
-            }
-            @if (step() === 2 && seenFilterPushed()) {
-              <button class="btn-primary" (click)="advanceVizPhase()">{{ nextLabel }}</button>
-            }
-          </div>
-        </div>
-      }
-
-      @if (step() === 1 && phase() === 'copy') {
-        <div class="step-copy">
-          <p [innerHTML]="copyPara1"></p>
-          <p><span [innerHTML]="copyPara2Before"></span><a [href]="olapEnginesHref" target="_blank" rel="noopener">{{ olapEnginesLabel }}</a>{{ copyPara2After }}</p>
-        </div>
-        <div class="copy-footer">
-          <button class="btn-ghost" (click)="returnToViz()">&#8592; {{ backToAnimationLabel }}</button>
-          <button #challengeTrigger class="btn-outline" (click)="openChallenge()">{{ testUnderstandingLabel }} &#8594;</button>
-        </div>
-      }
-
-      @if (step() === 2 && phase() === 'copy') {
-        <div class="step-copy">
-          <p [innerHTML]="ppCopyPara1"></p>
-          <p [innerHTML]="ppCopyPara2"></p>
-        </div>
-        <div class="copy-footer">
-          <button class="btn-ghost" (click)="returnToViz()">&#8592; {{ backToAnimationLabel }}</button>
-          <button #ppChallengeTrigger class="btn-outline" (click)="openPPChallenge()">{{ testUnderstandingLabel }} &#8594;</button>
-        </div>
-      }
-
+      <app-workshop-step [config]="currentStepConfig()" (advance)="onStepAdvance()" />
     </div>
-
   </div>
-
-  @if (step1Challenge.show()) {
-    <app-challenge-modal [showClose]="step1Challenge.state() !== 'correct'" (closed)="closeChallenge()">
-
-      <p class="challenge-schema" [innerHTML]="challengeSchema"></p>
-
-      <div class="code-block challenge-code"><span>{{ queryBefore }}</span><input class="code-input"
-        type="text" placeholder="col_a, ..." autocomplete="off" spellcheck="false"
-        [value]="challengeInput()"
-        (input)="onChallengeInput($event)"
-        (keyup.enter)="submitChallenge()"><span>{{ queryAfter }}</span></div>
-
-      @if (step1Challenge.state() !== 'correct') {
-        <div class="challenge-actions-row">
-          <button class="btn-outline" (click)="submitChallenge()" [disabled]="!challengeInput().trim()">{{ checkLabel }}</button>
-          <button class="btn-ghost" (click)="revealSolution()">{{ revealSolutionLabel }}</button>
-        </div>
-      }
-
-      @if (step1Challenge.state() === 'wrong') {
-        <p class="challenge-feedback challenge-feedback--wrong" [innerHTML]="feedbackWrong"></p>
-      }
-
-      @if (step1Challenge.state() === 'correct') {
-        @if (step1Challenge.solutionRevealed()) {
-          <p class="challenge-feedback" [innerHTML]="feedbackCorrectRevealed"></p>
-        } @else {
-          <p class="challenge-feedback" [innerHTML]="feedbackCorrect"></p>
-        }
-        <div class="challenge-actions">
-          <button class="btn-primary" (click)="advanceFromChallenge()">{{ nextLabel }}</button>
-        </div>
-      }
-
-    </app-challenge-modal>
-  }
-
-  @if (step2Challenge.show()) {
-    <app-challenge-modal [showClose]="step2Challenge.state() !== 'correct'" (closed)="closePPChallenge()">
-
-      <p class="challenge-schema" [innerHTML]="ppChallengeSchema"></p>
-
-      <textarea class="pp-sql-editor"
-        spellcheck="false" autocomplete="off"
-        [value]="ppChallengeSQL()"
-        (input)="onPPChallengeInput($event)"
-        [disabled]="step2Challenge.state() === 'correct'">
-      </textarea>
-
-      @if (step2Challenge.state() !== 'correct') {
-        <div class="challenge-actions-row">
-          <button class="btn-outline" (click)="submitPPChallenge()" [disabled]="step2Challenge.checking()">
-            {{ step2Challenge.checking() ? checkingLabel : checkLabel }}
-          </button>
-          <button class="btn-ghost" (click)="revealPPSolution()">{{ revealSolutionLabel }}</button>
-        </div>
-      }
-
-      @if (step2Challenge.state() === 'wrong-both-having') {
-        <p class="challenge-feedback challenge-feedback--wrong" [innerHTML]="ppFeedbackBothHaving"></p>
-      }
-      @if (step2Challenge.state() === 'wrong-output') {
-        <p class="challenge-feedback challenge-feedback--wrong" [innerHTML]="ppFeedbackWrongOutput"></p>
-      }
-      @if (step2Challenge.state() === 'wrong-sql') {
-        <p class="challenge-feedback challenge-feedback--wrong" [innerHTML]="ppFeedbackWrongSQL"></p>
-      }
-
-      @if (step2Challenge.state() === 'correct') {
-        @if (step2Challenge.solutionRevealed()) {
-          <p class="challenge-feedback" [innerHTML]="ppFeedbackCorrectRevealed"></p>
-        } @else {
-          <p class="challenge-feedback" [innerHTML]="ppFeedbackCorrect"></p>
-        }
-        <div class="challenge-actions">
-          <button class="btn-primary" (click)="advanceFromPPChallenge()">{{ nextLabel }}</button>
-        </div>
-      }
-
-    </app-challenge-modal>
-  }
-
 </div>
