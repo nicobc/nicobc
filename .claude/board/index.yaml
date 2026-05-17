@@ -29,5 +29,5 @@ maintenance:
     title: Angular testing skill + test coverage pass
   - id: MAINT/T6
     title: Data contracts lab — two-tier output validation
-  - id: MAINT/T7
+  - id: EPIC-008/T9
     title: Linting + formatting toolchain
