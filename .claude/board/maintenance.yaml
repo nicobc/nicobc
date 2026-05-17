@@ -76,7 +76,7 @@ tickets:
     title: Data contracts lab — two-tier output validation
     type: feat
     scope: data-contracts
-    status: TESTING
+    status: DONE
     description: Step 1 currently validates query output loosely. Replace with two explicit tiers — JSON schema for output structure, expected output for business logic — so feedback is precise and mirrors the contract concept the lab teaches.
     acceptance_criteria:
       - JSON schema defined for expected output (column names and types); schema failure shows current error behaviour
