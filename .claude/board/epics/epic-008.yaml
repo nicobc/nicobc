@@ -101,3 +101,4 @@ tickets:
       - npm run format auto-fixes formatting (prettier --write + stylelint --fix)
       - all pre-existing violations fixed at time of introduction
       - npm run lint added as a CI step in test-app.yml (runs after build and test)
+      - format-app pre-commit hook added to .pre-commit-config.yaml (runs npm run format on staged ts/html/scss files)
