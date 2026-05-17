@@ -26,7 +26,7 @@ nav {
 
 .first-name {
   font-weight: var(--fw-light);
-  margin-right: .33rem;
+  margin-right: 0.33rem;
 }
 
 .last-name {
@@ -55,7 +55,9 @@ nav {
   left: 0;
   display: flex;
   pointer-events: none;
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
 }
 
 .nav-hamburger button fa-icon.icon-xmark {
@@ -73,7 +75,7 @@ nav {
   transform: rotate(0deg);
 }
 
-@media (max-width: 768px) {
+@media (width <= 768px) {
   nav {
     padding: 0 1.5rem;
   }

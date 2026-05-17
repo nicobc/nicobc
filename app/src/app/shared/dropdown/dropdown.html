@@ -1,15 +1,11 @@
 <div class="dropdown-menu">
-  @for (item of items(); track item.label) {
-    @if (item.route) {
-      <a [routerLink]="item.route" routerLinkActive="active" [class.icon-only]="item.iconOnly">
-        @if (item.icon) { <fa-icon [icon]="item.icon" /> }
-        @if (!item.iconOnly) { {{ item.label }} }
-      </a>
-    } @else {
-      <a [href]="item.href" target="_blank" rel="noopener noreferrer" [class.icon-only]="item.iconOnly">
-        @if (item.icon) { <fa-icon [icon]="item.icon" /> }
-        @if (!item.iconOnly) { {{ item.label }} }
-      </a>
-    }
-  }
+  @for (item of items(); track item.label) { @if (item.route) {
+  <a [routerLink]="item.route" routerLinkActive="active" [class.icon-only]="item.iconOnly">
+    @if (item.icon) { <fa-icon [icon]="item.icon" /> } @if (!item.iconOnly) { {{ item.label }} }
+  </a>
+  } @else {
+  <a [href]="item.href" target="_blank" rel="noopener noreferrer" [class.icon-only]="item.iconOnly">
+    @if (item.icon) { <fa-icon [icon]="item.icon" /> } @if (!item.iconOnly) { {{ item.label }} }
+  </a>
+  } }
 </div>

@@ -4,14 +4,14 @@
   <div class="timeline">
     <button class="btn-icon play-btn" (click)="togglePlay()" [title]="isPlaying() ? 'Pause' : 'Play'">
       @if (isPlaying()) {
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-          <rect x="2" y="1" width="3" height="10" rx="1"/>
-          <rect x="7" y="1" width="3" height="10" rx="1"/>
-        </svg>
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+        <rect x="2" y="1" width="3" height="10" rx="1" />
+        <rect x="7" y="1" width="3" height="10" rx="1" />
+      </svg>
       } @else {
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-          <path d="M3 1.5L10.5 6 3 10.5V1.5Z"/>
-        </svg>
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+        <path d="M3 1.5L10.5 6 3 10.5V1.5Z" />
+      </svg>
       }
     </button>
     <span class="year-label">{{ selectedYear() }}</span>
@@ -26,13 +26,23 @@
   </div>
 </div>
 <div class="deck-container" #container>
-  <button class="btn-icon info-btn" (click)="showInfo.set(!showInfo())" [class.active]="showInfo()" [title]="infoTitle">i</button>
+  <button class="btn-icon info-btn" (click)="showInfo.set(!showInfo())" [class.active]="showInfo()" [title]="infoTitle">
+    i
+  </button>
   <button class="btn-icon fit-btn" (click)="fitToFrame()" title="Fit to frame">
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-      <path d="M1 5V1H5"/>
-      <path d="M9 1H13V5"/>
-      <path d="M13 9V13H9"/>
-      <path d="M5 13H1V9"/>
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 14 14"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linecap="round"
+    >
+      <path d="M1 5V1H5" />
+      <path d="M9 1H13V5" />
+      <path d="M13 9V13H9" />
+      <path d="M5 13H1V9" />
     </svg>
   </button>
   <a class="attribution" [href]="attributionHref" target="_blank" rel="noopener">{{ attributionText }}</a>
@@ -46,58 +56,59 @@
     </div>
   </div>
   @if (showInfo() && insights) {
-    <div class="info-panel">
-      <div class="info-panel-header">
-        <h3>{{ infoTitle }}</h3>
-        <button class="btn-icon info-close" (click)="showInfo.set(false)" title="Close">&times;</button>
-      </div>
-      <div class="info-panel-body">
-        <p>{{ infoBody }}</p>
-        <div class="info-insights">
-          <div class="info-insight">
-            <span class="info-insight-label">Priciest in {{ insights.priciest.year }}</span>
-            <span class="info-insight-value">€{{ insights.priciest.price_per_sqm.toFixed(2) }}/m²</span>
-            <span class="info-insight-sub">{{ insights.priciest.neighborhood }}</span>
-          </div>
-          <div class="info-insight">
-            <span class="info-insight-label">Biggest surge since {{ insights.biggest_surge.pre_covid_year }}</span>
-            <span class="info-insight-value">+€{{ insights.biggest_surge.delta_monthly_80sqm.toLocaleString('en-GB') }}/month</span>
-            <span class="info-insight-sub">{{ insights.biggest_surge.neighborhood }} · 80m²</span>
-          </div>
-          <div class="info-insight">
-            <span class="info-insight-label">City-wide average in {{ insights.city_avg.year }}</span>
-            <span class="info-insight-value">€{{ insights.city_avg.price_per_sqm.toFixed(2) }}/m²</span>
-            <span class="info-insight-sub">+{{ insights.city_avg.pct_change }}% since {{ insights.city_avg.pre_covid_year }}</span>
-          </div>
-        </div>
-        <p class="info-caveat">{{ infoCaveat }}</p>
-      </div>
+  <div class="info-panel">
+    <div class="info-panel-header">
+      <h3>{{ infoTitle }}</h3>
+      <button class="btn-icon info-close" (click)="showInfo.set(false)" title="Close">&times;</button>
     </div>
-  }
-
-  @if (tooltip(); as t) {
-    <div class="tooltip" [style.left.px]="t.x + 14" [style.top.px]="t.y">
-      <div class="tooltip-location">
-        <span class="tooltip-neighborhood">{{ t.neighborhood }}</span>
-        <span class="tooltip-district">{{ t.district }}</span>
-      </div>
-      <div class="tooltip-year">{{ t.year }}</div>
-      <div class="tooltip-price">{{ t.pricePerSqm }} <span class="tooltip-unit">/m²/month</span></div>
-      <div class="tooltip-total">{{ t.priceFor80sqm }} <span class="tooltip-unit">/month · 80 m²</span></div>
-      @if (t.yoy || t.vsPreCovid) {
-        <div class="tooltip-deltas">
-          @if (t.yoy) {
-            <div class="tooltip-delta" [class.up]="t.yoyUp" [class.down]="!t.yoyUp">
-              {{ t.yoyUp ? '▲' : '▼' }} {{ t.yoy }}
-            </div>
-          }
-          @if (t.vsPreCovid) {
-            <div class="tooltip-delta" [class.up]="t.vsPreCovidUp" [class.down]="!t.vsPreCovidUp">
-              {{ t.vsPreCovidUp ? '▲' : '▼' }} {{ t.vsPreCovid }}
-            </div>
-          }
+    <div class="info-panel-body">
+      <p>{{ infoBody }}</p>
+      <div class="info-insights">
+        <div class="info-insight">
+          <span class="info-insight-label">Priciest in {{ insights.priciest.year }}</span>
+          <span class="info-insight-value">€{{ insights.priciest.price_per_sqm.toFixed(2) }}/m²</span>
+          <span class="info-insight-sub">{{ insights.priciest.neighborhood }}</span>
         </div>
+        <div class="info-insight">
+          <span class="info-insight-label">Biggest surge since {{ insights.biggest_surge.pre_covid_year }}</span>
+          <span class="info-insight-value"
+            >+€{{ insights.biggest_surge.delta_monthly_80sqm.toLocaleString('en-GB') }}/month</span
+          >
+          <span class="info-insight-sub">{{ insights.biggest_surge.neighborhood }} · 80m²</span>
+        </div>
+        <div class="info-insight">
+          <span class="info-insight-label">City-wide average in {{ insights.city_avg.year }}</span>
+          <span class="info-insight-value">€{{ insights.city_avg.price_per_sqm.toFixed(2) }}/m²</span>
+          <span class="info-insight-sub"
+            >+{{ insights.city_avg.pct_change }}% since {{ insights.city_avg.pre_covid_year }}</span
+          >
+        </div>
+      </div>
+      <p class="info-caveat">{{ infoCaveat }}</p>
+    </div>
+  </div>
+  } @if (tooltip(); as t) {
+  <div class="tooltip" [style.left.px]="t.x + 14" [style.top.px]="t.y">
+    <div class="tooltip-location">
+      <span class="tooltip-neighborhood">{{ t.neighborhood }}</span>
+      <span class="tooltip-district">{{ t.district }}</span>
+    </div>
+    <div class="tooltip-year">{{ t.year }}</div>
+    <div class="tooltip-price">{{ t.pricePerSqm }} <span class="tooltip-unit">/m²/month</span></div>
+    <div class="tooltip-total">{{ t.priceFor80sqm }} <span class="tooltip-unit">/month · 80 m²</span></div>
+    @if (t.yoy || t.vsPreCovid) {
+    <div class="tooltip-deltas">
+      @if (t.yoy) {
+      <div class="tooltip-delta" [class.up]="t.yoyUp" [class.down]="!t.yoyUp">
+        {{ t.yoyUp ? '▲' : '▼' }} {{ t.yoy }}
+      </div>
+      } @if (t.vsPreCovid) {
+      <div class="tooltip-delta" [class.up]="t.vsPreCovidUp" [class.down]="!t.vsPreCovidUp">
+        {{ t.vsPreCovidUp ? '▲' : '▼' }} {{ t.vsPreCovid }}
+      </div>
       }
     </div>
+    }
+  </div>
   }
 </div>

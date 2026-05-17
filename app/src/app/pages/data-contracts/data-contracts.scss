@@ -84,7 +84,9 @@
 // ── step 2 ────────────────────────────────────────────────────────────────────
 
 // .code-block provides visual style; margin scoped here
-.sql-readonly { margin-bottom: 1rem; }
+.sql-readonly {
+  margin-bottom: 1rem;
+}
 
 // ── errors + hints ────────────────────────────────────────────────────────────
 
@@ -135,7 +137,9 @@
 }
 
 // .code-block provides visual style; margin scoped here
-.contract-block { margin: 1.5rem 0; }
+.contract-block {
+  margin: 1.5rem 0;
+}
 
 .meta-reveal {
   margin-top: 2.5rem !important;
