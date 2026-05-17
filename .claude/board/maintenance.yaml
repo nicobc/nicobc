@@ -77,7 +77,17 @@ tickets:
     type: feat
     scope: data-contracts
     status: DONE
-    description: Step 1 currently validates query output loosely. Replace with two explicit tiers — JSON schema for output structure, expected output for business logic — so feedback is precise and mirrors the contract concept the lab teaches.
+    description: Step 1 currently validates query output loosely.
+
+  - id: T7
+    title: Bar chart — black bars in dark mode
+    type: fix
+    scope: ui
+    status: IN PROGRESS
+    description: resolveTokenColor assumes 6-digit hex. --fg in dark mode is #fff (3-digit shorthand), causing incorrect channel parsing and nearly-invisible bars.
+    acceptance_criteria:
+      - bar chart bars are white/light in dark mode
+      - resolveTokenColor expands 3-digit hex before parsing Replace with two explicit tiers — JSON schema for output structure, expected output for business logic — so feedback is precise and mirrors the contract concept the lab teaches.
     acceptance_criteria:
       - JSON schema defined for expected output (column names and types); schema failure shows current error behaviour
       - expected output defined as exact match fixture (top 5 rows, post-T5 values)
