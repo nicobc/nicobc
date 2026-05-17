@@ -2,7 +2,7 @@ id: EPIC-008
 title: Test Coverage
 scope: quality
 category: quality
-status: IN PROGRESS
+status: DONE
 description: Establish test coverage across the repo — Python pipeline tests and Angular app tests. Includes testing skill files for both stacks.
 
 tickets:
@@ -81,7 +81,7 @@ tickets:
   - id: T8
     title: Angular testing skill + test coverage pass
     type: test
-    status: TESTING
+    status: DONE
     description: Write .claude/skills/angular-testing.md; apply across app/ specs, adding and refactoring tests to match the skill, adjusting the skill as the pass surfaces new patterns.
     acceptance_criteria:
       - .claude/skills/angular-testing.md created; covers what to test, fixture patterns, async handling, what not to test
