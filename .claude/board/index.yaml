@@ -22,6 +22,4 @@ done:
   - id: EPIC-007
     title: Deployment
 
-maintenance:
-  - id: MAINT/T7
-    title: Bar chart — black bars in dark mode
+maintenance: []

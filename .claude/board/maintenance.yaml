@@ -83,7 +83,7 @@ tickets:
     title: Bar chart — black bars in dark mode
     type: fix
     scope: ui
-    status: TESTING
+    status: DONE
     description: resolveTokenColor assumes 6-digit hex. --fg in dark mode is #fff (3-digit shorthand), causing incorrect channel parsing and nearly-invisible bars.
     acceptance_criteria:
       - bar chart bars are white/light in dark mode
