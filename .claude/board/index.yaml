@@ -1,10 +1,10 @@
 ready:
   - id: EPIC-004
     title: Unit Testing for Data Engineers Lab
+  - id: EPIC-006
+    title: UI/UX Audit
 
 ideation:
-  - id: EPIC-006
-    title: Copy Audit
   - id: EPIC-009
     title: Spark UI Literacy Lab
 
