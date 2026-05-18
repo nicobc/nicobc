@@ -1,8 +1,10 @@
+in_progress:
+  - id: EPIC-006
+    title: UI/UX Audit
+
 ready:
   - id: EPIC-004
     title: Unit Testing for Data Engineers Lab
-  - id: EPIC-006
-    title: UI/UX Audit
 
 ideation:
   - id: EPIC-009
