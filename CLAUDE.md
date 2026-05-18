@@ -8,6 +8,8 @@ Personal portfolio built to signal staff-level data engineering to hiring manage
 
 **Before editing any file on a committable task, run `git branch --show-current`. If it prints `main`, stop and cut a branch first.**
 
+**Push back on code correctness.** If a challenge would result in objectively worse code — more allocations, less clear, slower — explain the trade-off before changing anything. Do not silently comply.
+
 **Never commit or push directly to main.** Every change lives on a branch. Before any `git commit`, verify you are not on `main`:
 ```
 git branch --show-current   # must not print "main"

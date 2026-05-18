@@ -58,6 +58,9 @@ Grooming commits include the epic file and any corresponding index.yaml changes.
 ## maintenance index section
 Open tickets from `maintenance.yaml` plus any open non-`feat` tickets from feature epics appear in the `maintenance:` section of `index.yaml`. Load individual files only when you need ticket detail.
 
+## epic filenames
+Epic yaml files use lowercase: `epic-007.yaml` not `EPIC-007.yaml`. The `id:` field inside the file stays uppercase (`id: EPIC-007`). On macOS, case renames require `git mv` (filesystem is case-insensitive).
+
 ## yaml integrity
 Edit field values only. Never add or remove keys from epic or ticket entries.
 Intentional schema changes (e.g. adding a new field to all epics) are exceptions and require an explicit decision.
