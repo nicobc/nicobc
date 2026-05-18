@@ -7,7 +7,7 @@ description: Thorough evaluation and improvement of UI/UX across the site — la
 notes:
   - Copy register: about page + BCN map copy; no LLM patterns (no "not just X but Y", no triple enumerations, no dash punchlines)
   - Target audience is not beginners; no need to explain star schema, OLAP/OLTP, or basic SQL/Python
-  - Schema panel uses a pre-rendered SVG; .mmd is the source of truth, mmdc CLI (dev-only) regenerates the SVG via npm run gen:schema
+  - Schema panel is a custom Angular component — no Mermaid, no SVG file, no external diagram dependency
   - T4 (copy) should follow T1 (schema panel) so challenge schema hints can be simplified with the panel in place
 tickets:
 
@@ -18,13 +18,15 @@ tickets:
     description: Learner can inspect the workshop data model at any point without it being repeated in every challenge.
     acceptance_criteria:
       - Workshop landing page has a switch toggling between cards view and data model view; no other content changes
-      - Data model view renders a pre-rendered Mermaid erDiagram SVG — no runtime Mermaid JS
-      - .mmd source file checked in as source of truth; npm run gen:schema script runs mmdc and writes the SVG to assets/
-      - SVG inlined in the component; Mermaid ER diagram CSS classes (.er.entityBox etc.) overridden with design token variables for light/dark theming
-      - All workshop step pages have a sticky button (fixed position) that opens a modal with the same ER diagram SVG
-      - "@mermaid-js/mermaid-cli" added as a dev dependency only; does not appear in the production bundle
-    notes:
-      - mmdc pulls in Puppeteer/Chromium as a transitive dep; npm install will be heavier on dev machines — worth noting in PR description
+      - Data model renders as a custom Angular component — no Mermaid, no SVG file, no external diagram library
+      - 2×2 grid layout: dim_customer and dim_product on the top row, fct_order and fct_order_item on the bottom row
+      - Each entity card has a fixed header (DIM/FCT badge + table name + expand/collapse toggle) and a collapsible field list; fields collapsed by default
+      - Field list shows three columns: annotation (# for PK, → for FK, blank otherwise), field name, SQL type; no nullability column
+      - Relationship lines (SVG overlay) connect entity headers only; vertical positions computed once on ngAfterViewInit; lines never recalculate on expand/collapse
+      - Hover on a FK field highlights the connecting line and the target entity header; hover on a PK field highlights all connecting lines and all FK entity headers pointing to it
+      - All four tables include created_at TIMESTAMP and updated_at TIMESTAMP fields; seed.ts interfaces updated accordingly
+      - All workshop step pages have a sticky button (fixed position) that opens a modal with the same schema component
+    notes: []
 
   - id: T2
     title: SQL query output table in challenge modal
@@ -60,3 +62,13 @@ tickets:
       - Challenge schema hint strings simplified or removed where the schema panel makes them redundant
       - No LLM copy patterns — no "not just X but Y", no triple enumerations, no dash punchlines
       - Reference register is the about page and BCN map copy
+
+  - id: T5
+    title: Back navigation — step 1 to workshop landing page
+    type: feat
+    status: READY
+    description: As a learner, I can navigate back to the workshop landing page from step 1.
+    acceptance_criteria:
+      - Step 1 of every workshop displays a back arrow consistent with the one shown on steps 2+
+      - Clicking the back arrow from step 1 navigates to the workshop landing page
+      - No other step navigation is affected
