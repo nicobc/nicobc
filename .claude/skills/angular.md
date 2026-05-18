@@ -58,6 +58,7 @@ Define every reusable unit at the smallest scope that covers all its consumers.
 - Maximize data-to-ink ratio: every rendered element must earn its place
 - Visual elements (spacing, borders, color) should communicate structure, hierarchy, or state
 - Prefer CSS over extra DOM nodes for visual effects
+- Slick over safe: when visual choices exist, pick the clean and confident one, not the cautious one
 
 ## Design system
 Full system defined in `styles.scss` — read it before styling anything. Key rules:
