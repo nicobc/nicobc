@@ -8,9 +8,26 @@
     (click)="$event.stopPropagation()"
     (keydown)="trapFocus($event)"
   >
-    @if (showClose) {
-    <button class="btn-icon challenge-close" (click)="closed.emit()">&#x2715;</button>
-    }
+    <div class="challenge-panel-header">
+      <button
+        class="btn-icon schema-btn"
+        (click)="schemaOpen.update(v => !v)"
+        [attr.aria-expanded]="schemaOpen()"
+        aria-label="Toggle data model"
+      >
+        <span class="schema-icon-wrap">
+          <fa-icon class="icon-db" [icon]="dbIcon" />
+          <fa-icon class="icon-star" [icon]="starIcon" />
+        </span>
+      </button>
+      @if (showClose) {
+      <button class="btn-icon challenge-close" (click)="closed.emit()">&#x2715;</button>
+      }
+    </div>
+
+    <div class="collapsible-body challenge-schema-inline" [class.is-open]="schemaOpen()">
+      <div><app-schema-panel [copyable]="true" /></div>
+    </div>
 
     <ng-content />
   </div>

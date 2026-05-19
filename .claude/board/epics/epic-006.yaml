@@ -2,29 +2,31 @@ id: EPIC-006
 title: UI/UX Audit
 scope: ux
 category: project
-status: READY
+status: IN PROGRESS
 description: Thorough evaluation and improvement of UI/UX across the site — layout density, interaction design, data model visibility, and copy register.
 notes:
   - Copy register: about page + BCN map copy; no LLM patterns (no "not just X but Y", no triple enumerations, no dash punchlines)
   - Target audience is not beginners; no need to explain star schema, OLAP/OLTP, or basic SQL/Python
-  - Schema panel uses a pre-rendered SVG; .mmd is the source of truth, mmdc CLI (dev-only) regenerates the SVG via npm run gen:schema
-  - T4 (copy) should follow T1 (schema panel) so challenge schema hints can be simplified with the panel in place
+  - Schema panel is a custom Angular component — no Mermaid, no SVG file, no external diagram dependency
+  - T3 (copy) precedes T4 (density): copy removal eliminates DOM elements the density pass would otherwise have to work around
 tickets:
 
   - id: T1
-    title: Schema panel — landing page switch + in-workshop sticky modal
+    title: Schema panel — inline toggle on workshop pages; copyable in challenge modal
     type: feat
-    status: READY
+    status: DONE
     description: Learner can inspect the workshop data model at any point without it being repeated in every challenge.
     acceptance_criteria:
-      - Workshop landing page has a switch toggling between cards view and data model view; no other content changes
-      - Data model view renders a pre-rendered Mermaid erDiagram SVG — no runtime Mermaid JS
-      - .mmd source file checked in as source of truth; npm run gen:schema script runs mmdc and writes the SVG to assets/
-      - SVG inlined in the component; Mermaid ER diagram CSS classes (.er.entityBox etc.) overridden with design token variables for light/dark theming
-      - All workshop step pages have a sticky button (fixed position) that opens a modal with the same ER diagram SVG
-      - "@mermaid-js/mermaid-cli" added as a dev dependency only; does not appear in the production bundle
-    notes:
-      - mmdc pulls in Puppeteer/Chromium as a transitive dep; npm install will be heavier on dev machines — worth noting in PR description
+      - Workshops landing page has a toggle button in the eyebrow row that expands/collapses an inline schema panel above the workshop grid
+      - Data model renders as a custom Angular component — no Mermaid, no SVG file, no external diagram library
+      - 2×2 grid layout: dim_customer and dim_product on the top row, fct_order and fct_order_item on the bottom row
+      - Each entity card has a header (table name + expand/collapse chevron) and a collapsible animated field list; fields collapsed by default
+      - Field list shows three columns: annotation (# for PK, → for FK, blank otherwise), field name, SQL type; no nullability column
+      - Relationship lines (SVG overlay) connect entity headers only; vertical positions computed once on ngAfterViewInit; lines never recalculate on expand/collapse
+      - Hover on a FK field highlights the connecting line and the target entity header; hover on a PK field highlights all connecting lines and all FK entity headers pointing to it
+      - All four tables include created_at TIMESTAMP and updated_at TIMESTAMP fields; seed.ts interfaces updated accordingly
+      - Workshop step pages (distributed-computing, data-contracts) have a toggle button in the lab header that expands/collapses an inline schema panel; the challenge modal includes the schema panel in copyable mode (field name copy-to-clipboard)
+    notes: []
 
   - id: T2
     title: SQL query output table in challenge modal
@@ -39,17 +41,6 @@ tickets:
       - Result table styled consistently with the existing design system
 
   - id: T3
-    title: Distributed computing lab — vertical density pass
-    type: style
-    status: READY
-    description: Workshop steps fit on a 13" MacBook Pro viewport; copy-phase steps do not require scrolling to reach the CTA.
-    acceptance_criteria:
-      - Copy-phase steps (paragraphs + CTA button) visible without scrolling on a 13" MBP (~900px usable height)
-      - Viz-phase overflow is acceptable and out of scope
-      - Spacing reductions reviewed iteratively across all elements of the distributed computing lab
-      - No visual regression on other lab pages (data-contracts shares global lab styles)
-
-  - id: T4
     title: Copy pass — workshops and landing page
     type: style
     status: READY
@@ -60,3 +51,36 @@ tickets:
       - Challenge schema hint strings simplified or removed where the schema panel makes them redundant
       - No LLM copy patterns — no "not just X but Y", no triple enumerations, no dash punchlines
       - Reference register is the about page and BCN map copy
+
+  - id: T4
+    title: Distributed computing lab — vertical density pass
+    type: style
+    status: READY
+    description: Workshop steps fit on a 13" MacBook Pro viewport; copy-phase steps do not require scrolling to reach the CTA.
+    acceptance_criteria:
+      - Copy-phase steps (paragraphs + CTA button) visible without scrolling on a 13" MBP (~900px usable height)
+      - Viz-phase overflow is acceptable and out of scope
+      - Spacing reductions reviewed iteratively across all elements of the distributed computing lab
+      - No visual regression on other lab pages (data-contracts shares global lab styles)
+
+  - id: T5
+    title: Back navigation — step 1 to workshop landing page
+    type: feat
+    status: READY
+    description: As a learner, I can navigate back to the workshop landing page from step 1.
+    acceptance_criteria:
+      - Step 1 of every workshop displays a back arrow consistent with the one shown on steps 2+
+      - Clicking the back arrow from step 1 navigates to the workshop landing page
+      - No other step navigation is affected
+
+  - id: T6
+    title: Responsive design — site-wide mobile pass
+    type: style
+    status: READY
+    description: All lab pages and the schema panel render correctly on mobile viewports; no horizontal scroll at 375px.
+    acceptance_criteria:
+      - Schema panel switches to a single-column stacked layout on small screens
+      - Workshops landing, distributed-computing, and data-contracts pages reviewed for overflow and density on mobile
+      - Challenge modal reviewed for usability on small viewports
+      - No horizontal scroll on any page at 375px viewport width
+      - Breakpoints consistent with the existing 768px threshold in global styles

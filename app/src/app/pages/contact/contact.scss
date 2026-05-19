@@ -20,7 +20,7 @@ a {
   color: var(--fg);
   text-decoration: none;
   opacity: var(--opacity-secondary);
-  transition: opacity var(--transition) ease;
+  transition: opacity var(--transition);
 
   &:hover {
     opacity: 1;

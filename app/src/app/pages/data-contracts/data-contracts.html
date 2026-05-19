@@ -1,14 +1,31 @@
 <div class="lab-page">
   <header class="lab-header">
-    <span class="eyebrow">Data Engineering · Contracts</span>
+    <div class="lab-eyebrow-row">
+      <span class="eyebrow">Data Engineering · Contracts</span>
+      <button
+        class="btn-icon schema-btn"
+        (click)="schemaOpen.update(v => !v)"
+        [attr.aria-expanded]="schemaOpen()"
+        aria-label="Toggle data model"
+      >
+        <span class="schema-icon-wrap">
+          <fa-icon class="icon-db" [icon]="dbIcon" />
+          <fa-icon class="icon-star" [icon]="starIcon" />
+        </span>
+      </button>
+    </div>
     <h1>When good queries go wrong</h1>
   </header>
+
+  <div class="schema-inline" [class.is-open]="schemaOpen()">
+    <div><app-schema-panel /></div>
+  </div>
 
   @if (!dbReady()) {
   <div class="db-loading">{{ loadingText }}</div>
   } @else {
 
-  <div class="step-shell">
+  <div class="step-shell" #stepShell>
     @if (step() > 1) {
     <button class="btn-ghost step-back" (click)="goBack()">&#8592;</button>
     }

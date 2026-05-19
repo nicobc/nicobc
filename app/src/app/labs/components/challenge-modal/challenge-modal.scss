@@ -19,17 +19,35 @@
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--br-lg);
-  padding: 2rem;
+  padding: 1.25rem 2rem 2rem;
   width: 100%;
   max-width: 640px;
   max-height: 90vh;
   overflow-y: auto;
 }
 
-// .btn-icon provides visual style; position scoped here
+.challenge-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+// .btn-icon provides visual style; font-size scoped here
 .challenge-close {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
   font-size: var(--fs-lg);
+}
+
+// Collapsible schema diagram — same grid-rows trick as .schema-inline, with scroll cap
+.challenge-schema-inline {
+  > div {
+    transition: padding-bottom var(--transition);
+  }
+
+  &.is-open > div {
+    overflow-y: auto;
+    max-height: 260px;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border-faint);
+  }
 }

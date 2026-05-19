@@ -65,7 +65,7 @@
     accent-color: currentcolor;
     cursor: pointer;
     opacity: var(--opacity-muted);
-    transition: opacity var(--transition-fast) ease;
+    transition: opacity var(--transition-fast);
 
     &:hover {
       opacity: 1;
@@ -301,7 +301,7 @@
   letter-spacing: 0.02em;
   color: inherit;
   text-decoration: none;
-  transition: opacity var(--transition-fast) ease;
+  transition: opacity var(--transition-fast);
 
   &:hover {
     opacity: var(--opacity-secondary);

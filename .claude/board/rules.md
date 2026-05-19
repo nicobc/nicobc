@@ -6,7 +6,7 @@ story: alias for a `feat`-type ticket; "As a X, I want Y" format applies to stor
 
 ## ticket numbering
 Tickets are numbered per-epic or per-file: T1, T2, …
-Referenced externally as `EPIC-XXX / TN` for epic tickets, `MAINT / TN` for maintenance tickets.
+Numbers must read sequentially (T1, T2, T3 …) top-to-bottom with no gaps. The file is the source of truth for execution order.
 
 ## ticket type
 All tickets have a `type` field. Valid values mirror the conventional commits specification:
@@ -43,7 +43,9 @@ When updating a ticket status, check whether the change requires updating the pa
 Cross-cutting non-`feat` work that doesn't belong to a specific epic lives in `maintenance.yaml`.
 Non-`feat` tickets that do belong to a specific epic (e.g. a bug in a feature area) live in that epic's `tickets:` list.
 
-New tickets are always appended at the bottom of their file (epic or maintenance.yaml). Never insert mid-file. Numbering must match append order so the file reads chronologically.
+New tickets are always appended at the bottom of their file (epic or maintenance.yaml). Never insert a ticket mid-file without an explicit instruction to do so.
+
+Reordering READY tickets (and renumbering to keep the sequence clean) is permitted with explicit owner approval. Tickets that have been started (IN PROGRESS, TESTING, or DONE) must not be renumbered — their IDs appear in git history and commit messages.
 
 ## commit convention
 Code commits: `type(scope): description [EPIC-XXX/TN]` or `[MAINT/TN]` — ticket ID in the title makes git log self-contextualizing without scanning epic files. `type` and `scope` are taken directly from the ticket; epic tickets inherit scope from the parent epic; maintenance tickets have their own `scope` field.

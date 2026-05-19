@@ -18,7 +18,7 @@ fa-icon {
   position: relative;
   cursor: pointer;
   padding: 0;
-  transition: background var(--transition) ease;
+  transition: background var(--transition);
 
   &:hover {
     background: rgb(128 128 128 / 50%);
@@ -33,7 +33,7 @@ fa-icon {
   height: 14px;
   border-radius: 50%;
   background: #fff;
-  transition: transform var(--transition) ease;
+  transition: transform var(--transition);
 }
 
 .track.dark .knob {

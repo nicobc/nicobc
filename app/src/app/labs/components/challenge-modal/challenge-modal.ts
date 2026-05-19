@@ -7,11 +7,15 @@ import {
   Output,
   EventEmitter,
   ViewChild,
+  signal,
 } from '@angular/core';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { faDatabase, faStar } from '@fortawesome/free-solid-svg-icons';
+import { SchemaPanel } from '../schema-panel/schema-panel';
 
 @Component({
   selector: 'app-challenge-modal',
-  imports: [],
+  imports: [FaIconComponent, SchemaPanel],
   templateUrl: './challenge-modal.html',
   styleUrl: './challenge-modal.scss',
 })
@@ -20,6 +24,10 @@ export class ChallengeModal implements AfterViewInit {
   @Output() readonly closed = new EventEmitter<void>();
 
   @ViewChild('panel') private panel?: ElementRef<HTMLElement>;
+
+  readonly schemaOpen = signal(false);
+  readonly dbIcon = faDatabase;
+  readonly starIcon = faStar;
 
   ngAfterViewInit(): void {
     const first = this.panel?.nativeElement.querySelector<HTMLElement>(
