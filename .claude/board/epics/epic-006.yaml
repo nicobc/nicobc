@@ -34,8 +34,10 @@ tickets:
     status: TESTING
     description: As a learner, I want to see what my query actually returned after clicking Check, regardless of whether it is correct.
     acceptance_criteria:
-      - After clicking Check, result rows are rendered as a table inside the challenge modal whenever the query executes without error (wrong-output and correct states)
-      - wrong-sql and unsafe-sql states show no table
+      - Challenge modal SQL editor replaced with CodeMirror (syntax highlighting, consistent with data-contracts lab)
+      - After clicking Check, result rows are rendered as a table inside the challenge modal whenever the query executes without error (wrong-output, not-optimized, and correct states)
+      - wrong-sql state shows the raw DuckDB error trace in a code block; no result table
+      - unsafe-sql state shows no table and no error trace
       - Per-step tailored wrong-output hint strings removed; replaced with a single generic message across all steps
       - correct state shows the result table alongside the success feedback
       - Result table styled consistently with the existing design system
