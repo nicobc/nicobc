@@ -14,7 +14,7 @@ tickets:
   - id: T1
     title: Schema panel — landing page switch + in-workshop sticky modal
     type: feat
-    status: IN PROGRESS
+    status: TESTING
     description: Learner can inspect the workshop data model at any point without it being repeated in every challenge.
     acceptance_criteria:
       - Workshop landing page has a switch toggling between cards view and data model view; no other content changes
