@@ -8,8 +8,6 @@ story: alias for a `feat`-type ticket; "As a X, I want Y" format applies to stor
 Tickets are numbered per-epic or per-file: T1, T2, …
 Numbers must read sequentially (T1, T2, T3 …) top-to-bottom with no gaps. The file is the source of truth for execution order.
 
-External references: `MAINT / TN` for maintenance tickets. Epic ticket IDs (e.g. `EPIC-006/T3`) are impl details of the epic file — only maintenance tickets are tracked directly in index.yaml.
-
 ## ticket type
 All tickets have a `type` field. Valid values mirror the conventional commits specification:
 `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `perf`, `ci`, `chore`, `build`, `revert`
