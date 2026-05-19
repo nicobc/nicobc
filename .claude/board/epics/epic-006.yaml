@@ -45,14 +45,18 @@ tickets:
   - id: T3
     title: Copy pass — workshops and landing page
     type: style
-    status: READY
-    description: All workshop copy reads like a person wrote it; challenge schema hints simplified now that the schema panel exists.
+    status: IN PROGRESS
+    description: Workshop titles, lab header categories, and all prose updated to match the distributed computing register. Unit testing card hidden until EPIC-004 ships.
     acceptance_criteria:
-      - All lab prose, step paragraphs, challenge intros, feedback messages, and step labels reviewed and edited in distributed computing and data contracts
-      - Workshop landing page copy reviewed
+      - Unit testing workshop card removed from landing page; seq numbers and scenario line updated to reflect two visible workshops
+      - Workshop titles updated — data contracts to "Catching schema drift"; unit testing to "I/O isolation in pytest" (in data only, card hidden)
+      - Lab header category eyebrow updated to full noun phrase without "Data Engineering" prefix — "Distributed computing", "Data contracts", "Unit testing"
+      - Data contracts workshop card description updated (no "A hands-on look at" pattern)
+      - All lab prose, step paragraphs, challenge intros, and feedback messages reviewed in distributed computing and data contracts
+      - Broetry patterns removed: staccato fragment punchlines and em-dash payoff clauses
       - Challenge schema hint strings simplified or removed where the schema panel makes them redundant
       - No LLM copy patterns — no "not just X but Y", no triple enumerations, no dash punchlines
-      - Reference register is the about page and BCN map copy
+      - Reference register: distributed computing step paragraphs for technical prose; about page and BCN map copy for general register
 
   - id: T4
     title: Distributed computing lab — vertical density pass
