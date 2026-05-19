@@ -1,5 +1,8 @@
 {
   "permissions": {
+    "ask": [
+      "Edit(.claude/**)"
+    ],
     "allow": [
       "Bash(git log:*)",
       "Bash(git status:*)",

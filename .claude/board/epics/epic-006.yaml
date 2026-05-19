@@ -76,6 +76,21 @@ tickets:
       - No other step navigation is affected
 
   - id: T6
+    title: Challenge modal — Run, Submit, Reveal, Restart interaction model
+    type: feat
+    status: READY
+    description: As a learner, I can freely run queries to explore results before submitting for validation, restart from the starting query at any point, and compare my solution to the canonical answer even after solving the challenge.
+    acceptance_criteria:
+      - Control row layout in unanswered/wrong states — [↺] [ Run ]  [ Reveal ]  [ Submit ]
+      - Control row layout in correct state — [↺] [ Run ]  [ Reveal ]  [ Submit ]  [ Next ]
+      - Run executes the query and displays the result table; no validation, no feedback message change
+      - Submit validates the query and updates state and feedback as before (renamed from Check)
+      - Restart (↺ icon, no label) resets the editor to the starting SQL and clears state and result table; available in all states including correct
+      - Reveal shows the canonical solution SQL in the editor in all states including correct; does not change challenge state if already correct
+      - Editor remains editable in the correct state
+      - Mobile layout deferred to T7 — icon-only buttons at narrow viewports acceptable as out-of-scope here
+
+  - id: T7
     title: Responsive design — site-wide mobile pass
     type: style
     status: READY
@@ -83,6 +98,7 @@ tickets:
     acceptance_criteria:
       - Schema panel switches to a single-column stacked layout on small screens
       - Workshops landing, distributed-computing, and data-contracts pages reviewed for overflow and density on mobile
+      - Challenge modal control row uses icon-only buttons on small viewports to fit the four-button layout
       - Challenge modal reviewed for usability on small viewports
       - No horizontal scroll on any page at 375px viewport width
       - Breakpoints consistent with the existing 768px threshold in global styles
