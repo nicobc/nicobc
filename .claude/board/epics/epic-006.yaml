@@ -106,3 +106,14 @@ tickets:
       - Challenge modal reviewed for usability on small viewports
       - No horizontal scroll on any page at 375px viewport width
       - Breakpoints consistent with the existing 768px threshold in global styles
+
+  - id: T8
+    title: Challenge info icon — how the challenge environment works
+    type: feat
+    status: READY
+    description: A help icon on challenge components that explains on hover or click how the challenge runs — designed to extend beyond SQL editor challenges to future Spark UI challenges.
+    acceptance_criteria:
+      - A "?" icon is visible on each challenge component
+      - On hover or click, a tooltip or popover explains how the challenge environment works (SQL challenges run in the browser on DuckDB)
+      - Copy and design are extensible — the pattern must accommodate future challenge types (e.g. Spark UI) without structural changes
+      - Tooltip pattern is consistent with the query-hint tooltip introduced in T3
