@@ -11,7 +11,9 @@ import {
 } from '@angular/core';
 import { ChallengeHandle } from '../../labs/challenge-controller';
 import { ChallengeModal } from '../../labs/components/challenge-modal/challenge-modal';
+import { SqlEditor } from '../../labs/components/sql-editor/sql-editor';
 import { DataMovementViz, VizMode, VizScenario } from '../../labs/components/data-movement-viz/data-movement-viz';
+import { QueryResult } from '../../labs/db/duckdb';
 
 const UNLOCK_MODE: Partial<Record<VizScenario, VizMode>> = {
   'column-pruning': 'pruned',
@@ -24,6 +26,8 @@ export interface WorkshopStepConfig {
   paragraphs: string[];
   controller: ChallengeHandle;
   sql: WritableSignal<string>;
+  queryResult: WritableSignal<QueryResult | null>;
+  queryError: WritableSignal<string | null>;
   startingSql: string;
   solutionSql: string;
   schema: string;
@@ -34,7 +38,7 @@ export interface WorkshopStepConfig {
 
 @Component({
   selector: 'app-workshop-step',
-  imports: [DataMovementViz, ChallengeModal],
+  imports: [DataMovementViz, ChallengeModal, SqlEditor],
   templateUrl: './workshop-step.html',
   styleUrl: './workshop-step.scss',
 })
@@ -44,6 +48,7 @@ export class WorkshopStep implements OnChanges {
   @Output() readonly scrollToStep = new EventEmitter<void>();
 
   @ViewChild(DataMovementViz) private readonly viz?: DataMovementViz;
+  @ViewChild(SqlEditor) private readonly sqlEditorRef?: SqlEditor;
   @ViewChild('challengeTrigger') private readonly challengeTrigger?: ElementRef<HTMLButtonElement>;
 
   readonly phase = signal<'viz' | 'copy'>('viz');
@@ -61,11 +66,18 @@ export class WorkshopStep implements OnChanges {
     return this.config.isFinalStep ? 'Done' : 'Next';
   }
 
+  readonly wrongOutputMessage = 'The query ran, but the output does not match.';
+
   get feedbackMessage(): string | null {
     const state = this.config.controller.state();
     if (state === 'unanswered') return null;
+    if (state === 'wrong-output') return this.wrongOutputMessage;
     const key = state === 'correct' ? (this.config.controller.solutionRevealed() ? 'revealed' : 'correct') : state;
     return this.config.feedback[key] ?? null;
+  }
+
+  get showQueryError(): boolean {
+    return this.config.controller.state() === 'wrong-sql' && !!this.config.queryError();
   }
 
   get feedbackClass(): string {
@@ -104,6 +116,8 @@ export class WorkshopStep implements OnChanges {
 
   openChallenge(): void {
     this.config.sql.set(this.config.startingSql);
+    this.config.queryResult.set(null);
+    this.config.queryError.set(null);
     this.config.controller.open();
   }
 
@@ -112,8 +126,8 @@ export class WorkshopStep implements OnChanges {
     this.challengeTrigger?.nativeElement.focus();
   }
 
-  onChallengeInput(event: Event): void {
-    this.config.sql.set((event.target as HTMLTextAreaElement).value);
+  onChallengeInput(value: string): void {
+    this.config.sql.set(value);
   }
 
   async submitChallenge(): Promise<void> {
@@ -121,6 +135,7 @@ export class WorkshopStep implements OnChanges {
   }
 
   revealSolution(): void {
+    this.sqlEditorRef?.setValue(this.config.solutionSql);
     this.config.sql.set(this.config.solutionSql);
     this.config.controller.reveal();
   }

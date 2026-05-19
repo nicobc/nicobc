@@ -1,11 +1,11 @@
-import { Component, ElementRef, ViewChild, computed, OnInit, signal, Signal } from '@angular/core';
+import { Component, ElementRef, ViewChild, computed, OnInit, signal, Signal, WritableSignal } from '@angular/core';
 import { parse, Statement } from 'pgsql-ast-parser';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faDatabase, faStar } from '@fortawesome/free-solid-svg-icons';
 import { checkPruningStructure, checkPushdownStructure, checkCapstoneStructure } from './challenge-validators';
 import { WorkshopStep, WorkshopStepConfig } from './workshop-step';
 import { ChallengeController } from '../../labs/challenge-controller';
-import { execute } from '../../labs/db/duckdb';
+import { execute, QueryResult } from '../../labs/db/duckdb';
 import { runQuery, matchesExpected } from '../../labs/validation';
 import { dimProducts, dimCustomers, fctOrdersBatch1, fctOrderItems } from '../../labs/data/seed';
 import { SchemaPanel } from '../../labs/components/schema-panel/schema-panel';
@@ -25,7 +25,7 @@ import {
 // ── state types ───────────────────────────────────────────────────────────────
 
 type ChallengeState = 'unanswered' | 'unsafe-sql' | 'wrong-sql' | 'wrong-output' | 'not-optimized' | 'correct';
-type FeedbackMap = Record<Exclude<ChallengeState, 'unanswered'> | 'revealed', string>;
+type FeedbackMap = Record<Exclude<ChallengeState, 'unanswered' | 'wrong-output'> | 'revealed', string>;
 
 // ── validation pipeline ───────────────────────────────────────────────────────
 
@@ -34,9 +34,13 @@ function makeValidator(
   controller: ChallengeController<ChallengeState>,
   checkStructure: (stmts: Statement[]) => 'not-optimized' | 'correct',
   expectedRows: Record<string, unknown>[],
+  queryResult: WritableSignal<QueryResult | null>,
+  queryError: WritableSignal<string | null>,
 ): () => Promise<void> {
   return async () => {
     const s = sql();
+    queryResult.set(null);
+    queryError.set(null);
     let stmts: Statement[] | undefined;
     try {
       const parsed = parse(s);
@@ -48,12 +52,14 @@ function makeValidator(
     } catch {
       /* malformed SQL — runQuery will surface the error */
     }
-    const rows = await runQuery(s);
-    if (!rows) {
+    const { data: result, error } = await runQuery(s);
+    if (!result) {
+      queryError.set(error);
       controller.state.set('wrong-sql');
       return;
     }
-    if (!matchesExpected(rows, expectedRows)) {
+    queryResult.set(result);
+    if (!matchesExpected(result.rows, expectedRows)) {
       controller.state.set('wrong-output');
       return;
     }
@@ -96,6 +102,14 @@ export class DistributedComputing implements OnInit {
   private readonly ppChallengeSQL = signal(PP_STARTING_SQL);
   private readonly capstoneChallengeSQL = signal(CAPSTONE_STARTING_SQL);
 
+  private readonly step1QueryResult = signal<QueryResult | null>(null);
+  private readonly step2QueryResult = signal<QueryResult | null>(null);
+  private readonly step3QueryResult = signal<QueryResult | null>(null);
+
+  private readonly step1QueryError = signal<string | null>(null);
+  private readonly step2QueryError = signal<string | null>(null);
+  private readonly step3QueryError = signal<string | null>(null);
+
   private dbReady = false;
 
   readonly stepConfigs: WorkshopStepConfig[] = [
@@ -108,6 +122,8 @@ export class DistributedComputing implements OnInit {
       ],
       controller: this.step1Challenge,
       sql: this.cpChallengeSQL,
+      queryResult: this.step1QueryResult,
+      queryError: this.step1QueryError,
       startingSql: CP_STARTING_SQL,
       solutionSql: CP_SOLUTION_SQL,
       schema:
@@ -116,7 +132,6 @@ export class DistributedComputing implements OnInit {
       feedback: {
         'unsafe-sql': 'Only SELECT queries are allowed here.',
         'wrong-sql': 'The query could not run. Check your SQL and try again.',
-        'wrong-output': "The first CTE looks right, but the result doesn't match.",
         'not-optimized':
           'Not quite. Trace what <code>category_revenue</code> needs from <code>enriched_items</code> — only project those columns.',
         correct:
@@ -124,7 +139,14 @@ export class DistributedComputing implements OnInit {
         revealed:
           'The answer is <code>product_id</code> for the join, <code>category</code> for the group-by, <code>unit_price</code> for the aggregation. Everything else in <code>dim_products</code> is unnecessary.',
       } satisfies FeedbackMap,
-      validate: makeValidator(this.cpChallengeSQL, this.step1Challenge, checkPruningStructure, CP_EXPECTED_ROWS),
+      validate: makeValidator(
+        this.cpChallengeSQL,
+        this.step1Challenge,
+        checkPruningStructure,
+        CP_EXPECTED_ROWS,
+        this.step1QueryResult,
+        this.step1QueryError,
+      ),
     },
     {
       vizScenario: 'predicate-pushdown',
@@ -135,6 +157,8 @@ export class DistributedComputing implements OnInit {
       ],
       controller: this.step2Challenge,
       sql: this.ppChallengeSQL,
+      queryResult: this.step2QueryResult,
+      queryError: this.step2QueryError,
       startingSql: PP_STARTING_SQL,
       solutionSql: PP_SOLUTION_SQL,
       schema:
@@ -143,7 +167,6 @@ export class DistributedComputing implements OnInit {
       feedback: {
         'unsafe-sql': 'Only SELECT queries are allowed here.',
         'wrong-sql': 'The query could not run. Check your SQL and try again.',
-        'wrong-output': "Structure looks right, but the result doesn't match. Check the filter value or the threshold.",
         'not-optimized':
           "Both predicates are in <code>HAVING</code>, which runs after <code>GROUP BY</code>. One of them doesn't depend on any aggregated value — which one can be evaluated before the rows are grouped?",
         correct:
@@ -151,7 +174,14 @@ export class DistributedComputing implements OnInit {
         revealed:
           "The <code>category</code> filter belongs in <code>WHERE</code>: it doesn't depend on aggregated values and evaluating it before <code>GROUP BY</code> reduces the rows that enter the aggregation. <code>COUNT(*) >= 2</code> is a post-aggregation predicate — it can't move.",
       } satisfies FeedbackMap,
-      validate: makeValidator(this.ppChallengeSQL, this.step2Challenge, checkPushdownStructure, PP_EXPECTED_ROWS),
+      validate: makeValidator(
+        this.ppChallengeSQL,
+        this.step2Challenge,
+        checkPushdownStructure,
+        PP_EXPECTED_ROWS,
+        this.step2QueryResult,
+        this.step2QueryError,
+      ),
     },
     {
       isFinalStep: true,
@@ -161,6 +191,8 @@ export class DistributedComputing implements OnInit {
       ],
       controller: this.step3Challenge,
       sql: this.capstoneChallengeSQL,
+      queryResult: this.step3QueryResult,
+      queryError: this.step3QueryError,
       startingSql: CAPSTONE_STARTING_SQL,
       solutionSql: CAPSTONE_SOLUTION_SQL,
       schema:
@@ -170,7 +202,6 @@ export class DistributedComputing implements OnInit {
       feedback: {
         'unsafe-sql': 'Only SELECT queries are allowed here.',
         'wrong-sql': 'The query could not run. Check your SQL and try again.',
-        'wrong-output': "Structure looks right, but the result doesn't match. Check your join keys and column names.",
         'not-optimized':
           'Think about minimizing data movement. Which table can be filtered and pruned first, before the joins?',
         correct:
@@ -183,6 +214,8 @@ export class DistributedComputing implements OnInit {
         this.step3Challenge,
         checkCapstoneStructure,
         CAPSTONE_EXPECTED_ROWS,
+        this.step3QueryResult,
+        this.step3QueryError,
       ),
     },
   ];

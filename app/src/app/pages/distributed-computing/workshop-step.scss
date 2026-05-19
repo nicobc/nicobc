@@ -93,26 +93,17 @@
   line-height: 1.6;
 }
 
+// ── error trace ───────────────────────────────────────────────────────────────
+
+.feedback-error-trace {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
 // ── SQL editor ────────────────────────────────────────────────────────────────
 
-.lab-sql-editor {
-  width: 100%;
-  font-family: var(--font-mono);
-  font-size: var(--fs-code);
-  background: var(--code-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--br-md);
-  padding: 0.75rem 1rem;
-  color: var(--fg);
-  resize: vertical;
-  min-height: 220px;
-  line-height: 1.6;
-  tab-size: 2;
-  white-space: pre;
+app-sql-editor {
+  display: block;
   margin-bottom: 1.25rem;
-
-  &:disabled {
-    opacity: var(--opacity-muted);
-    cursor: default;
-  }
 }

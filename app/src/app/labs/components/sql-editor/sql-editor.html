@@ -1,9 +1,11 @@
 <div class="editor-wrapper">
   <div #editorHost class="editor-host"></div>
+  @if (showActions) {
   <div class="editor-actions">
     <button class="btn-primary" (click)="onRun()">{{ runLabel }}</button>
     @if (solution) {
     <button class="btn-ghost" (click)="onReveal()">{{ revealLabel }}</button>
     }
   </div>
+  }
 </div>
