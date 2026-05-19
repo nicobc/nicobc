@@ -41,6 +41,7 @@ export interface WorkshopStepConfig {
 export class WorkshopStep implements OnChanges {
   @Input({ required: true }) config!: WorkshopStepConfig;
   @Output() readonly advance = new EventEmitter<void>();
+  @Output() readonly scrollToStep = new EventEmitter<void>();
 
   @ViewChild(DataMovementViz) private readonly viz?: DataMovementViz;
   @ViewChild('challengeTrigger') private readonly challengeTrigger?: ElementRef<HTMLButtonElement>;
@@ -93,12 +94,12 @@ export class WorkshopStep implements OnChanges {
 
   advanceVizPhase(): void {
     this.phase.set('copy');
-    setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 0);
+    this.scrollToStep.emit();
   }
 
   returnToViz(): void {
     this.phase.set('viz');
-    setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 0);
+    this.scrollToStep.emit();
   }
 
   openChallenge(): void {

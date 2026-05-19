@@ -25,8 +25,8 @@
       }
     </div>
 
-    <div class="challenge-schema-inline" [class.is-open]="schemaOpen()">
-      <div><app-schema-panel /></div>
+    <div class="collapsible-body challenge-schema-inline" [class.is-open]="schemaOpen()">
+      <div><app-schema-panel [copyable]="true" /></div>
     </div>
 
     <ng-content />

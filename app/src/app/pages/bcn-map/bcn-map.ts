@@ -58,6 +58,14 @@ interface TooltipState {
 
 type MetricsLookup = Map<number, Map<number, MetricRecord>>;
 
+interface GeoFeature {
+  properties: { level: string; code: number; district_code: string; name: string };
+}
+
+interface GeoCollection {
+  features: GeoFeature[];
+}
+
 @Component({
   selector: 'app-bcn-map',
   imports: [],
@@ -88,7 +96,7 @@ export class BcnMap implements OnInit, OnDestroy {
     'Neighborhoods with fewer than 6 registered contracts in a given year are suppressed by the source. A small number of additional neighborhoods are suppressed because their year-on-year price swings exceed 40% — a signal of thin, unreliable coverage rather than genuine market movement. Both are shown in gray on the map.';
 
   private deck?: Deck;
-  private geojson: any;
+  private geojson: GeoCollection = { features: [] };
   private metricsLookup: MetricsLookup = new Map();
   private districtNames = new Map<number, string>();
   private suppressedNeighborhoods = new Set<number>();
@@ -158,7 +166,7 @@ export class BcnMap implements OnInit, OnDestroy {
     clearInterval(this.playInterval);
   }
 
-  private initDeck(geojson: any, metrics: MetricRecord[], insights: Insights): void {
+  private initDeck(geojson: GeoCollection, metrics: MetricRecord[], insights: Insights): void {
     this.geojson = geojson;
     this.insights = insights;
     this.suppressedNeighborhoods = new Set(insights.suppressed_neighborhoods);
@@ -167,11 +175,12 @@ export class BcnMap implements OnInit, OnDestroy {
     this.deck = new Deck({
       parent: this.container.nativeElement,
       viewState: INITIAL_VIEW,
-      onViewStateChange: ({ viewState }: any) => {
+      onViewStateChange: ({ viewState }: { viewState: Record<string, unknown> }) => {
         this.deck?.setProps({ viewState });
       },
       controller: true,
-      getCursor: ({ isDragging, isHovering }: any) => (isDragging ? 'grabbing' : isHovering ? 'pointer' : 'grab'),
+      getCursor: ({ isDragging, isHovering }: { isDragging: boolean; isHovering: boolean }) =>
+        isDragging ? 'grabbing' : isHovering ? 'pointer' : 'grab',
       style: { background: 'transparent' },
       layers: this.buildLayers(this.themeService.theme(), this.selectedYear()),
     });
@@ -207,7 +216,7 @@ export class BcnMap implements OnInit, OnDestroy {
         stroked: false,
         filled: true,
         pickable: true,
-        getFillColor: (f: any) => {
+        getFillColor: (f: GeoFeature) => {
           if (f.properties.level !== 'neighborhood') return [0, 0, 0, 0];
           const code: number = f.properties.code;
           if (this.suppressedNeighborhoods.has(code)) return [128, 128, 128, 40];
@@ -215,7 +224,7 @@ export class BcnMap implements OnInit, OnDestroy {
           if (!record?.price_per_sqm) return [128, 128, 128, 40];
           return interpolateColor((record.price_per_sqm - this.valueMin) / (this.valueMax - this.valueMin));
         },
-        onHover: ({ object, x, y }: any) => {
+        onHover: ({ object, x, y }: { object: GeoFeature | null; x: number; y: number }) => {
           if (!object || object.properties.level !== 'neighborhood') {
             this.tooltip.set(null);
             return;
@@ -265,7 +274,7 @@ export class BcnMap implements OnInit, OnDestroy {
         stroked: true,
         filled: false,
         parameters: { depthTest: false },
-        getLineColor: (f: any) => {
+        getLineColor: (f: GeoFeature) => {
           switch (f.properties.level) {
             case 'city':
               return [r, g, b, 80];
@@ -278,7 +287,7 @@ export class BcnMap implements OnInit, OnDestroy {
           }
         },
         updateTriggers: { getLineColor: theme },
-        getLineWidth: (f: any) => {
+        getLineWidth: (f: GeoFeature) => {
           switch (f.properties.level) {
             case 'city':
               return 2;
@@ -296,7 +305,7 @@ export class BcnMap implements OnInit, OnDestroy {
   }
 }
 
-function buildDistrictNames(geojson: any): Map<number, string> {
+function buildDistrictNames(geojson: GeoCollection): Map<number, string> {
   const map = new Map<number, string>();
   for (const f of geojson.features) {
     if (f.properties.level === 'district') {

@@ -4,7 +4,7 @@ Personal portfolio built to signal staff-level data engineering to hiring manage
 
 ## MUST DO — enforce on every task without exception
 
-**Invoke relevant skills before touching code.** Before editing any file, invoke the matching skill. No change is too small to skip this — a one-line fix still requires the relevant skill active and applied first.
+**Invoke relevant skills before touching code.** Before editing any file, invoke the matching domain skill from `.claude/skills/` (e.g. `angular`, `python-testing`). No change is too small to skip this — a one-line fix still requires the relevant skill active and applied first. Do not invoke workflow skills (`simplify`, `review`, `orient`, etc.) unless the user explicitly requests them.
 
 **Before editing any file on a committable task, run `git branch --show-current`. If it prints `main`, stop and cut a branch first.**
 

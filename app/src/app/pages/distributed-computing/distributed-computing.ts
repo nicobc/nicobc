@@ -1,4 +1,4 @@
-import { Component, computed, OnInit, signal, Signal } from '@angular/core';
+import { Component, ElementRef, ViewChild, computed, OnInit, signal, Signal } from '@angular/core';
 import { parse, Statement } from 'pgsql-ast-parser';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faDatabase, faStar } from '@fortawesome/free-solid-svg-icons';
@@ -70,6 +70,8 @@ function makeValidator(
   styleUrl: './distributed-computing.scss',
 })
 export class DistributedComputing implements OnInit {
+  @ViewChild('stepShell') private readonly stepShellRef!: ElementRef<HTMLElement>;
+
   readonly schemaOpen = signal(false);
   readonly dbIcon = faDatabase;
   readonly starIcon = faStar;
@@ -189,16 +191,20 @@ export class DistributedComputing implements OnInit {
 
   goNext(): void {
     this.step.set((this.step() + 1) as 2 | 3);
-    setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 0);
+    setTimeout(() => this.stepShellRef.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0);
   }
 
   goBack(): void {
     this.step.set((this.step() - 1) as 1 | 2);
-    setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 0);
+    setTimeout(() => this.stepShellRef.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0);
   }
 
   onStepAdvance(): void {
     if (this.step() < this.totalSteps) this.goNext();
+  }
+
+  onScrollToStep(): void {
+    setTimeout(() => this.stepShellRef.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0);
   }
 
   ngOnInit(): void {

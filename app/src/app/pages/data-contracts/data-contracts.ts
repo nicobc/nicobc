@@ -1,4 +1,4 @@
-import { Component, computed, ElementRef, inject, OnInit, signal } from '@angular/core';
+import { Component, ElementRef, ViewChild, computed, inject, OnInit, signal } from '@angular/core';
 import Ajv, { ErrorObject } from 'ajv';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faDatabase, faStar } from '@fortawesome/free-solid-svg-icons';
@@ -80,6 +80,8 @@ interface ContractViolation {
   styleUrl: './data-contracts.scss',
 })
 export class DataContracts implements OnInit {
+  @ViewChild('stepShell') private readonly stepShellRef?: ElementRef<HTMLElement>;
+
   readonly schemaOpen = signal(false);
   readonly dbIcon = faDatabase;
   readonly starIcon = faStar;
@@ -246,14 +248,14 @@ export class DataContracts implements OnInit {
     const next = (this.step() + 1) as 2 | 3;
     if (next === 3) this.onEnterStep3();
     this.step.set(next);
-    setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 0);
+    setTimeout(() => this.stepShellRef?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0);
   }
 
   async goBack() {
     const prev = (this.step() - 1) as 1 | 2;
     if (prev === 1) await this.seedBatch(1);
     this.step.set(prev);
-    setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 0);
+    setTimeout(() => this.stepShellRef?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0);
   }
 
   readonly canGoNext = computed(() => {

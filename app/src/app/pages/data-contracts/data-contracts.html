@@ -25,7 +25,7 @@
   <div class="db-loading">{{ loadingText }}</div>
   } @else {
 
-  <div class="step-shell">
+  <div class="step-shell" #stepShell>
     @if (step() > 1) {
     <button class="btn-ghost step-back" (click)="goBack()">&#8592;</button>
     }

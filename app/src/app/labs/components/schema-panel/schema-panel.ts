@@ -1,4 +1,6 @@
-import { AfterViewInit, Component, ElementRef, ViewChild, signal, viewChildren } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, ViewChild, signal, viewChildren } from '@angular/core';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { faCheck, faCopy } from '@fortawesome/free-solid-svg-icons';
 
 interface SchemaField {
   name: string;
@@ -86,15 +88,24 @@ const REL_MAP: Record<string, string> = {
   selector: 'app-schema-panel',
   templateUrl: './schema-panel.html',
   styleUrl: './schema-panel.scss',
+  imports: [FaIconComponent],
 })
 export class SchemaPanel implements AfterViewInit {
+  @Input() copyable = false;
+
   readonly tables = TABLES;
   readonly expanded = signal(new Set<string>());
   readonly lines = signal<Line[]>([]);
   readonly activeRelKey = signal<string | null>(null);
+  readonly justCopied = signal<string | null>(null);
+  readonly showCheck = signal<string | null>(null);
+
+  readonly copyIcon = faCopy;
+  readonly checkIcon = faCheck;
 
   @ViewChild('schemaGrid') private containerRef!: ElementRef<HTMLElement>;
   private readonly headerRefs = viewChildren<ElementRef<HTMLElement>>('entityHeader');
+  private readonly cardRefs = viewChildren<ElementRef<HTMLElement>>('entityCard');
 
   ngAfterViewInit(): void {
     setTimeout(() => this.computeLines(), 0);
@@ -107,10 +118,10 @@ export class SchemaPanel implements AfterViewInit {
       else next.add(tableId);
       return next;
     });
-    setTimeout(() => this.computeLines(), 0);
   }
 
   onFieldHover(tableId: string, field: SchemaField): void {
+    this.computeLines();
     if (field.pk) {
       this.activeRelKey.set(`${tableId}.${field.name}`);
     } else if (field.fk) {
@@ -120,6 +131,16 @@ export class SchemaPanel implements AfterViewInit {
 
   onFieldLeave(): void {
     this.activeRelKey.set(null);
+  }
+
+  copyField(fieldName: string): void {
+    navigator.clipboard.writeText(fieldName);
+    this.showCheck.set(fieldName);
+    this.justCopied.set(fieldName);
+    setTimeout(() => {
+      this.justCopied.set(null);
+      setTimeout(() => this.showCheck.set(null), 150);
+    }, 600);
   }
 
   ann(field: SchemaField): string {
@@ -142,24 +163,29 @@ export class SchemaPanel implements AfterViewInit {
   }
 
   private computeLines(): void {
-    const refs = this.headerRefs();
-    if (refs.length !== 4 || !this.containerRef) return;
+    const headers = this.headerRefs();
+    const cards = this.cardRefs();
+    if (headers.length !== 4 || cards.length !== 4 || !this.containerRef) return;
     const cr = this.containerRef.nativeElement.getBoundingClientRect();
-    const [dimC, dimP, fctO, fctOI] = refs.map((r) => {
+    const h = headers.map((r) => {
+      const b = r.nativeElement.getBoundingClientRect();
+      return { midX: (b.left + b.right) / 2 - cr.left, midY: (b.top + b.bottom) / 2 - cr.top };
+    });
+    const c = cards.map((r) => {
       const b = r.nativeElement.getBoundingClientRect();
       return {
         top: b.top - cr.top,
         bottom: b.bottom - cr.top,
         left: b.left - cr.left,
         right: b.right - cr.left,
-        midX: (b.left + b.right) / 2 - cr.left,
-        midY: (b.top + b.bottom) / 2 - cr.top,
       };
     });
+    const [hDimC, hDimP, hFctO, hFctOI] = h;
+    const [cDimC, cDimP, cFctO, cFctOI] = c;
     this.lines.set([
-      { id: 'rel-dim_customer', x1: dimC.midX, y1: dimC.bottom, x2: fctO.midX, y2: fctO.top },
-      { id: 'rel-dim_product', x1: dimP.midX, y1: dimP.bottom, x2: fctOI.midX, y2: fctOI.top },
-      { id: 'rel-fct_order', x1: fctO.right, y1: fctO.midY, x2: fctOI.left, y2: fctOI.midY },
+      { id: 'rel-dim_customer', x1: hDimC.midX, y1: cDimC.bottom, x2: hFctO.midX, y2: cFctO.top },
+      { id: 'rel-dim_product', x1: hDimP.midX, y1: cDimP.bottom, x2: hFctOI.midX, y2: cFctOI.top },
+      { id: 'rel-fct_order', x1: cFctO.right, y1: hFctO.midY, x2: cFctOI.left, y2: hFctOI.midY },
     ]);
   }
 }

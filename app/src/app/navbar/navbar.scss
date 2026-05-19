@@ -56,8 +56,8 @@ nav {
   display: flex;
   pointer-events: none;
   transition:
-    opacity 0.25s ease,
-    transform 0.25s ease;
+    opacity var(--transition),
+    transform var(--transition);
 }
 
 .nav-hamburger button fa-icon.icon-xmark {

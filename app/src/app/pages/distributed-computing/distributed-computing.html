@@ -21,7 +21,7 @@
     <div><app-schema-panel /></div>
   </div>
 
-  <div class="step-shell">
+  <div class="step-shell" #stepShell>
     @if (step() > 1) {
     <button class="btn-ghost step-back" (click)="goBack()">&#8592;</button>
     }
@@ -33,7 +33,7 @@
     }
 
     <div class="step-content">
-      <app-workshop-step [config]="currentStepConfig()" (advance)="onStepAdvance()" />
+      <app-workshop-step [config]="currentStepConfig()" (advance)="onStepAdvance()" (scrollToStep)="onScrollToStep()" />
     </div>
   </div>
 </div>

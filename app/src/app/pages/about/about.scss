@@ -29,7 +29,7 @@
     color: var(--fg);
     text-underline-offset: 3px;
     opacity: var(--opacity-secondary);
-    transition: opacity var(--transition) ease;
+    transition: opacity var(--transition);
 
     &:hover {
       opacity: 1;

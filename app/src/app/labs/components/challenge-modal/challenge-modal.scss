@@ -40,17 +40,8 @@
 
 // Collapsible schema diagram — same grid-rows trick as .schema-inline, with scroll cap
 .challenge-schema-inline {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 280ms ease;
-
-  &.is-open {
-    grid-template-rows: 1fr;
-  }
-
   > div {
-    overflow: hidden;
-    transition: padding-bottom 280ms ease;
+    transition: padding-bottom var(--transition);
   }
 
   &.is-open > div {
