@@ -14,7 +14,7 @@ tickets:
   - id: T1
     title: Schema panel — inline toggle on workshop pages; copyable in challenge modal
     type: feat
-    status: TESTING
+    status: DONE
     description: Learner can inspect the workshop data model at any point without it being repeated in every challenge.
     acceptance_criteria:
       - Workshops landing page has a toggle button in the eyebrow row that expands/collapses an inline schema panel above the workshop grid
