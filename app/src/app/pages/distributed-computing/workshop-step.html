@@ -25,15 +25,12 @@
   <p class="challenge-schema" [innerHTML]="config.schema"></p>
   <p class="challenge-intro" [innerHTML]="config.intro"></p>
 
-  <textarea
-    class="lab-sql-editor"
-    spellcheck="false"
-    autocomplete="off"
-    [value]="config.sql()"
-    (input)="onChallengeInput($event)"
-    [disabled]="config.controller.state() === 'correct'"
-  >
-  </textarea>
+  <app-sql-editor
+    [initialValue]="config.startingSql"
+    [showActions]="false"
+    [readonly]="config.controller.state() === 'correct'"
+    (valueChange)="onChallengeInput($event)"
+  />
 
   @if (config.controller.state() !== 'correct') {
   <div class="challenge-actions-row">
@@ -42,8 +39,31 @@
     </button>
     <button class="btn-ghost" (click)="revealSolution()">{{ revealSolutionLabel }}</button>
   </div>
-  } @if (feedbackMessage) {
+  } @if (showQueryError) {
+  <div [class]="feedbackClass"><pre class="code-block feedback-error-trace">{{ config.queryError() }}</pre></div>
+  } @else if (feedbackMessage) {
   <div [class]="feedbackClass"><p [innerHTML]="feedbackMessage"></p></div>
+  } @if (config.queryResult(); as result) {
+  <div class="query-result-table">
+    <table>
+      <thead>
+        <tr>
+          @for (col of result.columns; track col) {
+          <th>{{ col }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of result.rows; track $index) {
+        <tr>
+          @for (col of result.columns; track col) {
+          <td>{{ row[col] }}</td>
+          }
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
   } @if (config.controller.state() === 'correct') {
   <div class="challenge-actions">
     <button class="btn-primary" (click)="onTerminalAction()">{{ terminalLabel }}</button>

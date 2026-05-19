@@ -164,12 +164,13 @@ export class DataContracts implements OnInit {
 
     this.lastSql.set(sql);
 
-    const rows = await runQuery(sql);
-    if (!rows) {
-      this.sqlError.set('The query could not run. Check your SQL and try again.');
+    const { data, error } = await runQuery(sql);
+    if (!data) {
+      this.sqlError.set(error);
       return;
     }
 
+    const { rows } = data;
     const invalid = rows.find((r) => !validateOutput(r));
     if (invalid) {
       this.outputHint.set(

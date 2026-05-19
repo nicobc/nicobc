@@ -1,10 +1,12 @@
 import { query, QueryResult } from './db/duckdb';
 
-export async function runQuery(sql: string): Promise<QueryResult['rows'] | null> {
+export type QueryRunResult = { data: QueryResult; error: null } | { data: null; error: string };
+
+export async function runQuery(sql: string): Promise<QueryRunResult> {
   try {
-    return (await query(sql)).rows;
-  } catch {
-    return null;
+    return { data: await query(sql), error: null };
+  } catch (e) {
+    return { data: null, error: e instanceof Error ? e.message : String(e) };
   }
 }
 
