@@ -8,7 +8,7 @@ notes:
   - Copy register: about page + BCN map copy; no LLM patterns (no "not just X but Y", no triple enumerations, no dash punchlines)
   - Target audience is not beginners; no need to explain star schema, OLAP/OLTP, or basic SQL/Python
   - Schema panel is a custom Angular component — no Mermaid, no SVG file, no external diagram dependency
-  - T4 (copy) should follow T1 (schema panel) so challenge schema hints can be simplified with the panel in place
+  - T3 (copy) precedes T4 (density): copy removal eliminates DOM elements the density pass would otherwise have to work around
 tickets:
 
   - id: T1
@@ -41,17 +41,6 @@ tickets:
       - Result table styled consistently with the existing design system
 
   - id: T3
-    title: Distributed computing lab — vertical density pass
-    type: style
-    status: READY
-    description: Workshop steps fit on a 13" MacBook Pro viewport; copy-phase steps do not require scrolling to reach the CTA.
-    acceptance_criteria:
-      - Copy-phase steps (paragraphs + CTA button) visible without scrolling on a 13" MBP (~900px usable height)
-      - Viz-phase overflow is acceptable and out of scope
-      - Spacing reductions reviewed iteratively across all elements of the distributed computing lab
-      - No visual regression on other lab pages (data-contracts shares global lab styles)
-
-  - id: T4
     title: Copy pass — workshops and landing page
     type: style
     status: READY
@@ -63,6 +52,17 @@ tickets:
       - No LLM copy patterns — no "not just X but Y", no triple enumerations, no dash punchlines
       - Reference register is the about page and BCN map copy
 
+  - id: T4
+    title: Distributed computing lab — vertical density pass
+    type: style
+    status: READY
+    description: Workshop steps fit on a 13" MacBook Pro viewport; copy-phase steps do not require scrolling to reach the CTA.
+    acceptance_criteria:
+      - Copy-phase steps (paragraphs + CTA button) visible without scrolling on a 13" MBP (~900px usable height)
+      - Viz-phase overflow is acceptable and out of scope
+      - Spacing reductions reviewed iteratively across all elements of the distributed computing lab
+      - No visual regression on other lab pages (data-contracts shares global lab styles)
+
   - id: T5
     title: Back navigation — step 1 to workshop landing page
     type: feat
@@ -72,3 +72,15 @@ tickets:
       - Step 1 of every workshop displays a back arrow consistent with the one shown on steps 2+
       - Clicking the back arrow from step 1 navigates to the workshop landing page
       - No other step navigation is affected
+
+  - id: T6
+    title: Responsive design — site-wide mobile pass
+    type: style
+    status: READY
+    description: All lab pages and the schema panel render correctly on mobile viewports; no horizontal scroll at 375px.
+    acceptance_criteria:
+      - Schema panel switches to a single-column stacked layout on small screens
+      - Workshops landing, distributed-computing, and data-contracts pages reviewed for overflow and density on mobile
+      - Challenge modal reviewed for usability on small viewports
+      - No horizontal scroll on any page at 375px viewport width
+      - Breakpoints consistent with the existing 768px threshold in global styles
