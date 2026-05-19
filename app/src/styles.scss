@@ -394,6 +394,67 @@ main {
   }
 }
 
+// schema toggle — database icon crossfades to star (star schema easter egg) on hover
+.schema-btn {
+  .schema-icon-wrap {
+    display: grid;
+
+    fa-icon {
+      grid-area: 1 / 1;
+    }
+  }
+
+  .icon-star {
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+  }
+
+  .icon-db {
+    transition: opacity var(--transition-fast);
+  }
+
+  &:hover .icon-db {
+    opacity: 0;
+  }
+
+  &:hover .icon-star {
+    opacity: 1;
+  }
+}
+
+// collapsible schema panel — grid-rows trick animates 0 → natural height on both open and close
+.schema-inline {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 280ms ease;
+
+  &.is-open {
+    grid-template-rows: 1fr;
+  }
+
+  > div {
+    overflow: hidden;
+    padding-bottom: 0;
+    transition: padding-bottom 280ms ease;
+  }
+
+  &.is-open > div {
+    padding-bottom: 2rem;
+  }
+}
+
+// eyebrow + schema-toggle icon on the same row; used on all lab pages
+.lab-eyebrow-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+
+  .eyebrow {
+    margin-bottom: 0;
+  }
+}
+
 // ── lab step content ──────────────────────────────────────────────────────────
 
 .step-copy a {

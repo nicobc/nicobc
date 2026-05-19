@@ -1,11 +1,14 @@
 import { Component, computed, OnInit, signal, Signal } from '@angular/core';
 import { parse, Statement } from 'pgsql-ast-parser';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { faDatabase, faStar } from '@fortawesome/free-solid-svg-icons';
 import { checkPruningStructure, checkPushdownStructure, checkCapstoneStructure } from './challenge-validators';
 import { WorkshopStep, WorkshopStepConfig } from './workshop-step';
 import { ChallengeController } from '../../labs/challenge-controller';
 import { execute } from '../../labs/db/duckdb';
 import { runQuery, matchesExpected } from '../../labs/validation';
 import { dimProducts, dimCustomers, fctOrdersBatch1, fctOrderItems } from '../../labs/data/seed';
+import { SchemaPanel } from '../../labs/components/schema-panel/schema-panel';
 import {
   CP_STARTING_SQL,
   CP_SOLUTION_SQL,
@@ -62,11 +65,15 @@ function makeValidator(
 
 @Component({
   selector: 'app-distributed-computing',
-  imports: [WorkshopStep],
+  imports: [WorkshopStep, FaIconComponent, SchemaPanel],
   templateUrl: './distributed-computing.html',
   styleUrl: './distributed-computing.scss',
 })
 export class DistributedComputing implements OnInit {
+  readonly schemaOpen = signal(false);
+  readonly dbIcon = faDatabase;
+  readonly starIcon = faStar;
+
   readonly step = signal<1 | 2 | 3>(1);
   readonly totalSteps = 3;
   readonly labCategory = 'Data Engineering · Distributed';

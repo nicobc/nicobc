@@ -1,5 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { faDatabase, faStar } from '@fortawesome/free-solid-svg-icons';
+import { SchemaPanel } from '../../labs/components/schema-panel/schema-panel';
 
 interface Workshop {
   seq: string;
@@ -10,11 +13,15 @@ interface Workshop {
 
 @Component({
   selector: 'app-workshops',
-  imports: [RouterLink],
+  imports: [RouterLink, FaIconComponent, SchemaPanel],
   templateUrl: './workshops.html',
   styleUrl: './workshops.scss',
 })
 export class Workshops {
+  readonly schemaOpen = signal(false);
+  readonly dbIcon = faDatabase;
+  readonly starIcon = faStar;
+
   readonly eyebrow = 'Workshop';
   readonly heading = 'Workshop series';
   readonly exploreCta = 'Explore';

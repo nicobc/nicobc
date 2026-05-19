@@ -1,0 +1,41 @@
+<div class="schema-grid" #schemaGrid>
+  <svg class="schema-lines" aria-hidden="true">
+    @for (line of lines(); track line.id) {
+    <line
+      [attr.x1]="line.x1"
+      [attr.y1]="line.y1"
+      [attr.x2]="line.x2"
+      [attr.y2]="line.y2"
+      [class.is-highlighted]="isLineHighlighted(line.id)"
+    />
+    }
+  </svg>
+
+  @for (table of tables; track table.id) {
+  <div class="schema-entity">
+    <button
+      #entityHeader
+      class="schema-entity-header"
+      [class.is-highlighted]="isTableHighlighted(table.id)"
+      (click)="toggle(table.id)"
+      [attr.aria-expanded]="expanded().has(table.id)"
+      [attr.aria-label]="'Toggle ' + table.name"
+    >
+      <span class="schema-name">{{ table.name }}</span>
+      <span class="schema-chevron" aria-hidden="true">{{ expanded().has(table.id) ? '▾' : '▸' }}</span>
+    </button>
+
+    @if (expanded().has(table.id)) {
+    <ul class="schema-fields">
+      @for (field of table.fields; track field.name) {
+      <li class="schema-field" (mouseenter)="onFieldHover(table.id, field)" (mouseleave)="onFieldLeave()">
+        <span class="schema-ann">{{ ann(field) }}</span>
+        <span class="schema-fname">{{ field.name }}</span>
+        <span class="schema-ftype">{{ field.sqlType }}</span>
+      </li>
+      }
+    </ul>
+    }
+  </div>
+  }
+</div>

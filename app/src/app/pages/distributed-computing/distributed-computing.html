@@ -1,8 +1,25 @@
 <div class="lab-page">
   <header class="lab-header">
-    <span class="eyebrow">{{ labCategory }}</span>
+    <div class="lab-eyebrow-row">
+      <span class="eyebrow">{{ labCategory }}</span>
+      <button
+        class="btn-icon schema-btn"
+        (click)="schemaOpen.update(v => !v)"
+        [attr.aria-expanded]="schemaOpen()"
+        aria-label="Toggle data model"
+      >
+        <span class="schema-icon-wrap">
+          <fa-icon class="icon-db" [icon]="dbIcon" />
+          <fa-icon class="icon-star" [icon]="starIcon" />
+        </span>
+      </button>
+    </div>
     <h1>{{ labTitle }}</h1>
   </header>
+
+  <div class="schema-inline" [class.is-open]="schemaOpen()">
+    <div><app-schema-panel /></div>
+  </div>
 
   <div class="step-shell">
     @if (step() > 1) {

@@ -1,7 +1,10 @@
 import { Component, computed, ElementRef, inject, OnInit, signal } from '@angular/core';
 import Ajv, { ErrorObject } from 'ajv';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { faDatabase, faStar } from '@fortawesome/free-solid-svg-icons';
 import { SqlEditor } from '../../labs/components/sql-editor/sql-editor';
 import { BarChart } from '../../labs/components/bar-chart/bar-chart';
+import { SchemaPanel } from '../../labs/components/schema-panel/schema-panel';
 import { getDB, query } from '../../labs/db/duckdb';
 import { dimCustomers, fctOrdersBatch1, fctOrdersBatch2, FctOrder } from '../../labs/data/seed';
 import { ChartRow } from '../../labs/components/chart-colors';
@@ -72,11 +75,15 @@ interface ContractViolation {
 
 @Component({
   selector: 'app-data-contracts',
-  imports: [SqlEditor, BarChart],
+  imports: [SqlEditor, BarChart, FaIconComponent, SchemaPanel],
   templateUrl: './data-contracts.html',
   styleUrl: './data-contracts.scss',
 })
 export class DataContracts implements OnInit {
+  readonly schemaOpen = signal(false);
+  readonly dbIcon = faDatabase;
+  readonly starIcon = faStar;
+
   readonly solution = DC_SOLUTION;
   readonly skeleton = DC_SKELETON;
   readonly schemaDisplay = JSON.stringify(FCT_ORDERS_SCHEMA, null, 2);
