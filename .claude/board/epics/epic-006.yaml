@@ -31,7 +31,7 @@ tickets:
   - id: T2
     title: SQL query output table in challenge modal
     type: feat
-    status: IN PROGRESS
+    status: TESTING
     description: As a learner, I want to see what my query actually returned after clicking Check, regardless of whether it is correct.
     acceptance_criteria:
       - After clicking Check, result rows are rendered as a table inside the challenge modal whenever the query executes without error (wrong-output and correct states)
