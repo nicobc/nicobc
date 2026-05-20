@@ -9,6 +9,8 @@ notes:
   - Target audience is not beginners; no need to explain star schema, OLAP/OLTP, or basic SQL/Python
   - Schema panel is a custom Angular component — no Mermaid, no SVG file, no external diagram dependency
   - T3 (copy) precedes T4 (density): copy removal eliminates DOM elements the density pass would otherwise have to work around
+  - T9 (avg→sum) precedes T10 (animation): animation uses the corrected KPI query
+  - T10 (animation) precedes T11 (conclusion): conclusion renders after the animated capstone step is in place
 tickets:
 
   - id: T1
@@ -117,3 +119,44 @@ tickets:
       - On hover or click, a tooltip or popover explains how the challenge environment works (SQL challenges run in the browser on DuckDB)
       - Copy and design are extensible — the pattern must accommodate future challenge types (e.g. Spark UI) without structural changes
       - Tooltip pattern is consistent with the query-hint tooltip introduced in T3
+
+  - id: T9
+    title: Switch distributed computing lab KPI from average to total order amount
+    type: fix
+    status: READY
+    description: The top 5 Spanish customers KPI uses average order amount, which has no business meaning. Replace with total order amount (SUM) across capstone SQL, expected rows, and copy.
+    acceptance_criteria:
+      - Capstone starting and solution SQL updated to compute total order amount via SUM(o.amount)
+      - CAPSTONE_EXPECTED_ROWS recomputed against updated seed data
+      - Copy referencing average order amount updated to total order amount
+
+  - id: T10
+    title: Capstone step — DAG race animation for scan, shuffle, and aggregate
+    type: feat
+    status: READY
+    description: As a learner, I see a side-by-side DAG race that visualises sloppy vs. optimised execution for the top 5 Spanish customers query, making the scan-to-shuffle cost reduction concrete before the capstone challenge.
+    acceptance_criteria:
+      - Two DAGs rendered side by side; each represents one query implementation (sloppy vs. optimised) for top 5 Spanish customers by total order amount (dim_customers + fct_orders, 2-table join)
+      - DAG building blocks — scan, project, filter, join, aggregate — rendered as labeled blocks in execution order (left to right)
+      - Each block fills in the direction of the DAG as the race progresses; fill rate encodes relative data volume (more data = slower fill)
+      - Data rectangles travel through the DAG below each block; sloppy path carries a larger rectangle into the join
+      - Join block: two rectangles enter, spinner represents the shuffle, single output rectangle exits sized to surviving rows in a neutral merged color
+      - Aggregate block: spinner represents computation; output rectangle is smaller and a distinct third color to signal grouped result
+      - Both DAGs race simultaneously; sloppy path visibly slower at join and aggregate steps
+      - Single restart button resets and reruns the race; no pill switch
+      - Mobile: data rectangles hidden; block fill rate difference conveys the comparison at narrow viewports
+      - New vizScenario wired to step 3 in distributed-computing.ts; step 3 viz phase uses this component
+
+  - id: T11
+    title: Workshop conclusion — pass minimization and next workshop nudge
+    type: feat
+    status: READY
+    description: After completing the capstone challenge, the learner sees a short conclusion that introduces pass minimization as the third lever of data movement minimization and nudges them toward the next workshop.
+    acceptance_criteria:
+      - Conclusion section renders after the capstone challenge is marked correct
+      - Copy introduces pass minimization as the third lever — how many times the engine reads through the data
+      - No forward reference to EPIC-009 until that epic is READY; conclusion copy is self-contained
+      - A continue button or link prompts the learner to proceed
+      - Layout and style consistent with the existing lab design
+    notes:
+      - Forward reference to Spark UI workshop (EPIC-009) to be added once EPIC-009 is groomed to READY
