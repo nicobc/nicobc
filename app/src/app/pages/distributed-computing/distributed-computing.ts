@@ -184,6 +184,7 @@ export class DistributedComputing implements OnInit {
       ),
     },
     {
+      vizScenario: 'dag-race',
       isFinalStep: true,
       paragraphs: [
         'Both column pruning and predicate pushdown minimize data scanning. They can also make shuffles more manageable by reducing the data that enters a join or an aggregation.',

@@ -73,21 +73,21 @@ tickets:
       - Distributed computing DB setup declares all seed columns on every table
 
   - id: T5
-    title: Capstone step — DAG race animation for scan, shuffle, and aggregate
+    title: Capstone step — DAG race animation
     type: feat
-    status: READY
-    description: As a learner, I see a side-by-side DAG race that visualises sloppy vs. optimised execution for the top 5 Spanish customers query, making the scan-to-shuffle cost reduction concrete before the capstone challenge.
+    status: DONE
+    description: As a learner, I see a side-by-side DAG race that makes the combined effect of column pruning and predicate pushdown on join cost concrete, before the capstone challenge.
     acceptance_criteria:
-      - Two DAGs rendered side by side; each represents one query implementation (sloppy vs. optimised) for top 5 Spanish customers by total order amount (dim_customers + fct_orders, 2-table join)
-      - DAG building blocks — scan, project, filter, join, aggregate — rendered as labeled blocks in execution order (left to right)
-      - Each block fills in the direction of the DAG as the race progresses; fill rate encodes relative data volume (more data = slower fill)
-      - Data rectangles travel through the DAG below each block; sloppy path carries a larger rectangle into the join
-      - Join block: two rectangles enter, spinner represents the shuffle, single output rectangle exits sized to surviving rows in a neutral merged color
-      - Aggregate block: spinner represents computation; output rectangle is smaller and a distinct third color to signal grouped result
-      - Both DAGs race simultaneously; sloppy path visibly slower at join and aggregate steps
-      - Single restart button resets and reruns the race; no pill switch
-      - Mobile: data rectangles hidden; block fill rate difference conveys the comparison at narrow viewports
-      - New vizScenario wired to step 3 in distributed-computing.ts; step 3 viz phase uses this component
+      - Two DAGs rendered side by side (Baseline · Optimised); each represents the top 5 Spanish customers query on dim_customers + fct_orders
+      - Baseline has 7 blocks in execution order: scan × 2 → join → filter → project → aggregate → sort·limit
+      - Optimised has 6 blocks: scan × 2 → join → project → aggregate → sort·limit; no filter block (predicate pushed into scan)
+      - Each block fills top-to-bottom as execution proceeds; fill duration encodes relative processing time
+      - Block metadata — source table and detail text (e.g. "all cols · all rows" vs "2 cols · Spanish rows") — fades in when the block activates and stays visible
+      - Both DAGs race simultaneously; optimised join fills 2× faster than baseline, making the predicate-pushdown payoff visually legible
+      - Scan inputs converge via SVG merge lines into the join block
+      - done event emitted once baseline completes; wired to modeChange('dag-race-done') in DataMovementViz, which unlocks Next in workshop-step
+      - Restart delegated to parent via public restart() method
+      - New vizScenario 'dag-race' wired to step 3 in distributed-computing.ts; step 3 viz phase uses this component
 
   - id: T6
     title: Back navigation — step 1 to workshop landing page

@@ -7,23 +7,28 @@ import {
   OnChanges,
   Output,
   SimpleChanges,
+  ViewChild,
   signal,
 } from '@angular/core';
+import { DagRaceViz } from '../dag-race-viz/dag-race-viz';
 
-export type VizScenario = 'column-pruning' | 'predicate-pushdown';
+export type VizScenario = 'column-pruning' | 'predicate-pushdown' | 'dag-race';
 export type PruningMode = 'unpruned' | 'pruned';
 export type PushdownMode = 'unpushed' | 'pushed';
-export type VizMode = PruningMode | PushdownMode;
+export type DagRaceMode = 'dag-race-done';
+export type VizMode = PruningMode | PushdownMode | DagRaceMode;
 
 @Component({
   selector: 'app-data-movement-viz',
-  imports: [],
+  imports: [DagRaceViz],
   templateUrl: './data-movement-viz.html',
   styleUrl: './data-movement-viz.scss',
 })
 export class DataMovementViz implements OnInit, OnChanges {
   @Input({ required: true }) scenario!: VizScenario;
   @Output() readonly modeChange = new EventEmitter<VizMode>();
+
+  @ViewChild(DagRaceViz) private readonly dagRaceRef?: DagRaceViz;
 
   readonly cpToggleUnpruned = 'SELECT *';
   readonly cpTogglePruned = 'SELECT customer_id, customer_name, country';
@@ -40,15 +45,19 @@ export class DataMovementViz implements OnInit, OnChanges {
   readonly isFilterPushed = computed(() => this.pushdownMode() === 'pushed');
 
   ngOnInit() {
-    setTimeout(() => this.animating.set(true), 50);
+    if (this.scenario !== 'dag-race') {
+      setTimeout(() => this.animating.set(true), 50);
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['scenario'] && !changes['scenario'].firstChange) {
       this.pruningMode.set('unpruned');
       this.pushdownMode.set('unpushed');
-      this.animating.set(false);
-      setTimeout(() => this.animating.set(true), 50);
+      if (this.scenario !== 'dag-race') {
+        this.animating.set(false);
+        setTimeout(() => this.animating.set(true), 50);
+      }
     }
   }
 
@@ -73,7 +82,15 @@ export class DataMovementViz implements OnInit, OnChanges {
   }
 
   replay(): void {
-    this.animating.set(false);
-    setTimeout(() => this.animating.set(true), 20);
+    if (this.scenario === 'dag-race') {
+      this.dagRaceRef?.restart();
+    } else {
+      this.animating.set(false);
+      setTimeout(() => this.animating.set(true), 20);
+    }
+  }
+
+  onDagRaceDone(): void {
+    this.modeChange.emit('dag-race-done');
   }
 }
