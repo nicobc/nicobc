@@ -73,10 +73,10 @@ tickets:
       - Distributed computing DB setup declares all seed columns on every table
 
   - id: T5
-    title: Capstone step — DAG race animation for scan, shuffle, and aggregate
+    title: Capstone step — DAG race animation
     type: feat
-    status: TESTING
-    description: As a learner, I see a side-by-side DAG race that visualises sloppy vs. optimised execution for the top 5 Spanish customers query, making the scan-to-shuffle cost reduction concrete before the capstone challenge.
+    status: DONE
+    description: As a learner, I see a side-by-side DAG race that makes the combined effect of column pruning and predicate pushdown on join cost concrete, before the capstone challenge.
     acceptance_criteria:
       - Two DAGs rendered side by side (Baseline · Optimised); each represents the top 5 Spanish customers query on dim_customers + fct_orders
       - Baseline has 7 blocks in execution order: scan × 2 → join → filter → project → aggregate → sort·limit
