@@ -1,0 +1,144 @@
+<div class="dag-race" [class.animating]="animating()">
+  <!-- Baseline: 7 blocks -->
+  <div class="dag-col">
+    <div class="dag-col-label">{{ baselineLabel }}</div>
+
+    <div class="dag-inputs">
+      <div class="dag-block">
+        <div class="block-fill bf-b-scan-c"></div>
+        <span class="block-name">{{ scanLabel }}</span>
+        <div class="block-meta ft-b-scan">
+          <span class="block-source">{{ dimCustomersAlias }}</span>
+          <span class="block-detail">{{ bScanCDetail }}</span>
+        </div>
+      </div>
+      <div class="dag-block">
+        <div class="block-fill bf-b-scan-o"></div>
+        <span class="block-name">{{ scanLabel }}</span>
+        <div class="block-meta ft-b-scan">
+          <span class="block-source">{{ fctOrdersAlias }}</span>
+          <span class="block-detail">{{ bScanODetail }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dag-merge">
+      <svg class="dag-merge-svg" viewBox="0 0 100 32" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M 25 0 L 50 32" stroke="currentColor" stroke-width="1" fill="none" />
+        <path d="M 75 0 L 50 32" stroke="currentColor" stroke-width="1" fill="none" />
+      </svg>
+    </div>
+
+    <div class="dag-block dag-block--full">
+      <div class="block-fill bf-b-join"></div>
+      <span class="block-name">{{ joinLabel }}</span>
+      <div class="block-meta ft-b-join">
+        <span class="block-source">{{ joinedAlias }}</span>
+        <span class="block-detail">{{ bJoinDetail }}</span>
+      </div>
+    </div>
+    <div class="dag-connector"></div>
+    <div class="dag-block dag-block--full">
+      <div class="block-fill bf-b-filter"></div>
+      <span class="block-name">{{ filterLabel }}</span>
+      <div class="block-meta ft-b-filter">
+        <span class="block-source">{{ joinedAlias }}</span>
+        <span class="block-detail">{{ bFilterDetail }}</span>
+      </div>
+    </div>
+    <div class="dag-connector"></div>
+    <div class="dag-block dag-block--full">
+      <div class="block-fill bf-b-project"></div>
+      <span class="block-name">{{ projectLabel }}</span>
+      <div class="block-meta ft-b-project">
+        <span class="block-source">{{ joinedAlias }}</span>
+        <span class="block-detail">{{ bProjectDetail }}</span>
+      </div>
+    </div>
+    <div class="dag-connector"></div>
+    <div class="dag-block dag-block--full">
+      <div class="block-fill bf-b-agg"></div>
+      <span class="block-name">{{ aggregateLabel }}</span>
+      <div class="block-meta ft-b-agg">
+        <span class="block-source">{{ joinedAlias }}</span>
+        <span class="block-detail">{{ bAggDetail }}</span>
+      </div>
+    </div>
+    <div class="dag-connector"></div>
+    <div class="dag-block dag-block--full">
+      <div class="block-fill bf-b-sort"></div>
+      <span class="block-name">{{ sortLimitLabel }}</span>
+      <div class="block-meta ft-b-sort">
+        <span class="block-source">{{ joinedAlias }}</span>
+        <span class="block-detail">{{ bSortDetail }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Optimised: 6 blocks -->
+  <div class="dag-col">
+    <div class="dag-col-label">{{ optimisedLabel }}</div>
+
+    <div class="dag-inputs">
+      <div class="dag-block">
+        <div class="block-fill bf-o-scan-c"></div>
+        <span class="block-name">{{ scanLabel }}</span>
+        <div class="block-meta ft-o-scan">
+          <span class="block-source">{{ dimCustomersAlias }}</span>
+          <span class="block-detail">{{ oScanCDetail }}</span>
+        </div>
+      </div>
+      <div class="dag-block">
+        <div class="block-fill bf-o-scan-o"></div>
+        <span class="block-name">{{ scanLabel }}</span>
+        <div class="block-meta ft-o-scan">
+          <span class="block-source">{{ fctOrdersAlias }}</span>
+          <span class="block-detail">{{ oScanODetail }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dag-merge">
+      <svg class="dag-merge-svg" viewBox="0 0 100 32" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M 25 0 L 50 32" stroke="currentColor" stroke-width="1" fill="none" />
+        <path d="M 75 0 L 50 32" stroke="currentColor" stroke-width="1" fill="none" />
+      </svg>
+    </div>
+
+    <div class="dag-block dag-block--full">
+      <div class="block-fill bf-o-join"></div>
+      <span class="block-name">{{ joinLabel }}</span>
+      <div class="block-meta ft-o-join">
+        <span class="block-source">{{ joinedAlias }}</span>
+        <span class="block-detail">{{ oJoinDetail }}</span>
+      </div>
+    </div>
+    <div class="dag-connector"></div>
+    <div class="dag-block dag-block--full">
+      <div class="block-fill bf-o-project"></div>
+      <span class="block-name">{{ projectLabel }}</span>
+      <div class="block-meta ft-o-project">
+        <span class="block-source">{{ joinedAlias }}</span>
+        <span class="block-detail">{{ oProjectDetail }}</span>
+      </div>
+    </div>
+    <div class="dag-connector"></div>
+    <div class="dag-block dag-block--full">
+      <div class="block-fill bf-o-agg"></div>
+      <span class="block-name">{{ aggregateLabel }}</span>
+      <div class="block-meta ft-o-agg">
+        <span class="block-source">{{ joinedAlias }}</span>
+        <span class="block-detail">{{ oAggDetail }}</span>
+      </div>
+    </div>
+    <div class="dag-connector"></div>
+    <div class="dag-block dag-block--full">
+      <div class="block-fill bf-o-sort"></div>
+      <span class="block-name">{{ sortLimitLabel }}</span>
+      <div class="block-meta ft-o-sort">
+        <span class="block-source">{{ joinedAlias }}</span>
+        <span class="block-detail">{{ oSortDetail }}</span>
+      </div>
+    </div>
+  </div>
+</div>

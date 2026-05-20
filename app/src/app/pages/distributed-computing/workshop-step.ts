@@ -18,6 +18,7 @@ import { QueryResult } from '../../labs/db/duckdb';
 const UNLOCK_MODE: Partial<Record<VizScenario, VizMode>> = {
   'column-pruning': 'pruned',
   'predicate-pushdown': 'pushed',
+  'dag-race': 'dag-race-done',
 };
 
 export interface WorkshopStepConfig {

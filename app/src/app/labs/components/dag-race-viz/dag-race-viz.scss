@@ -1,0 +1,268 @@
+:host {
+  display: block;
+}
+
+// ── layout ─────────────────────────────────────────────────────────────────────
+
+.dag-race {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.dag-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.dag-col-label {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  opacity: var(--opacity-muted);
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+// ── input pair ─────────────────────────────────────────────────────────────────
+
+.dag-inputs {
+  display: flex;
+  gap: 0.5rem;
+
+  .dag-block {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+// ── blocks ─────────────────────────────────────────────────────────────────────
+// Uniform height across all blocks for visual consistency.
+
+$block-h: 64px;
+
+.dag-block {
+  position: relative;
+  overflow: hidden;
+  height: $block-h;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: var(--br);
+  background: var(--surface-faint);
+  box-sizing: border-box;
+}
+
+.block-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 0%;
+  background: color-mix(in srgb, var(--fg) 10%, transparent);
+  pointer-events: none;
+}
+
+.block-name {
+  display: block;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  position: relative;
+}
+
+.block-meta {
+  opacity: 0;
+  position: relative;
+}
+
+.block-source {
+  display: block;
+  font-size: var(--fs-xs);
+  font-family: var(--font-mono);
+  opacity: var(--opacity-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.block-detail {
+  display: block;
+  font-size: var(--fs-xs);
+  opacity: var(--opacity-subtle);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// ── connectors ─────────────────────────────────────────────────────────────────
+// Merge SVG and single connector: identical color and stroke weight.
+
+.dag-merge {
+  position: relative;
+  height: 32px;
+}
+
+.dag-merge-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  color: var(--border);
+}
+
+.dag-connector {
+  position: relative;
+  height: 24px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    height: 100%;
+    width: 1px;
+    background: var(--border);
+  }
+}
+
+// ── keyframes ───────────────────────────────────────────────────────────────────
+
+// Fill grows top-to-bottom, matching DAG data flow direction.
+@keyframes fill-down {
+  to {
+    height: 100%;
+  }
+}
+
+// Block text: fades in when the block activates and stays visible.
+@keyframes text-appear {
+  0% {
+    opacity: 0;
+  }
+
+  30% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+// ── animation triggers ──────────────────────────────────────────────────────────
+// Baseline (7 blocks, 7.9s total):
+//   scan-c   0s    dur 1.5s  → done 1.5s
+//   scan-o   0s    dur 1.8s  → done 1.8s
+//   join     1.8s  dur 3.0s  → done 4.8s   ← heavy: all rows from both tables
+//   filter   4.8s  dur 0.8s  → done 5.6s
+//   project  5.6s  dur 0.6s  → done 6.2s
+//   agg      6.2s  dur 1.2s  → done 7.4s
+//   sort     7.4s  dur 0.5s  → done 7.9s
+// Optimised (6 blocks, 5.2s total — scans faster via PP+CP; join 2× faster):
+//   scan-c   0s    dur 1.2s  → done 1.2s
+//   scan-o   0s    dur 1.4s  → done 1.4s
+//   join     1.4s  dur 1.5s  → done 2.9s   ← light: Spanish rows only
+//   project  2.9s  dur 0.6s  → done 3.5s
+//   agg      3.5s  dur 1.2s  → done 4.7s
+//   sort     4.7s  dur 0.5s  → done 5.2s
+
+.animating {
+  // ── baseline fills ────────────────────────────────────────────────────────
+  .bf-b-scan-c {
+    animation: fill-down 1.5s ease-in 0s 1 forwards;
+  }
+
+  .bf-b-scan-o {
+    animation: fill-down 1.8s ease-in 0s 1 forwards;
+  }
+
+  .bf-b-join {
+    animation: fill-down 3s linear 1.8s 1 forwards;
+  }
+
+  .bf-b-filter {
+    animation: fill-down 0.8s ease-out 4.8s 1 forwards;
+  }
+
+  .bf-b-project {
+    animation: fill-down 0.6s ease-out 5.6s 1 forwards;
+  }
+
+  .bf-b-agg {
+    animation: fill-down 1.2s ease-in-out 6.2s 1 forwards;
+  }
+
+  .bf-b-sort {
+    animation: fill-down 0.5s ease-out 7.4s 1 forwards;
+  }
+
+  // ── optimised fills ───────────────────────────────────────────────────────
+  .bf-o-scan-c {
+    animation: fill-down 1.2s ease-in 0s 1 forwards;
+  }
+
+  .bf-o-scan-o {
+    animation: fill-down 1.4s ease-in 0s 1 forwards;
+  }
+
+  .bf-o-join {
+    animation: fill-down 1.5s linear 1.4s 1 forwards;
+  }
+
+  .bf-o-project {
+    animation: fill-down 0.6s ease-out 2.9s 1 forwards;
+  }
+
+  .bf-o-agg {
+    animation: fill-down 1.2s ease-in-out 3.5s 1 forwards;
+  }
+
+  .bf-o-sort {
+    animation: fill-down 0.5s ease-out 4.7s 1 forwards;
+  }
+
+  // ── baseline text ─────────────────────────────────────────────────────────
+  .ft-b-scan {
+    animation: text-appear 0.4s ease-out 0s 1 both;
+  }
+
+  .ft-b-join {
+    animation: text-appear 0.4s ease-out 1.8s 1 both;
+  }
+
+  .ft-b-filter {
+    animation: text-appear 0.3s ease-out 4.8s 1 both;
+  }
+
+  .ft-b-project {
+    animation: text-appear 0.3s ease-out 5.6s 1 both;
+  }
+
+  .ft-b-agg {
+    animation: text-appear 0.4s ease-out 6.2s 1 both;
+  }
+
+  .ft-b-sort {
+    animation: text-appear 0.3s ease-out 7.4s 1 both;
+  }
+
+  // ── optimised text ────────────────────────────────────────────────────────
+  .ft-o-scan {
+    animation: text-appear 0.4s ease-out 0s 1 both;
+  }
+
+  .ft-o-join {
+    animation: text-appear 0.4s ease-out 1.4s 1 both;
+  }
+
+  .ft-o-project {
+    animation: text-appear 0.3s ease-out 2.9s 1 both;
+  }
+
+  .ft-o-agg {
+    animation: text-appear 0.4s ease-out 3.5s 1 both;
+  }
+
+  .ft-o-sort {
+    animation: text-appear 0.3s ease-out 4.7s 1 both;
+  }
+}
