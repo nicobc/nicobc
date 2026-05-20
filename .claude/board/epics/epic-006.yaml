@@ -63,7 +63,7 @@ tickets:
   - id: T4
     title: Switch workshop KPI from average to total order amount
     type: fix
-    status: TESTING
+    status: DONE
     description: The shared workshop KPI used average order amount, which has no business meaning. Switch to total order amount across landing page copy and data contracts lab.
     acceptance_criteria:
       - Landing page scenario line updated from average to total order amount
