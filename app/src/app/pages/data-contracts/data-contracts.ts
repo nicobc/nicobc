@@ -37,16 +37,18 @@ const FCT_ORDERS_SCHEMA = {
     customer_id: { type: 'integer' },
     amount: { type: 'integer' },
     order_date: { type: 'string' },
+    created_at: { type: 'string' },
+    updated_at: { type: 'string' },
   },
   additionalProperties: false,
 };
 
 const OUTPUT_SCHEMA = {
   type: 'object',
-  required: ['customer_name', 'avg_order_amount'],
+  required: ['customer_name', 'total_amount'],
   properties: {
     customer_name: { type: 'string' },
-    avg_order_amount: { type: 'number' },
+    total_amount: { type: 'number' },
   },
 };
 
@@ -175,7 +177,7 @@ export class DataContracts implements OnInit {
     if (invalid) {
       this.outputHint.set(
         'Your query ran but the output does not match what the chart expects. ' +
-          'Make sure you return customer_name (text) and avg_order_amount (number).',
+          'Make sure you return customer_name (text) and total_amount (number).',
       );
       return;
     }
@@ -189,7 +191,7 @@ export class DataContracts implements OnInit {
 
     const chartRows: ChartRow[] = rows.map((r) => ({
       label: r['customer_name'] as string,
-      value: r['avg_order_amount'] as number,
+      value: r['total_amount'] as number,
     }));
     this.step1Rows.set(chartRows);
     this.step1Done.set(true);
@@ -211,7 +213,7 @@ export class DataContracts implements OnInit {
       const result = await query(this.lastSql());
       const rows: ChartRow[] = result.rows.map((r) => ({
         label: r['customer_name'] as string,
-        value: r['avg_order_amount'] as number | null,
+        value: r['total_amount'] as number | null,
       }));
       this.step2Rows.set(rows);
       this.step2Done.set(true);

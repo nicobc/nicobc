@@ -8,7 +8,9 @@ notes:
   - Copy register: about page + BCN map copy; no LLM patterns (no "not just X but Y", no triple enumerations, no dash punchlines)
   - Target audience is not beginners; no need to explain star schema, OLAP/OLTP, or basic SQL/Python
   - Schema panel is a custom Angular component — no Mermaid, no SVG file, no external diagram dependency
-  - T3 (copy) precedes T4 (density): copy removal eliminates DOM elements the density pass would otherwise have to work around
+  - T3 (copy) precedes T10 (density): copy removal eliminates DOM elements the density pass would otherwise have to work around
+  - T4 (avg→sum) precedes T5 (animation): animation uses the corrected KPI query
+  - T5 (animation) precedes T9 (conclusion): conclusion renders after the animated capstone step is in place
 tickets:
 
   - id: T1
@@ -45,27 +47,49 @@ tickets:
   - id: T3
     title: Copy pass — workshops and landing page
     type: style
-    status: READY
-    description: All workshop copy reads like a person wrote it; challenge schema hints simplified now that the schema panel exists.
+    status: IN PROGRESS
+    description: Workshop titles, lab header categories, and all prose updated to match the distributed computing register. Unit testing card hidden until EPIC-004 ships.
     acceptance_criteria:
-      - All lab prose, step paragraphs, challenge intros, feedback messages, and step labels reviewed and edited in distributed computing and data contracts
-      - Workshop landing page copy reviewed
+      - Unit testing workshop card removed from landing page; seq numbers and scenario line updated to reflect two visible workshops
+      - Workshop titles updated — data contracts to "Catching schema drift"; unit testing to "I/O isolation in pytest" (in data only, card hidden)
+      - Lab header category eyebrow updated to full noun phrase without "Data Engineering" prefix — "Distributed computing", "Data contracts", "Unit testing"
+      - Data contracts workshop card description updated (no "A hands-on look at" pattern)
+      - All lab prose, step paragraphs, challenge intros, and feedback messages reviewed in distributed computing and data contracts
+      - Broetry patterns removed: staccato fragment punchlines and em-dash payoff clauses
       - Challenge schema hint strings simplified or removed where the schema panel makes them redundant
       - No LLM copy patterns — no "not just X but Y", no triple enumerations, no dash punchlines
-      - Reference register is the about page and BCN map copy
+      - Reference register: distributed computing step paragraphs for technical prose; about page and BCN map copy for general register
 
   - id: T4
-    title: Distributed computing lab — vertical density pass
-    type: style
-    status: READY
-    description: Workshop steps fit on a 13" MacBook Pro viewport; copy-phase steps do not require scrolling to reach the CTA.
+    title: Switch workshop KPI from average to total order amount
+    type: fix
+    status: DONE
+    description: The shared workshop KPI used average order amount, which has no business meaning. Switch to total order amount across landing page copy and data contracts lab.
     acceptance_criteria:
-      - Copy-phase steps (paragraphs + CTA button) visible without scrolling on a 13" MBP (~900px usable height)
-      - Viz-phase overflow is acceptable and out of scope
-      - Spacing reductions reviewed iteratively across all elements of the distributed computing lab
-      - No visual regression on other lab pages (data-contracts shares global lab styles)
+      - Landing page scenario line updated from average to total order amount
+      - Data contracts lab query updated from AVG to SUM(::INTEGER cast) with column renamed to total_amount
+      - Data contracts expected rows recomputed for total order amount
+      - Data contracts output schema, hint copy, and chart mappings updated accordingly
+      - Distributed computing DB setup declares all seed columns on every table
 
   - id: T5
+    title: Capstone step — DAG race animation for scan, shuffle, and aggregate
+    type: feat
+    status: READY
+    description: As a learner, I see a side-by-side DAG race that visualises sloppy vs. optimised execution for the top 5 Spanish customers query, making the scan-to-shuffle cost reduction concrete before the capstone challenge.
+    acceptance_criteria:
+      - Two DAGs rendered side by side; each represents one query implementation (sloppy vs. optimised) for top 5 Spanish customers by total order amount (dim_customers + fct_orders, 2-table join)
+      - DAG building blocks — scan, project, filter, join, aggregate — rendered as labeled blocks in execution order (left to right)
+      - Each block fills in the direction of the DAG as the race progresses; fill rate encodes relative data volume (more data = slower fill)
+      - Data rectangles travel through the DAG below each block; sloppy path carries a larger rectangle into the join
+      - Join block: two rectangles enter, spinner represents the shuffle, single output rectangle exits sized to surviving rows in a neutral merged color
+      - Aggregate block: spinner represents computation; output rectangle is smaller and a distinct third color to signal grouped result
+      - Both DAGs race simultaneously; sloppy path visibly slower at join and aggregate steps
+      - Single restart button resets and reruns the race; no pill switch
+      - Mobile: data rectangles hidden; block fill rate difference conveys the comparison at narrow viewports
+      - New vizScenario wired to step 3 in distributed-computing.ts; step 3 viz phase uses this component
+
+  - id: T6
     title: Back navigation — step 1 to workshop landing page
     type: feat
     status: READY
@@ -75,7 +99,7 @@ tickets:
       - Clicking the back arrow from step 1 navigates to the workshop landing page
       - No other step navigation is affected
 
-  - id: T6
+  - id: T7
     title: Challenge modal — Run, Submit, Reveal, Restart interaction model
     type: feat
     status: READY
@@ -88,9 +112,45 @@ tickets:
       - Restart (↺ icon, no label) resets the editor to the starting SQL and clears state and result table; available in all states including correct
       - Reveal shows the canonical solution SQL in the editor in all states including correct; does not change challenge state if already correct
       - Editor remains editable in the correct state
-      - Mobile layout deferred to T7 — icon-only buttons at narrow viewports acceptable as out-of-scope here
+      - Mobile layout deferred to T11 — icon-only buttons at narrow viewports acceptable as out-of-scope here
 
-  - id: T7
+  - id: T8
+    title: Challenge info icon — how the challenge environment works
+    type: feat
+    status: READY
+    description: A help icon on challenge components that explains on hover or click how the challenge runs — designed to extend beyond SQL editor challenges to future Spark UI challenges.
+    acceptance_criteria:
+      - A "?" icon is visible on each challenge component
+      - On hover or click, a tooltip or popover explains how the challenge environment works (SQL challenges run in the browser on DuckDB)
+      - Copy and design are extensible — the pattern must accommodate future challenge types (e.g. Spark UI) without structural changes
+      - Tooltip pattern is consistent with the query-hint tooltip introduced in T3
+
+  - id: T9
+    title: Workshop conclusion — pass minimization and next workshop nudge
+    type: feat
+    status: READY
+    description: After completing the capstone challenge, the learner sees a short conclusion that introduces pass minimization as the third lever of data movement minimization and nudges them toward the next workshop.
+    acceptance_criteria:
+      - Conclusion section renders after the capstone challenge is marked correct
+      - Copy introduces pass minimization as the third lever — how many times the engine reads through the data
+      - No forward reference to EPIC-009 until that epic is READY; conclusion copy is self-contained
+      - A continue button or link prompts the learner to proceed
+      - Layout and style consistent with the existing lab design
+    notes:
+      - Forward reference to Spark UI workshop (EPIC-009) to be added once EPIC-009 is groomed to READY
+
+  - id: T10
+    title: Distributed computing lab — vertical density pass
+    type: style
+    status: READY
+    description: Workshop steps fit on a 13" MacBook Pro viewport; copy-phase steps do not require scrolling to reach the CTA.
+    acceptance_criteria:
+      - Copy-phase steps (paragraphs + CTA button) visible without scrolling on a 13" MBP (~900px usable height)
+      - Viz-phase overflow is acceptable and out of scope
+      - Spacing reductions reviewed iteratively across all elements of the distributed computing lab
+      - No visual regression on other lab pages (data-contracts shares global lab styles)
+
+  - id: T11
     title: Responsive design — site-wide mobile pass
     type: style
     status: READY

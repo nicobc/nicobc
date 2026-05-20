@@ -247,24 +247,28 @@ export class DistributedComputing implements OnInit {
   private async setupDatabase(): Promise<void> {
     if (this.dbReady) return;
     await execute(
-      'CREATE OR REPLACE TABLE dim_products (product_id INTEGER, product_name VARCHAR, category VARCHAR, unit_price INTEGER)',
+      'CREATE OR REPLACE TABLE dim_products (product_id INTEGER, product_name VARCHAR, category VARCHAR, unit_price INTEGER, created_at VARCHAR, updated_at VARCHAR)',
     );
     await execute(
-      `INSERT INTO dim_products VALUES ${dimProducts.map((p) => `(${p.product_id}, '${p.product_name}', '${p.category}', ${p.unit_price})`).join(', ')}`,
-    );
-    await execute('CREATE OR REPLACE TABLE fct_order_items (order_id INTEGER, product_id INTEGER, quantity INTEGER)');
-    await execute(
-      `INSERT INTO fct_order_items VALUES ${fctOrderItems.map((i) => `(${i.order_id}, ${i.product_id}, ${i.quantity})`).join(', ')}`,
+      `INSERT INTO dim_products VALUES ${dimProducts.map((p) => `(${p.product_id}, '${p.product_name}', '${p.category}', ${p.unit_price}, '${p.created_at}', '${p.updated_at}')`).join(', ')}`,
     );
     await execute(
-      'CREATE OR REPLACE TABLE dim_customers (customer_id INTEGER, customer_name VARCHAR, country VARCHAR)',
+      'CREATE OR REPLACE TABLE fct_order_items (order_id INTEGER, product_id INTEGER, quantity INTEGER, created_at VARCHAR, updated_at VARCHAR)',
     );
     await execute(
-      `INSERT INTO dim_customers VALUES ${dimCustomers.map((c) => `(${c.customer_id}, '${c.customer_name}', '${c.country}')`).join(', ')}`,
+      `INSERT INTO fct_order_items VALUES ${fctOrderItems.map((i) => `(${i.order_id}, ${i.product_id}, ${i.quantity}, '${i.created_at}', '${i.updated_at}')`).join(', ')}`,
     );
-    await execute('CREATE OR REPLACE TABLE fct_orders (order_id INTEGER, customer_id INTEGER)');
     await execute(
-      `INSERT INTO fct_orders VALUES ${fctOrdersBatch1.map((o) => `(${o.order_id}, ${o.customer_id})`).join(', ')}`,
+      'CREATE OR REPLACE TABLE dim_customers (customer_id INTEGER, customer_name VARCHAR, country VARCHAR, created_at VARCHAR, updated_at VARCHAR)',
+    );
+    await execute(
+      `INSERT INTO dim_customers VALUES ${dimCustomers.map((c) => `(${c.customer_id}, '${c.customer_name}', '${c.country}', '${c.created_at}', '${c.updated_at}')`).join(', ')}`,
+    );
+    await execute(
+      'CREATE OR REPLACE TABLE fct_orders (order_id INTEGER, customer_id INTEGER, amount INTEGER, order_date VARCHAR, created_at VARCHAR, updated_at VARCHAR)',
+    );
+    await execute(
+      `INSERT INTO fct_orders VALUES ${fctOrdersBatch1.map((o) => `(${o.order_id}, ${o.customer_id}, ${o.amount}, '${o.order_date}', '${o.created_at}', '${o.updated_at}')`).join(', ')}`,
     );
     this.dbReady = true;
   }

@@ -28,7 +28,7 @@ export class Workshops {
   readonly disclaimer = 'Any resemblance to actual companies or persons is purely coincidental.';
 
   readonly scenarioLines: string[] = [
-    'A Spanish e-commerce company is expanding into France. Its pipeline produces two tables: <code>fct_orders</code> and <code>dim_customers</code>. The KPI across all three workshops is the same: average order amount per customer, top 5 for Spain.',
+    'A Spanish e-commerce company is expanding into France. Its pipeline produces two tables: <code>fct_orders</code> and <code>dim_customers</code>. The KPI across all three workshops is the same: total order amount per customer, top 5 for Spain.',
     'The workshops are independent — pick whichever gap in your practice matters most.',
   ];
 
