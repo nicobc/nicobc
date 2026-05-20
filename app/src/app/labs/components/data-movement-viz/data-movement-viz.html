@@ -1,4 +1,8 @@
-@if (scenario === 'column-pruning') {
+@if (scenario === 'dag-race') {
+
+<app-dag-race-viz (done)="onDagRaceDone()" />
+
+} @if (scenario === 'column-pruning') {
 
 <div class="viz-toggle">
   <button class="toggle-pill" [class.active]="pruningMode() === 'unpruned'" (click)="setPruningMode('unpruned')">

@@ -31,7 +31,7 @@ export class Workshops {
     'A Spanish e-commerce company is expanding into France and wants to analyse its data to inform its decisions.';
   readonly scenario2Pre = 'Each workshop introduces a data engineering concept using ';
   readonly scenario2Query = 'the same query';
-  readonly scenario2QueryDetail = 'top 5 Spanish customers by average order amount';
+  readonly scenario2QueryDetail = 'top 5 Spanish customers by total order amount';
   readonly scenario3Pre = 'The data model is ';
   readonly scenario3Available = 'available';
   readonly scenario3Post = ' throughout.';
