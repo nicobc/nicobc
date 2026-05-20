@@ -8,9 +8,9 @@ notes:
   - Copy register: about page + BCN map copy; no LLM patterns (no "not just X but Y", no triple enumerations, no dash punchlines)
   - Target audience is not beginners; no need to explain star schema, OLAP/OLTP, or basic SQL/Python
   - Schema panel is a custom Angular component — no Mermaid, no SVG file, no external diagram dependency
-  - T3 (copy) precedes T4 (density): copy removal eliminates DOM elements the density pass would otherwise have to work around
-  - T9 (avg→sum) precedes T10 (animation): animation uses the corrected KPI query
-  - T10 (animation) precedes T11 (conclusion): conclusion renders after the animated capstone step is in place
+  - T3 (copy) precedes T10 (density): copy removal eliminates DOM elements the density pass would otherwise have to work around
+  - T4 (avg→sum) precedes T5 (animation): animation uses the corrected KPI query
+  - T5 (animation) precedes T9 (conclusion): conclusion renders after the animated capstone step is in place
 tickets:
 
   - id: T1
@@ -61,66 +61,6 @@ tickets:
       - Reference register: distributed computing step paragraphs for technical prose; about page and BCN map copy for general register
 
   - id: T4
-    title: Distributed computing lab — vertical density pass
-    type: style
-    status: READY
-    description: Workshop steps fit on a 13" MacBook Pro viewport; copy-phase steps do not require scrolling to reach the CTA.
-    acceptance_criteria:
-      - Copy-phase steps (paragraphs + CTA button) visible without scrolling on a 13" MBP (~900px usable height)
-      - Viz-phase overflow is acceptable and out of scope
-      - Spacing reductions reviewed iteratively across all elements of the distributed computing lab
-      - No visual regression on other lab pages (data-contracts shares global lab styles)
-
-  - id: T5
-    title: Back navigation — step 1 to workshop landing page
-    type: feat
-    status: READY
-    description: As a learner, I can navigate back to the workshop landing page from step 1.
-    acceptance_criteria:
-      - Step 1 of every workshop displays a back arrow consistent with the one shown on steps 2+
-      - Clicking the back arrow from step 1 navigates to the workshop landing page
-      - No other step navigation is affected
-
-  - id: T6
-    title: Challenge modal — Run, Submit, Reveal, Restart interaction model
-    type: feat
-    status: READY
-    description: As a learner, I can freely run queries to explore results before submitting for validation, restart from the starting query at any point, and compare my solution to the canonical answer even after solving the challenge.
-    acceptance_criteria:
-      - Control row layout in unanswered/wrong states — [↺] [ Run ]  [ Reveal ]  [ Submit ]
-      - Control row layout in correct state — [↺] [ Run ]  [ Reveal ]  [ Submit ]  [ Next ]
-      - Run executes the query and displays the result table; no validation, no feedback message change
-      - Submit validates the query and updates state and feedback as before (renamed from Check)
-      - Restart (↺ icon, no label) resets the editor to the starting SQL and clears state and result table; available in all states including correct
-      - Reveal shows the canonical solution SQL in the editor in all states including correct; does not change challenge state if already correct
-      - Editor remains editable in the correct state
-      - Mobile layout deferred to T7 — icon-only buttons at narrow viewports acceptable as out-of-scope here
-
-  - id: T7
-    title: Responsive design — site-wide mobile pass
-    type: style
-    status: READY
-    description: All lab pages and the schema panel render correctly on mobile viewports; no horizontal scroll at 375px.
-    acceptance_criteria:
-      - Schema panel switches to a single-column stacked layout on small screens
-      - Workshops landing, distributed-computing, and data-contracts pages reviewed for overflow and density on mobile
-      - Challenge modal control row uses icon-only buttons on small viewports to fit the four-button layout
-      - Challenge modal reviewed for usability on small viewports
-      - No horizontal scroll on any page at 375px viewport width
-      - Breakpoints consistent with the existing 768px threshold in global styles
-
-  - id: T8
-    title: Challenge info icon — how the challenge environment works
-    type: feat
-    status: READY
-    description: A help icon on challenge components that explains on hover or click how the challenge runs — designed to extend beyond SQL editor challenges to future Spark UI challenges.
-    acceptance_criteria:
-      - A "?" icon is visible on each challenge component
-      - On hover or click, a tooltip or popover explains how the challenge environment works (SQL challenges run in the browser on DuckDB)
-      - Copy and design are extensible — the pattern must accommodate future challenge types (e.g. Spark UI) without structural changes
-      - Tooltip pattern is consistent with the query-hint tooltip introduced in T3
-
-  - id: T9
     title: Switch distributed computing lab KPI from average to total order amount
     type: fix
     status: READY
@@ -130,7 +70,7 @@ tickets:
       - CAPSTONE_EXPECTED_ROWS recomputed against updated seed data
       - Copy referencing average order amount updated to total order amount
 
-  - id: T10
+  - id: T5
     title: Capstone step — DAG race animation for scan, shuffle, and aggregate
     type: feat
     status: READY
@@ -147,7 +87,43 @@ tickets:
       - Mobile: data rectangles hidden; block fill rate difference conveys the comparison at narrow viewports
       - New vizScenario wired to step 3 in distributed-computing.ts; step 3 viz phase uses this component
 
-  - id: T11
+  - id: T6
+    title: Back navigation — step 1 to workshop landing page
+    type: feat
+    status: READY
+    description: As a learner, I can navigate back to the workshop landing page from step 1.
+    acceptance_criteria:
+      - Step 1 of every workshop displays a back arrow consistent with the one shown on steps 2+
+      - Clicking the back arrow from step 1 navigates to the workshop landing page
+      - No other step navigation is affected
+
+  - id: T7
+    title: Challenge modal — Run, Submit, Reveal, Restart interaction model
+    type: feat
+    status: READY
+    description: As a learner, I can freely run queries to explore results before submitting for validation, restart from the starting query at any point, and compare my solution to the canonical answer even after solving the challenge.
+    acceptance_criteria:
+      - Control row layout in unanswered/wrong states — [↺] [ Run ]  [ Reveal ]  [ Submit ]
+      - Control row layout in correct state — [↺] [ Run ]  [ Reveal ]  [ Submit ]  [ Next ]
+      - Run executes the query and displays the result table; no validation, no feedback message change
+      - Submit validates the query and updates state and feedback as before (renamed from Check)
+      - Restart (↺ icon, no label) resets the editor to the starting SQL and clears state and result table; available in all states including correct
+      - Reveal shows the canonical solution SQL in the editor in all states including correct; does not change challenge state if already correct
+      - Editor remains editable in the correct state
+      - Mobile layout deferred to T11 — icon-only buttons at narrow viewports acceptable as out-of-scope here
+
+  - id: T8
+    title: Challenge info icon — how the challenge environment works
+    type: feat
+    status: READY
+    description: A help icon on challenge components that explains on hover or click how the challenge runs — designed to extend beyond SQL editor challenges to future Spark UI challenges.
+    acceptance_criteria:
+      - A "?" icon is visible on each challenge component
+      - On hover or click, a tooltip or popover explains how the challenge environment works (SQL challenges run in the browser on DuckDB)
+      - Copy and design are extensible — the pattern must accommodate future challenge types (e.g. Spark UI) without structural changes
+      - Tooltip pattern is consistent with the query-hint tooltip introduced in T3
+
+  - id: T9
     title: Workshop conclusion — pass minimization and next workshop nudge
     type: feat
     status: READY
@@ -160,3 +136,27 @@ tickets:
       - Layout and style consistent with the existing lab design
     notes:
       - Forward reference to Spark UI workshop (EPIC-009) to be added once EPIC-009 is groomed to READY
+
+  - id: T10
+    title: Distributed computing lab — vertical density pass
+    type: style
+    status: READY
+    description: Workshop steps fit on a 13" MacBook Pro viewport; copy-phase steps do not require scrolling to reach the CTA.
+    acceptance_criteria:
+      - Copy-phase steps (paragraphs + CTA button) visible without scrolling on a 13" MBP (~900px usable height)
+      - Viz-phase overflow is acceptable and out of scope
+      - Spacing reductions reviewed iteratively across all elements of the distributed computing lab
+      - No visual regression on other lab pages (data-contracts shares global lab styles)
+
+  - id: T11
+    title: Responsive design — site-wide mobile pass
+    type: style
+    status: READY
+    description: All lab pages and the schema panel render correctly on mobile viewports; no horizontal scroll at 375px.
+    acceptance_criteria:
+      - Schema panel switches to a single-column stacked layout on small screens
+      - Workshops landing, distributed-computing, and data-contracts pages reviewed for overflow and density on mobile
+      - Challenge modal control row uses icon-only buttons on small viewports to fit the four-button layout
+      - Challenge modal reviewed for usability on small viewports
+      - No horizontal scroll on any page at 375px viewport width
+      - Breakpoints consistent with the existing 768px threshold in global styles
