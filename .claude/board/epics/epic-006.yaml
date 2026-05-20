@@ -75,7 +75,7 @@ tickets:
   - id: T5
     title: Capstone step — DAG race animation for scan, shuffle, and aggregate
     type: feat
-    status: IN PROGRESS
+    status: TESTING
     description: As a learner, I see a side-by-side DAG race that visualises sloppy vs. optimised execution for the top 5 Spanish customers query, making the scan-to-shuffle cost reduction concrete before the capstone challenge.
     acceptance_criteria:
       - Two DAGs rendered side by side (Baseline · Optimised); each represents the top 5 Spanish customers query on dim_customers + fct_orders
