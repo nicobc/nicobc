@@ -61,14 +61,16 @@ tickets:
       - Reference register: distributed computing step paragraphs for technical prose; about page and BCN map copy for general register
 
   - id: T4
-    title: Switch distributed computing lab KPI from average to total order amount
+    title: Switch workshop KPI from average to total order amount
     type: fix
-    status: IN PROGRESS
-    description: The top 5 Spanish customers KPI uses average order amount, which has no business meaning. Replace with total order amount (SUM) across capstone SQL, expected rows, and copy.
+    status: TESTING
+    description: The shared workshop KPI used average order amount, which has no business meaning. Switch to total order amount across landing page copy and data contracts lab.
     acceptance_criteria:
-      - Capstone starting and solution SQL updated to compute total order amount via SUM(o.amount)
-      - CAPSTONE_EXPECTED_ROWS recomputed against updated seed data
-      - Copy referencing average order amount updated to total order amount
+      - Landing page scenario line updated from average to total order amount
+      - Data contracts lab query updated from AVG to SUM(::INTEGER cast) with column renamed to total_amount
+      - Data contracts expected rows recomputed for total order amount
+      - Data contracts output schema, hint copy, and chart mappings updated accordingly
+      - Distributed computing DB setup declares all seed columns on every table
 
   - id: T5
     title: Capstone step — DAG race animation for scan, shuffle, and aggregate
