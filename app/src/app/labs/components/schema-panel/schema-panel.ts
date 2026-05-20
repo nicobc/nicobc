@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ElementRef, Input, ViewChild, signal, viewChildren } from '@angular/core';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faCheck, faCopy } from '@fortawesome/free-solid-svg-icons';
+import { DIM_CUSTOMERS, DIM_PRODUCTS, FCT_ORDERS, FCT_ORDER_ITEMS } from '../../data/schema';
 
 interface SchemaField {
   name: string;
@@ -26,9 +27,9 @@ interface Line {
 
 const TABLES: SchemaTable[] = [
   {
-    id: 'dim_customer',
+    id: DIM_CUSTOMERS,
     kind: 'DIM',
-    name: 'dim_customer',
+    name: DIM_CUSTOMERS,
     fields: [
       { name: 'customer_id', sqlType: 'INT', pk: true },
       { name: 'customer_name', sqlType: 'VARCHAR' },
@@ -38,9 +39,9 @@ const TABLES: SchemaTable[] = [
     ],
   },
   {
-    id: 'dim_product',
+    id: DIM_PRODUCTS,
     kind: 'DIM',
-    name: 'dim_product',
+    name: DIM_PRODUCTS,
     fields: [
       { name: 'product_id', sqlType: 'INT', pk: true },
       { name: 'product_name', sqlType: 'VARCHAR' },
@@ -51,12 +52,12 @@ const TABLES: SchemaTable[] = [
     ],
   },
   {
-    id: 'fct_order',
+    id: FCT_ORDERS,
     kind: 'FCT',
-    name: 'fct_order',
+    name: FCT_ORDERS,
     fields: [
       { name: 'order_id', sqlType: 'INT', pk: true },
-      { name: 'customer_id', sqlType: 'INT', fk: { table: 'dim_customer', field: 'customer_id' } },
+      { name: 'customer_id', sqlType: 'INT', fk: { table: DIM_CUSTOMERS, field: 'customer_id' } },
       { name: 'amount', sqlType: 'DECIMAL' },
       { name: 'order_date', sqlType: 'DATE' },
       { name: 'created_at', sqlType: 'TIMESTAMP' },
@@ -64,12 +65,12 @@ const TABLES: SchemaTable[] = [
     ],
   },
   {
-    id: 'fct_order_item',
+    id: FCT_ORDER_ITEMS,
     kind: 'FCT',
-    name: 'fct_order_item',
+    name: FCT_ORDER_ITEMS,
     fields: [
-      { name: 'order_id', sqlType: 'INT', fk: { table: 'fct_order', field: 'order_id' } },
-      { name: 'product_id', sqlType: 'INT', fk: { table: 'dim_product', field: 'product_id' } },
+      { name: 'order_id', sqlType: 'INT', fk: { table: FCT_ORDERS, field: 'order_id' } },
+      { name: 'product_id', sqlType: 'INT', fk: { table: DIM_PRODUCTS, field: 'product_id' } },
       { name: 'quantity', sqlType: 'INT' },
       { name: 'created_at', sqlType: 'TIMESTAMP' },
       { name: 'updated_at', sqlType: 'TIMESTAMP' },
@@ -79,9 +80,9 @@ const TABLES: SchemaTable[] = [
 
 // Maps line id → 'pkTable.pkField' key used by hover state
 const REL_MAP: Record<string, string> = {
-  'rel-dim_customer': 'dim_customer.customer_id',
-  'rel-dim_product': 'dim_product.product_id',
-  'rel-fct_order': 'fct_order.order_id',
+  [`rel-${DIM_CUSTOMERS}`]: `${DIM_CUSTOMERS}.customer_id`,
+  [`rel-${DIM_PRODUCTS}`]: `${DIM_PRODUCTS}.product_id`,
+  [`rel-${FCT_ORDERS}`]: `${FCT_ORDERS}.order_id`,
 };
 
 @Component({
@@ -183,9 +184,9 @@ export class SchemaPanel implements AfterViewInit {
     const [hDimC, hDimP, hFctO, hFctOI] = h;
     const [cDimC, cDimP, cFctO, cFctOI] = c;
     this.lines.set([
-      { id: 'rel-dim_customer', x1: hDimC.midX, y1: cDimC.bottom, x2: hFctO.midX, y2: cFctO.top },
-      { id: 'rel-dim_product', x1: hDimP.midX, y1: cDimP.bottom, x2: hFctOI.midX, y2: cFctOI.top },
-      { id: 'rel-fct_order', x1: cFctO.right, y1: hFctO.midY, x2: cFctOI.left, y2: hFctOI.midY },
+      { id: `rel-${DIM_CUSTOMERS}`, x1: hDimC.midX, y1: cDimC.bottom, x2: hFctO.midX, y2: cFctO.top },
+      { id: `rel-${DIM_PRODUCTS}`, x1: hDimP.midX, y1: cDimP.bottom, x2: hFctOI.midX, y2: cFctOI.top },
+      { id: `rel-${FCT_ORDERS}`, x1: cFctO.right, y1: hFctO.midY, x2: cFctOI.left, y2: hFctOI.midY },
     ]);
   }
 }

@@ -7,6 +7,6 @@ import { Component } from '@angular/core';
   styleUrl: './contact.scss',
 })
 export class Contact {
-  readonly intro = "I'm open to data engineering conversations — technical or otherwise.";
+  readonly intro = 'Happy to start a conversation.';
   readonly linkedInIntro = 'Drop me a message on ';
 }

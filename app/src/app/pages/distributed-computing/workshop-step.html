@@ -22,7 +22,6 @@
 </div>
 } @if (config.controller.show()) {
 <app-challenge-modal [showClose]="config.controller.state() !== 'correct'" (closed)="closeChallenge()">
-  <p class="challenge-schema" [innerHTML]="config.schema"></p>
   <p class="challenge-intro" [innerHTML]="config.intro"></p>
 
   <app-sql-editor

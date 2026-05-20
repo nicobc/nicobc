@@ -8,6 +8,7 @@ import { ChallengeController } from '../../labs/challenge-controller';
 import { execute, QueryResult } from '../../labs/db/duckdb';
 import { runQuery, matchesExpected } from '../../labs/validation';
 import { dimProducts, dimCustomers, fctOrdersBatch1, fctOrderItems } from '../../labs/data/seed';
+import { DIM_CUSTOMERS, FCT_ORDERS, FCT_ORDER_ITEMS } from '../../labs/data/schema';
 import { SchemaPanel } from '../../labs/components/schema-panel/schema-panel';
 import {
   CP_STARTING_SQL,
@@ -84,7 +85,7 @@ export class DistributedComputing implements OnInit {
 
   readonly step = signal<1 | 2 | 3>(1);
   readonly totalSteps = 3;
-  readonly labCategory = 'Data Engineering · Distributed';
+  readonly labCategory = 'Distributed computing';
   readonly labTitle = 'Minimizing data movement';
 
   readonly conceptName = computed(() => CONCEPT_NAMES[this.step() - 1]);
@@ -117,7 +118,7 @@ export class DistributedComputing implements OnInit {
       vizScenario: 'column-pruning',
       isFinalStep: false,
       paragraphs: [
-        'We need three columns from <code>dim_customers</code> to retrieve the top 5 Spanish customers: <code>customer_id</code> to join on, <code>customer_name</code> for the output, and <code>country</code> for the filter. The table also stores <code>created_at</code> and <code>updated_at</code> — none of which this query uses.',
+        `We need three columns from <code>${DIM_CUSTOMERS}</code> to retrieve the top 5 Spanish customers: <code>customer_id</code> to join on, <code>customer_name</code> for the output, and <code>country</code> for the filter. The table also stores <code>created_at</code> and <code>updated_at</code> — none of which this query uses.`,
         '<code>SELECT *</code> scans the full width of the table, while <code>SELECT customer_id, customer_name, country</code> only projects the needed columns. OLAP engines may push this projection down automatically; but they do not always. When a query is slow and you pull up the execution plan, column pruning is one of the first things to check.',
       ],
       controller: this.step1Challenge,
@@ -126,8 +127,6 @@ export class DistributedComputing implements OnInit {
       queryError: this.step1QueryError,
       startingSql: CP_STARTING_SQL,
       solutionSql: CP_SOLUTION_SQL,
-      schema:
-        '<code>dim_products</code> — product_id, product_name, category, unit_price, sku, supplier_id, weight_kg, reorder_threshold, created_at',
       intro: 'Use column pruning to optimize the query below.',
       feedback: {
         'unsafe-sql': 'Only SELECT queries are allowed here.',
@@ -152,8 +151,8 @@ export class DistributedComputing implements OnInit {
       vizScenario: 'predicate-pushdown',
       isFinalStep: false,
       paragraphs: [
-        "<code>WHERE country = 'Spain'</code> at the top level runs after the CTE closes — all 20 customers join with <code>fct_orders</code> before the French rows are dropped. That filter doesn't depend on any aggregated value, so it belongs inside the CTE, before the join. Same result, less data in motion.",
-        "Query optimisers detect this kind of pushdown and apply it automatically when the query is simple and statistics are fresh. But it can fail across CTE boundaries in some engines, or when the planner's cost model is stale. Writing <code>WHERE country = 'Spain'</code> inside the CTE makes the intent explicit, and keeps it efficient when the optimiser guesses wrong.",
+        `We only need Spanish customers to compute the top 5. We can either apply <code>WHERE country = 'Spain'</code> after joining <code>${DIM_CUSTOMERS}</code> with <code>${FCT_ORDERS}</code>, scanning every customer row, or push the predicate early in the query so only matching rows enter the join.`,
+        "Query optimisers detect this kind of pushdown and apply it automatically when the query is simple and statistics are fresh. But it can fail across CTE boundaries in some engines, or when the planner's cost model is stale. Filtering on country early in the query makes the intent explicit, and keeps it efficient when the optimiser guesses wrong.",
       ],
       controller: this.step2Challenge,
       sql: this.ppChallengeSQL,
@@ -161,8 +160,6 @@ export class DistributedComputing implements OnInit {
       queryError: this.step2QueryError,
       startingSql: PP_STARTING_SQL,
       solutionSql: PP_SOLUTION_SQL,
-      schema:
-        '<code>dim_products</code> — product_id, product_name, category, sku, supplier_id, cost_price, list_price, weight_kg, reorder_threshold, created_at',
       intro: 'Use predicate pushdown to optimize the query below.',
       feedback: {
         'unsafe-sql': 'Only SELECT queries are allowed here.',
@@ -195,19 +192,15 @@ export class DistributedComputing implements OnInit {
       queryError: this.step3QueryError,
       startingSql: CAPSTONE_STARTING_SQL,
       solutionSql: CAPSTONE_SOLUTION_SQL,
-      schema:
-        '<code>fct_orders</code> — order_id, customer_id &nbsp;|&nbsp; <code>fct_order_items</code> — order_id, product_id, quantity &nbsp;|&nbsp; <code>dim_customers</code> — customer_id, customer_name, country',
       intro:
-        'Each order has multiple line items — one row in <code>fct_orders</code> maps to several in <code>fct_order_items</code>. Goal: top 5 Spanish customers by total items ordered.',
+        'Write a query that minimizes data movement and returns the top 5 Spanish customers by total items ordered.',
       feedback: {
         'unsafe-sql': 'Only SELECT queries are allowed here.',
         'wrong-sql': 'The query could not run. Check your SQL and try again.',
         'not-optimized':
           'Think about minimizing data movement. Which table can be filtered and pruned first, before the joins?',
-        correct:
-          'Right. Filter and prune <code>dim_customers</code> first, join the fact tables after, group last. Each step carries only the rows the next step actually needs.',
-        revealed:
-          "<code>WHERE country = 'Spain'</code> and <code>SELECT customer_id, customer_name</code> go inside the first CTE. That gives the engine a small set to join against <code>fct_orders</code>, which then feeds <code>fct_order_items</code>. <code>GROUP BY</code> runs last on the already-reduced data.",
+        correct: `Right. Filter and prune <code>${DIM_CUSTOMERS}</code> first, join the fact tables after, group last. Each step carries only the rows the next step actually needs.`,
+        revealed: `<code>WHERE country = 'Spain'</code> and <code>SELECT customer_id, customer_name</code> go inside the first CTE. That gives the engine a small set to join against <code>${FCT_ORDERS}</code>, which then feeds <code>${FCT_ORDER_ITEMS}</code>. <code>GROUP BY</code> runs last on the already-reduced data.`,
       } satisfies FeedbackMap,
       validate: makeValidator(
         this.capstoneChallengeSQL,

@@ -9,6 +9,7 @@ import {
   SimpleChanges,
   signal,
 } from '@angular/core';
+import { DIM_CUSTOMERS } from '../../data/schema';
 
 export type VizScenario = 'column-pruning' | 'predicate-pushdown';
 export type PruningMode = 'unpruned' | 'pruned';
@@ -27,9 +28,9 @@ export class DataMovementViz implements OnInit, OnChanges {
 
   readonly cpToggleUnpruned = 'SELECT *';
   readonly cpTogglePruned = 'SELECT customer_id, customer_name, country';
-  readonly cpFromClause = 'FROM dim_customers';
+  readonly cpFromClause = `FROM ${DIM_CUSTOMERS}`;
 
-  readonly ppSelectFrom = 'SELECT *\nFROM dim_customers';
+  readonly ppSelectFrom = `SELECT *\nFROM ${DIM_CUSTOMERS}`;
   readonly ppWhereClause = "WHERE country = 'Spain'";
 
   readonly animating = signal(false);

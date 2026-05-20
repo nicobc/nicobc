@@ -1,4 +1,5 @@
 import type { ExprRef, FromTable, SelectFromStatement, Statement, WithStatement } from 'pgsql-ast-parser';
+import { DIM_CUSTOMERS } from '../../labs/data/schema';
 
 function hasRef(expr: unknown, name: string): boolean {
   if (!expr || typeof expr !== 'object') return false;
@@ -39,7 +40,7 @@ export function checkCapstoneStructure(stmts: Statement[]): 'not-optimized' | 'c
     const stmt = statement as SelectFromStatement;
     const from = stmt.from ?? [];
     if (from.length !== 1 || from[0].type !== 'table') return false;
-    if ((from[0] as FromTable).name.name !== 'dim_customers') return false;
+    if ((from[0] as FromTable).name.name !== DIM_CUSTOMERS) return false;
     if (!hasRef(stmt.where, 'country')) return false;
     const cols = stmt.columns ?? [];
     return !cols.some((c) => {

@@ -1,8 +1,10 @@
+import { DIM_CUSTOMERS, FCT_ORDERS } from '../../labs/data/schema';
+
 // ── SQL ───────────────────────────────────────────────────────────────────────
 
 export const DC_SKELETON = `-- Compute average order amount per customer name for Spain
--- Tables: fct_orders (order_id, customer_id, amount, order_date)
---         dim_customers (customer_id, customer_name, country)
+-- Tables: ${FCT_ORDERS} (order_id, customer_id, amount, order_date)
+--         ${DIM_CUSTOMERS} (customer_id, customer_name, country)
 -- Return: customer_name, avg_order_amount — top 5 DESC
 
 `;
@@ -11,8 +13,8 @@ export const DC_SOLUTION = `WITH avg_amounts AS (
   SELECT
     c.customer_name,
     AVG(o.amount) AS avg_order_amount
-  FROM fct_orders o
-  JOIN dim_customers c ON o.customer_id = c.customer_id
+  FROM ${FCT_ORDERS} o
+  JOIN ${DIM_CUSTOMERS} c ON o.customer_id = c.customer_id
   WHERE c.country = 'Spain'
   GROUP BY c.customer_name
 )
@@ -48,7 +50,7 @@ export const DC_STEP3_PROSE = [
   'The query did not throw. DuckDB returned rows and the chart rendered. But look at who is in the top 5.',
   "The upstream team made <code>amount</code> nullable. A batch came through with no amounts for the top customers — DuckDB's <code>AVG</code> silently ignored them, and they dropped out of the ranking entirely.",
   'A stakeholder looking at that dashboard would see their top customers disappear overnight.',
-  'A contract on <code>fct_orders</code> would have caught this at ingestion, before the mart job ran and faulty data reached the dashboard.',
+  `A contract on <code>${FCT_ORDERS}</code> would have caught this at ingestion, before the mart job ran and faulty data reached the dashboard.`,
   'A data contract is a formal agreement between producer and consumer. At minimum, the producing team declares field types, nullability, and constraints; the consuming team validates incoming data against that declaration at the boundary. A batch that violates the contract fails there instead of propagating silently downstream.',
   'Several formats can express a contract; this lab uses JSON Schema:',
 ];

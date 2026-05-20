@@ -30,7 +30,6 @@ export interface WorkshopStepConfig {
   queryError: WritableSignal<string | null>;
   startingSql: string;
   solutionSql: string;
-  schema: string;
   intro: string;
   feedback: Record<string, string>;
   validate: () => Promise<void>;
