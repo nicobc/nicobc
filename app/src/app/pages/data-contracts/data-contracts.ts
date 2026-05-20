@@ -37,6 +37,8 @@ const FCT_ORDERS_SCHEMA = {
     customer_id: { type: 'integer' },
     amount: { type: 'integer' },
     order_date: { type: 'string' },
+    created_at: { type: 'string' },
+    updated_at: { type: 'string' },
   },
   additionalProperties: false,
 };
