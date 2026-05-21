@@ -13,6 +13,7 @@ Practitioners — data engineers, CTOs, CDOs. Do not explain star schema, OLAP/O
 
 ## Anti-patterns — never use
 - "Not just X but Y" constructions
+- "X, not Y" contrast clauses used for rhetorical effect ("built around scenarios, not slides") — reads as LLM-generated copy
 - Triple enumerations used for rhetorical rhythm rather than genuine enumeration
 - Em-dash payoff clauses ("We do X — and it works")
 - Staccato fragment punchlines
