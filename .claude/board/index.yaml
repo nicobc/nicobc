@@ -24,4 +24,7 @@ done:
   - id: EPIC-007
     title: Deployment
 
-maintenance: []
+maintenance:
+  - id: MAINT/T8
+    title: Centralize route path constants
+    type: refactor

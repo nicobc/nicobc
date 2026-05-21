@@ -94,3 +94,16 @@ tickets:
     acceptance_criteria:
       - bar chart bars are white/light in dark mode
       - resolveTokenColor expands 3-digit hex before parsing
+
+  - id: T8
+    title: Centralize route path constants
+    type: refactor
+    scope: app
+    status: READY
+    description: Route strings ('/lab', '/about', '/lab/workshops', etc.) are duplicated as magic strings across navbar.ts, home.ts, lab.ts, and workshops.ts. Extract to a shared ROUTES constant object in app.routes.constants.ts and import it in all consumers.
+    acceptance_criteria:
+      - app/src/app/app.routes.constants.ts defines ROUTES as a const object covering all app paths
+      - navbar.ts, home.ts, lab.ts, and workshops.ts import and use ROUTES instead of raw strings
+      - app.routes.ts updated to use the same constants for path definitions
+      - no raw route strings remain in component files
+
