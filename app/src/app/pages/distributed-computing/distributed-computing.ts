@@ -84,7 +84,7 @@ export class DistributedComputing implements OnInit {
 
   readonly step = signal<1 | 2 | 3>(1);
   readonly totalSteps = 3;
-  readonly labCategory = 'Distributed computing';
+  readonly labCategory = 'Query optimisation';
   readonly labTitle = 'Minimizing data movement';
 
   readonly conceptName = computed(() => CONCEPT_NAMES[this.step() - 1]);
