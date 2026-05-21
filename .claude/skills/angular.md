@@ -32,6 +32,14 @@ Define every reusable unit at the smallest scope that covers all its consumers.
 - SCSS design tokens (colors, spacing, font sizes) → CSS custom properties on `:root` in `styles.scss`, consumed via `var(--token)`
 - Don't wrap imported functions in private aliases — call them directly
 
+## State modeling
+Prefer discriminated unions over nullable returns when a component has multiple display variants.
+
+- `string | null` where null can mean "unanswered", "trace shown instead", or "key absent" creates implicit semantic coupling — the caller cannot reason about the null case without reading the implementation.
+- Define a discriminated union instead: `{ kind: 'none' } | { kind: 'trace'; error: string } | { kind: 'message'; html: string }`. Each variant is self-describing; the template exhausts all cases via `@switch`.
+- `?? null` as a fallback is a smell when different null sources carry different meanings — the type system cannot distinguish them.
+- Framework-level responses (e.g. unsafe input rejected, network error) are constants in the component; they do not belong in per-instance config objects.
+
 ## Signals and reactivity
 - All signals and all class properties that are never reassigned declared as `readonly` — applies to icon refs, label strings, config arrays, and any other fixed member, not just signals
 - Derived values that read from signals → `computed()`, not plain getters; computed signals are memoized and tracked by the signal graph; getters re-run on every change detection cycle
