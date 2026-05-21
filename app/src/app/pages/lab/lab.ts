@@ -22,9 +22,8 @@ export class Lab {
     {
       slug: 'workshops',
       category: 'Workshop',
-      title: 'Workshop series',
-      description:
-        'A Spanish e-commerce company is expanding into France. Each workshop uses the same pipeline to examine a different class of data engineering problem.',
+      title: 'Data pipeline fundamentals',
+      description: 'Interactive workshops on pipeline performance, testability, and data quality.',
       route: '/lab/workshops',
     },
     {

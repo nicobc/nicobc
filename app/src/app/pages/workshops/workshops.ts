@@ -22,16 +22,15 @@ export class Workshops {
   readonly dbIcon = faDatabase;
   readonly starIcon = faStar;
 
+  readonly scenarioLines = [
+    'Each workshop starts from the same scenario: compute the top 5 Spanish customers of an e-commerce platform, by total order amount.',
+  ];
+
   readonly eyebrow = 'Workshop';
-  readonly heading = 'Workshop series';
+  readonly heading = 'Data pipeline fundamentals';
   readonly exploreCta = 'Explore';
   readonly disclaimer = 'Any resemblance to actual companies or persons is purely coincidental.';
 
-  readonly scenario1 =
-    'A Spanish e-commerce company is expanding into France and wants to analyse its data to inform its decisions.';
-  readonly scenario2Pre = 'Each workshop introduces a data engineering concept using ';
-  readonly scenario2Query = 'the same query';
-  readonly scenario2QueryDetail = 'top 5 Spanish customers by total order amount';
   readonly scenario3Pre = 'The data model is ';
   readonly scenario3Available = 'available';
   readonly scenario3Post = ' throughout.';

@@ -19,12 +19,9 @@
   </header>
 
   <div class="scenario">
-    <p>{{ scenario1 }}</p>
-    <p>
-      {{ scenario2Pre }}<span class="query-hint"
-        >{{ scenario2Query }}<span class="query-tooltip">{{ scenario2QueryDetail }}</span></span
-      >.
-    </p>
+    @for (line of scenarioLines; track $index) {
+    <p>{{ line }}</p>
+    }
     <p>
       {{ scenario3Pre }}<button type="button" class="inline-link" (click)="highlightSchema()">
         {{ scenario3Available }}</button
