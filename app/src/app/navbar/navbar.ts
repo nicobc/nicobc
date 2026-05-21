@@ -21,10 +21,7 @@ export class Navbar {
   readonly xmark = faXmark;
   isOpen = false;
 
-  readonly navLinks: NavLink[] = [
-    { label: 'About', route: '/about' },
-    { label: 'Labs', route: '/lab' },
-  ];
+  readonly navLinks: NavLink[] = [{ label: 'About', route: '/about' }];
 
   readonly mobileItems: DropdownItem[] = [{ label: 'Home', route: '/home' }, ...this.navLinks];
 
