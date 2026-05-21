@@ -135,7 +135,7 @@ export class DistributedComputing implements OnInit {
       intro: 'Use column pruning to optimize the query below.',
       feedback: {
         'not-optimized':
-          'Not quite. Trace what <code>category_revenue</code> needs from <code>enriched_items</code> and only project those columns.',
+          'Not quite. Trace what <code>category_revenue</code> needs from <code>products</code> and only project those columns.',
         correct:
           'Right. <code>product_id</code> for the join, <code>category</code> for the group-by, <code>unit_price</code> for the aggregation.',
         revealed:
@@ -155,7 +155,7 @@ export class DistributedComputing implements OnInit {
       isFinalStep: false,
       paragraphs: [
         `We only need Spanish customers to compute the top 5. We can either apply <code>WHERE country = 'Spain'</code> after joining <code>${DIM_CUSTOMERS}</code> with <code>${FCT_ORDERS}</code>, scanning every customer row, or push the predicate early in the query so only matching rows enter the join.`,
-        "Query optimisers detect this kind of pushdown and apply it automatically when the query is simple and statistics are fresh. But it can fail across CTE boundaries in some engines, or when the planner's cost model is stale. Filtering on country early in the query makes the intent explicit, and keeps it efficient when the optimiser guesses wrong.",
+        'Query optimisers detect this kind of pushdown and apply it automatically when the query is simple and statistics are fresh. Filtering on country early in the query makes the intent explicit, and keeps it efficient when the optimiser guesses wrong.',
       ],
       controller: this.step2Challenge,
       sql: this.ppChallengeSQL,

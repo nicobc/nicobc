@@ -2,15 +2,16 @@ import { DIM_CUSTOMERS, DIM_PRODUCTS, FCT_ORDERS, FCT_ORDER_ITEMS } from '../../
 
 // ── SQL ───────────────────────────────────────────────────────────────────────
 
-export const CP_STARTING_SQL = `WITH enriched_items AS (
+export const CP_STARTING_SQL = `WITH products AS (
   SELECT *
   FROM ${DIM_PRODUCTS}
+  WHERE unit_price > 0
 ),
 category_revenue AS (
   SELECT
     p.category,
     SUM(i.quantity * p.unit_price) AS revenue
-  FROM enriched_items p
+  FROM products p
   JOIN ${FCT_ORDER_ITEMS} i ON p.product_id = i.product_id
   GROUP BY p.category
 )
@@ -18,15 +19,16 @@ SELECT category, revenue
 FROM category_revenue
 ORDER BY revenue DESC`;
 
-export const CP_SOLUTION_SQL = `WITH enriched_items AS (
+export const CP_SOLUTION_SQL = `WITH products AS (
   SELECT product_id, category, unit_price
   FROM ${DIM_PRODUCTS}
+  WHERE unit_price > 0
 ),
 category_revenue AS (
   SELECT
     p.category,
     SUM(i.quantity * p.unit_price) AS revenue
-  FROM enriched_items p
+  FROM products p
   JOIN ${FCT_ORDER_ITEMS} i ON p.product_id = i.product_id
   GROUP BY p.category
 )

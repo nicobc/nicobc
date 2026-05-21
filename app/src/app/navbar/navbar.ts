@@ -23,8 +23,7 @@ export class Navbar {
 
   readonly navLinks: NavLink[] = [
     { label: 'About', route: '/about' },
-    { label: 'Lab', route: '/lab' },
-    { label: 'Contact', route: '/contact' },
+    { label: 'Labs', route: '/lab' },
   ];
 
   readonly mobileItems: DropdownItem[] = [{ label: 'Home', route: '/home' }, ...this.navLinks];

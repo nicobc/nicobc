@@ -32,7 +32,7 @@ export class DataMovementViz implements OnInit, OnChanges {
   @ViewChild(DagRaceViz) private readonly dagRaceRef?: DagRaceViz;
 
   readonly cpToggleUnpruned = 'SELECT *';
-  readonly cpTogglePruned = 'SELECT customer_id, customer_name, country';
+  readonly cpTogglePruned = 'SELECT customer_id, customer_name';
   readonly cpFromClause = `FROM ${DIM_CUSTOMERS}`;
 
   readonly ppSelectFrom = `SELECT *\nFROM ${DIM_CUSTOMERS}`;
