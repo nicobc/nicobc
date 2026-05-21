@@ -4,32 +4,14 @@ Personal portfolio built to signal staff-level data engineering to hiring manage
 
 ## MUST DO — enforce on every task without exception
 
-**Invoke relevant skills before touching code.** Before editing any file, invoke the matching domain skill from `.claude/skills/` (e.g. `angular`, `python-testing`). No change is too small to skip this — a one-line fix still requires the relevant skill active and applied first. Do not invoke workflow skills (`simplify`, `review`, `orient`, etc.) unless the user explicitly requests them.
+**MUST CHECK BRANCH BEFORE ANY COMMIT.** Run `git branch --show-current` before any `git commit`. If it prints `main`, stop — cut a branch first: `git fetch origin && git switch -c type/scope origin/main`. Never commit or push directly to main under any circumstances.
 
-**Before editing any file on a committable task, run `git branch --show-current`. If it prints `main`, stop and cut a branch first.**
+**MUST INVOKE RELEVANT SKILLS BEFORE TOUCHING CODE.** Before editing any file, invoke the matching domain skill from `.claude/skills/` (e.g. `angular`, `python-testing`). No change is too small to skip this — a one-line fix still requires the relevant skill active and applied first. Do not invoke workflow skills (`simplify`, `review`, `orient`, etc.) unless the user explicitly requests them.
 
-**Push back on code correctness.** If a challenge would result in objectively worse code — more allocations, less clear, slower — explain the trade-off before changing anything. Do not silently comply.
+**MUST APPLY DESIGN PRINCIPLES ON EVERY CODE CHANGE.** Less is more. Do one thing well (Unix). KISS — simplest correct solution. YAGNI — don't build for hypothetical needs. DRY — one home per concept; duplication is a bug. Before adding abstraction, ask whether it earns its weight. Before duplicating, ask why.
 
-**Never commit or push directly to main.** Every change lives on a branch. Before any `git commit`, verify you are not on `main`:
-```
-git branch --show-current   # must not print "main"
-```
-If on `main`, stop and cut a branch first: `git fetch origin && git switch -c type/scope origin/main`. The full sequence — branch → commit → push → PR → CI → squash merge — is in `RELEASING.md`. Skipping it corrupts git history and can break the deployment pipeline.
+**MUST SURFACE AND RESOLVE TECH DEBT BEFORE IMPLEMENTING.** Before editing any file, read it and identify structural problems. Raise them to the user before writing a single line of new code. Do not start implementing until the structural picture is clear. Tech debt is paid immediately, not deferred.
 
-## Code quality
+**MUST BE OPINIONATED, NOT SYCOPHANTIC.** Push back on bad ideas — priorities, architecture, implementation, copy, anything. If a direction leads to worse outcomes, say so and explain instead of silently complying.
 
-Before editing any file, read the files you will touch and surface any structural problems that constitute tech debt. Raise these to the user as a proposed pre-implementation cleanup. Do not start implementing until the structural picture is clear. Tech debt is paid immediately, not deferred.
-
-## Copy
-Write copy that sounds like a person, not a language model. Avoid "not just X but Y", triple enumerations, dash-separated punchlines, and broetry patterns in general. When in doubt, refer to the about page or the BCN map copy as the reference register.
-
-Trust Nicolas's copy judgment but copy decisions prioritize reader and site objective over his tastes. Push back on grammatical, orthographic, and linguistic mistakes.
-
-Files under .claude/ are agent-facing only. Write for comprehension, not readability. Omit flourish, bend grammar freely if meaning stays unambiguous, prefer dense over verbose.
-
-## Release process
-
-If the user introduces work that belongs in a separate PR while one is already open, push back and suggest merging the current PR first (one ticket = one PR, or directly dependent tickets only).
-
-## Language
-All code, data schemas, column names, JSON keys, and GeoJSON property names must be in English. Geographic proper nouns (place names like "el Raval", "Eixample") are kept in their original language as they are names, not labels.
+**MUST FOLLOW RELEASING.MD FOR ANY PUSH, PR, MERGE, OR TAG.** RELEASING.md is the authoritative source for the full release sequence. Before any `git push`, `gh pr create`, `gh pr merge`, or tag push — follow it without exception.

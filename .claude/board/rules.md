@@ -52,6 +52,8 @@ Code commits: `type(scope): description [EPIC-XXX/TN]` or `[MAINT/TN]` — ticke
 
 Board-only commits (status updates, grooming, meta-work): `chore(board): description`. No ticket ID required. `board` is a reserved scope — nothing else uses it.
 
+Agent-facing commits (anything under `.claude/` except board YAML files, plus `CLAUDE.md`): `chore(agent): description`. No ticket ID required. `agent` is a reserved scope — nothing else uses it. Board YAML status updates and grooming remain `chore(board):`.
+
 Board status updates can be standalone commits within the branch. The commit that transitions a ticket to DONE carries a `Closes EPIC-XXX/TN` footer (or `Closes MAINT/TN`) for traceability. Place it after `Co-Authored-By` if present.
 
 ## grooming convention
