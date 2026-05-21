@@ -21,6 +21,10 @@ const UNLOCK_MODE: Partial<Record<VizScenario, VizMode>> = {
   'dag-race': 'dag-race-done',
 };
 
+export type FeedbackMap = Record<'not-optimized' | 'correct' | 'revealed', string>;
+
+type FeedbackDisplay = { kind: 'none' } | { kind: 'trace'; error: string } | { kind: 'message'; html: string };
+
 export interface WorkshopStepConfig {
   vizScenario?: VizScenario;
   isFinalStep: boolean;
@@ -32,7 +36,7 @@ export interface WorkshopStepConfig {
   startingSql: string;
   solutionSql: string;
   intro: string;
-  feedback: Record<string, string>;
+  feedback: FeedbackMap;
   validate: () => Promise<void>;
 }
 
@@ -66,18 +70,19 @@ export class WorkshopStep implements OnChanges {
     return this.config.isFinalStep ? 'Done' : 'Next';
   }
 
-  readonly wrongOutputMessage = 'The query ran, but the output does not match.';
-
-  get feedbackMessage(): string | null {
+  get feedback(): FeedbackDisplay {
     const state = this.config.controller.state();
-    if (state === 'unanswered') return null;
-    if (state === 'wrong-output') return this.wrongOutputMessage;
-    const key = state === 'correct' ? (this.config.controller.solutionRevealed() ? 'revealed' : 'correct') : state;
-    return this.config.feedback[key] ?? null;
-  }
-
-  get showQueryError(): boolean {
-    return this.config.controller.state() === 'wrong-sql' && !!this.config.queryError();
+    if (state === 'unanswered') return { kind: 'none' };
+    if (state === 'wrong-sql') {
+      const error = this.config.queryError();
+      return error ? { kind: 'trace', error } : { kind: 'none' };
+    }
+    if (state === 'unsafe-sql') return { kind: 'message', html: 'Only SELECT queries are allowed here.' };
+    if (state === 'wrong-output') return { kind: 'message', html: 'The query ran, but the output does not match.' };
+    const key = (
+      state === 'correct' ? (this.config.controller.solutionRevealed() ? 'revealed' : 'correct') : state
+    ) as keyof FeedbackMap;
+    return { kind: 'message', html: this.config.feedback[key] };
   }
 
   get feedbackClass(): string {

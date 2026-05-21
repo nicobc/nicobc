@@ -3,7 +3,7 @@ import { parse, Statement } from 'pgsql-ast-parser';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faDatabase, faStar } from '@fortawesome/free-solid-svg-icons';
 import { checkPruningStructure, checkPushdownStructure, checkCapstoneStructure } from './challenge-validators';
-import { WorkshopStep, WorkshopStepConfig } from './workshop-step';
+import { WorkshopStep, WorkshopStepConfig, FeedbackMap } from './workshop-step';
 import { ChallengeController } from '../../labs/challenge-controller';
 import { execute, QueryResult } from '../../labs/db/duckdb';
 import { runQuery, matchesExpected } from '../../labs/validation';
@@ -26,7 +26,6 @@ import {
 // ── state types ───────────────────────────────────────────────────────────────
 
 type ChallengeState = 'unanswered' | 'unsafe-sql' | 'wrong-sql' | 'wrong-output' | 'not-optimized' | 'correct';
-type FeedbackMap = Record<Exclude<ChallengeState, 'unanswered' | 'wrong-output'> | 'revealed', string>;
 
 // ── validation pipeline ───────────────────────────────────────────────────────
 
@@ -118,8 +117,14 @@ export class DistributedComputing implements OnInit {
       vizScenario: 'column-pruning',
       isFinalStep: false,
       paragraphs: [
-        `We need three columns from <code>${DIM_CUSTOMERS}</code> to retrieve the top 5 Spanish customers: <code>customer_id</code> to join on, <code>customer_name</code> for the output, and <code>country</code> for the filter. The table also stores <code>created_at</code> and <code>updated_at</code> — none of which this query uses.`,
-        '<code>SELECT *</code> scans the full width of the table, while <code>SELECT customer_id, customer_name, country</code> only projects the needed columns. OLAP engines may push this projection down automatically; but they do not always. When a query is slow and you pull up the execution plan, column pruning is one of the first things to check.',
+        `We need two columns from <code>${DIM_CUSTOMERS}</code> to retrieve the top 5 Spanish customers:
+        <code>customer_id</code> to join on, <code>customer_name</code> for the output.
+        The table also stores <code>created_at</code> and <code>updated_at</code>, neither of which this query uses.
+        <code>country</code> is used for filtering, but is not required in the projection.`,
+        `<code>SELECT *</code> scans the full width of the table, while <code>SELECT customer_id, customer_name</code>
+        only projects the needed columns. OLAP engines may push this projection down automatically,
+        but not always. When a query is slow and you pull up the execution plan, column pruning is one of the
+        first things to check.`,
       ],
       controller: this.step1Challenge,
       sql: this.cpChallengeSQL,
@@ -129,10 +134,8 @@ export class DistributedComputing implements OnInit {
       solutionSql: CP_SOLUTION_SQL,
       intro: 'Use column pruning to optimize the query below.',
       feedback: {
-        'unsafe-sql': 'Only SELECT queries are allowed here.',
-        'wrong-sql': 'The query could not run. Check your SQL and try again.',
         'not-optimized':
-          'Not quite. Trace what <code>category_revenue</code> needs from <code>enriched_items</code> — only project those columns.',
+          'Not quite. Trace what <code>category_revenue</code> needs from <code>enriched_items</code> and only project those columns.',
         correct:
           'Right. <code>product_id</code> for the join, <code>category</code> for the group-by, <code>unit_price</code> for the aggregation.',
         revealed:
@@ -162,8 +165,6 @@ export class DistributedComputing implements OnInit {
       solutionSql: PP_SOLUTION_SQL,
       intro: 'Use predicate pushdown to optimize the query below.',
       feedback: {
-        'unsafe-sql': 'Only SELECT queries are allowed here.',
-        'wrong-sql': 'The query could not run. Check your SQL and try again.',
         'not-optimized':
           "Both predicates are in <code>HAVING</code>, which runs after <code>GROUP BY</code>. One of them doesn't depend on any aggregated value — which one can be evaluated before the rows are grouped?",
         correct:
@@ -196,8 +197,6 @@ export class DistributedComputing implements OnInit {
       intro:
         'Write a query that minimizes data movement and returns the top 5 Spanish customers by total items ordered.',
       feedback: {
-        'unsafe-sql': 'Only SELECT queries are allowed here.',
-        'wrong-sql': 'The query could not run. Check your SQL and try again.',
         'not-optimized':
           'Think about minimizing data movement. Which table can be filtered and pruned first, before the joins?',
         correct: `Right. Filter and prune <code>${DIM_CUSTOMERS}</code> first, join the fact tables after, group last. Each step carries only the rows the next step actually needs.`,
