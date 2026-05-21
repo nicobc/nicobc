@@ -45,28 +45,26 @@ tickets:
       - Result table styled consistently with the existing design system
 
   - id: T3
-    title: Copy pass — workshops and landing page
+    title: Copy pass — site-wide navigation simplification and lab prose
     type: style
     status: IN PROGRESS
-    description: Workshop titles, lab header categories, and all prose updated to match the distributed computing register. Unit testing card hidden until EPIC-004 ships.
+    description: Navigation stripped to essentials; site-wide copy updated to match the distributed computing register across all lab prose, challenge intros, and feedback messages.
     acceptance_criteria:
-      - Unit testing workshop card removed from landing page; seq numbers and scenario line updated to reflect two visible workshops
-      - Workshop titles updated — data contracts to "Catching schema drift"; unit testing to "I/O isolation in pytest" (in data only, card hidden)
-      - Lab header category eyebrow updated to full noun phrase without "Data Engineering" prefix — "Distributed computing", "Data contracts", "Unit testing"
-      - Data contracts workshop card description updated (no "A hands-on look at" pattern)
+      - Workshop titles updated — data contracts to "Catching schema drift"; unit testing to "I/O isolation in pytest" (in data only, not shown until EPIC-004)
+      - Lab header category eyebrow updated — "Query optimisation" for distributed computing, "Data contracts" for data contracts
       - All lab prose, step paragraphs, challenge intros, and feedback messages reviewed in distributed computing and data contracts
       - Broetry patterns removed: staccato fragment punchlines and em-dash payoff clauses
       - Challenge schema hint strings simplified or removed where the schema panel makes them redundant
-      - No LLM copy patterns — no "not just X but Y", no triple enumerations, no dash punchlines
-      - Reference register: distributed computing step paragraphs for technical prose; about page and BCN map copy for general register
+      - No LLM copy patterns — no "not just X but Y", no "X, not Y" contrasts, no triple enumerations, no dash punchlines
+      - Reference register: distributed computing step paragraphs for technical prose; BCN map copy for general register
       - /contact route removed; Contact component and all related files deleted; app.routes.ts updated accordingly
       - Challenge feedback states refactored to discriminated union; loading and seeding states hardcoded rather than derived at runtime
       - Table name strings extracted to constants across the data contracts lab; schema entity names pluralized
       - Workshops landing page scenario line, heading, and card descriptions rewritten
       - Data movement viz copy updated; SQL challenge queries restructured for legibility; additional copy pass across distributed computing steps
-      - Home page restructured — two project cards (workshops group, BCN map) replace the "Labs →" and "About →" CTAs; card descriptions rewritten for cold visitors
+      - Home page restructured — two project cards (workshops group, BCN map) replace CTAs; card descriptions rewritten for cold visitors
       - /lab route removed; Lab component and all related files deleted; app.routes.ts updated accordingly
-      - Labs nav link removed from navbar; About remains
+      - About page and /about route removed; navbar simplified to NC monogram and theme toggle; hamburger and dropdown removed
 
   - id: T4
     title: Switch workshop KPI from average to total order amount
