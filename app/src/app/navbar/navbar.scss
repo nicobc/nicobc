@@ -11,85 +11,18 @@ nav {
   background: var(--bg);
   border-bottom: 1px solid var(--border-faint);
   z-index: 1000;
-}
 
-.nav-links,
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 2.5rem;
-}
-
-.nav-links a {
-  font-size: var(--fs-base);
-}
-
-.first-name {
-  font-weight: var(--fw-light);
-  margin-right: 0.33rem;
-}
-
-.last-name {
-  font-weight: var(--fw-bold);
-}
-
-.nav-hamburger {
-  display: none;
-  position: relative;
-}
-
-.nav-hamburger button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1.4rem;
-  position: relative;
-  width: 1.4rem;
-  height: 1.4rem;
-  padding: 0;
-}
-
-.nav-hamburger button fa-icon {
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: flex;
-  pointer-events: none;
-  transition:
-    opacity var(--transition),
-    transform var(--transition);
-}
-
-.nav-hamburger button fa-icon.icon-xmark {
-  opacity: 0;
-  transform: rotate(-45deg);
-}
-
-.nav-hamburger button.is-open fa-icon.icon-bars {
-  opacity: 0;
-  transform: rotate(45deg);
-}
-
-.nav-hamburger button.is-open fa-icon.icon-xmark {
-  opacity: 1;
-  transform: rotate(0deg);
-}
-
-@media (width <= 768px) {
-  nav {
+  @media (width <= 768px) {
     padding: 0 1.5rem;
   }
+}
 
-  .nav-links {
-    display: none;
-  }
+.brand-prefix {
+  font-weight: var(--fw-light);
+  display: inline-block;
+  transform: scaleX(-1);
+}
 
-  .nav-hamburger {
-    display: block;
-  }
-
-  .nav-right {
-    flex: 1;
-    justify-content: space-between;
-  }
+.brand-suffix {
+  font-weight: var(--fw-bold);
 }

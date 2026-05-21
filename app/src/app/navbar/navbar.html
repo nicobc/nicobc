@@ -1,24 +1,6 @@
 <nav>
-  <div class="nav-links">
-    <a routerLink="/home" routerLinkActive="active">
-      <span class="first-name">Nicolas</span> <span class="last-name">Contreras</span>
-    </a>
-    @for (link of navLinks; track link.route) {
-    <a [routerLink]="link.route" routerLinkActive="active">{{ link.label }}</a>
-    }
-  </div>
-
-  <div class="nav-right">
-    <div class="nav-hamburger">
-      <button (click)="toggleMenu()" [class.is-open]="isOpen" [attr.aria-expanded]="isOpen" aria-label="Menu">
-        <fa-icon [icon]="bars" class="icon-bars" />
-        <fa-icon [icon]="xmark" class="icon-xmark" />
-      </button>
-      @if (isOpen) {
-      <app-dropdown [items]="mobileItems" />
-      }
-    </div>
-
-    <app-theme-toggle />
-  </div>
+  <a routerLink="/home"
+    ><span class="brand-prefix">{{ brandPrefix }}</span><span class="brand-suffix">{{ brandSuffix }}</span></a
+  >
+  <app-theme-toggle />
 </nav>
