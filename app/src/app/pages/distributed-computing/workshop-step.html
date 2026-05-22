@@ -22,7 +22,6 @@
 </div>
 } @if (config.controller.show()) {
 <app-challenge-modal [showClose]="config.controller.state() !== 'correct'" (closed)="closeChallenge()">
-  <p class="challenge-schema" [innerHTML]="config.schema"></p>
   <p class="challenge-intro" [innerHTML]="config.intro"></p>
 
   <app-sql-editor
@@ -39,11 +38,11 @@
     </button>
     <button class="btn-ghost" (click)="revealSolution()">{{ revealSolutionLabel }}</button>
   </div>
-  } @if (showQueryError) {
-  <div [class]="feedbackClass"><pre class="code-block feedback-error-trace">{{ config.queryError() }}</pre></div>
-  } @else if (feedbackMessage) {
-  <div [class]="feedbackClass"><p [innerHTML]="feedbackMessage"></p></div>
-  } @if (config.queryResult(); as result) {
+  } @switch (feedback.kind) { @case ('trace') {
+  <div [class]="feedbackClass"><pre class="code-block feedback-error-trace">{{ feedback.error }}</pre></div>
+  } @case ('message') {
+  <div [class]="feedbackClass"><p [innerHTML]="feedback.html"></p></div>
+  } } @if (config.queryResult(); as result) {
   <div class="query-result-table">
     <table>
       <thead>

@@ -22,37 +22,40 @@ export class Workshops {
   readonly dbIcon = faDatabase;
   readonly starIcon = faStar;
 
+  readonly scenarioLines = [
+    'Each workshop starts from the same scenario: compute the top 5 Spanish customers of an e-commerce platform, by total order amount.',
+  ];
+
   readonly eyebrow = 'Workshop';
-  readonly heading = 'Workshop series';
+  readonly heading = 'Data pipeline fundamentals';
   readonly exploreCta = 'Explore';
   readonly disclaimer = 'Any resemblance to actual companies or persons is purely coincidental.';
 
-  readonly scenarioLines: string[] = [
-    'A Spanish e-commerce company is expanding into France. Its pipeline produces two tables: <code>fct_orders</code> and <code>dim_customers</code>. The KPI across all three workshops is the same: total order amount per customer, top 5 for Spain.',
-    'The workshops are independent — pick whichever gap in your practice matters most.',
-  ];
+  readonly scenario3Pre = 'The data model is ';
+  readonly scenario3Available = 'available';
+  readonly scenario3Post = ' throughout.';
+
+  readonly schemaIconPulse = signal(false);
+
+  highlightSchema(): void {
+    if (this.schemaIconPulse()) return;
+    this.schemaIconPulse.set(true);
+    setTimeout(() => this.schemaIconPulse.set(false), 1200);
+  }
 
   readonly workshops: Workshop[] = [
     {
-      seq: '1 of 3',
+      seq: '1 of 2',
       title: 'Minimizing data movement',
       description:
-        'Build a mental model for distributed computing from simple optimization techniques, ' +
-        'using animated walkthroughs and SQL challenges.',
+        'Build a mental model for query optimization from simple techniques, using animated walkthroughs and SQL challenges.',
       route: '/lab/distributed-computing',
     },
     {
-      seq: '2 of 3',
-      title: 'The test that always passes',
+      seq: '2 of 2',
+      title: 'Catching schema drift',
       description:
-        "Refactor a pytest suite in six steps, from a test that reads a committed database file to one that doesn't need to know where the database lives.",
-      route: '/lab/unit-testing',
-    },
-    {
-      seq: ' of 3',
-      title: 'When good queries go wrong',
-      description:
-        'Write a query, see it work, then watch it silently break on the next batch. A hands-on look at schema drift and how data contracts catch it early.',
+        'See a valid query silently return wrong results when upstream data changes, and learn how data contracts catch the problem at the pipeline boundary.',
       route: '/lab/data-contracts',
     },
   ];

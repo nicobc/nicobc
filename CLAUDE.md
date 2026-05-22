@@ -6,7 +6,7 @@ Personal portfolio built to signal staff-level data engineering to hiring manage
 
 **MUST CHECK BRANCH BEFORE ANY COMMIT.** Run `git branch --show-current` before any `git commit`. If it prints `main`, stop — cut a branch first: `git fetch origin && git switch -c type/scope origin/main`. Never commit or push directly to main under any circumstances.
 
-**MUST INVOKE RELEVANT SKILLS BEFORE TOUCHING CODE.** Before editing any file, invoke the matching domain skill from `.claude/skills/` (e.g. `angular`, `python-testing`). No change is too small to skip this — a one-line fix still requires the relevant skill active and applied first. Do not invoke workflow skills (`simplify`, `review`, `orient`, etc.) unless the user explicitly requests them.
+**MUST READ RELEVANT SKILLS BEFORE TOUCHING CODE.** Before editing any file, read the matching domain skill from `.claude/skills/` (e.g. `angular`, `python-testing`) and apply its guidance. No change is too small to skip this — a one-line fix still requires the relevant skill read and applied first. Do not invoke workflow skills (`simplify`, `review`, `orient`, etc.) unless the user explicitly requests them.
 
 **MUST APPLY DESIGN PRINCIPLES ON EVERY CODE CHANGE.** Less is more. Do one thing well (Unix). KISS — simplest correct solution. YAGNI — don't build for hypothetical needs. DRY — one home per concept; duplication is a bug. Before adding abstraction, ask whether it earns its weight. Before duplicating, ask why.
 

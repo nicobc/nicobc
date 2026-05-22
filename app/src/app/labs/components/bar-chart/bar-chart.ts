@@ -13,6 +13,8 @@ Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, L
 export class BarChart implements AfterViewInit, OnChanges, OnDestroy {
   @Input() rows: ChartRow[] = [];
   @Input() comparisonRows?: ChartRow[];
+  @Input() primaryLabel = 'Primary';
+  @Input() comparisonLabel = 'Comparison';
   @ViewChild('canvas', { static: true }) canvasRef!: ElementRef<HTMLCanvasElement>;
 
   private chart: Chart | null = null;
@@ -57,7 +59,7 @@ export class BarChart implements AfterViewInit, OnChanges, OnDestroy {
     const datasets = this.isComparison
       ? [
           {
-            label: 'Batch 1',
+            label: this.primaryLabel,
             data: this.rows.map((r) => r.value),
             backgroundColor: resolveTokenColor('--fg', 0.12),
             borderColor: resolveTokenColor('--fg', 0.5),
@@ -65,7 +67,7 @@ export class BarChart implements AfterViewInit, OnChanges, OnDestroy {
             borderRadius: 3,
           },
           {
-            label: 'Batch 2',
+            label: this.comparisonLabel,
             data: this.comparisonRows!.map((r) => r.value),
             backgroundColor: resolveTokenColor('--accent', 0.18),
             borderColor: resolveTokenColor('--accent', 0.7),

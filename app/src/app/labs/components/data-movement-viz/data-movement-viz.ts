@@ -10,6 +10,7 @@ import {
   ViewChild,
   signal,
 } from '@angular/core';
+import { DIM_CUSTOMERS } from '../../data/schema';
 import { DagRaceViz } from '../dag-race-viz/dag-race-viz';
 
 export type VizScenario = 'column-pruning' | 'predicate-pushdown' | 'dag-race';
@@ -31,10 +32,10 @@ export class DataMovementViz implements OnInit, OnChanges {
   @ViewChild(DagRaceViz) private readonly dagRaceRef?: DagRaceViz;
 
   readonly cpToggleUnpruned = 'SELECT *';
-  readonly cpTogglePruned = 'SELECT customer_id, customer_name, country';
-  readonly cpFromClause = 'FROM dim_customers';
+  readonly cpTogglePruned = 'SELECT customer_id, customer_name';
+  readonly cpFromClause = `FROM ${DIM_CUSTOMERS}`;
 
-  readonly ppSelectFrom = 'SELECT *\nFROM dim_customers';
+  readonly ppSelectFrom = `SELECT *\nFROM ${DIM_CUSTOMERS}`;
   readonly ppWhereClause = "WHERE country = 'Spain'";
 
   readonly animating = signal(false);

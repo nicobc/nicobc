@@ -23,7 +23,6 @@
 }
 
 .step-intro {
-  font-size: var(--fs-lg);
   margin-bottom: 2rem !important;
 }
 
@@ -37,6 +36,7 @@
 .pipeline-dag {
   display: flex;
   align-items: center;
+  justify-content: center;
   flex-wrap: wrap;
   gap: 0.5rem;
   margin: 2rem 0;
@@ -49,24 +49,24 @@
   font-size: var(--fs-code);
   opacity: var(--opacity-muted);
 
-  &--tables {
+  &--storage {
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
-    font-size: var(--fs-xs);
-    font-family: var(--font-mono);
+    gap: 0.1rem;
   }
 
-  &--highlight {
+  &--active {
     border-color: var(--border-emphasis);
-    opacity: 1;
+    opacity: var(--opacity-strong);
     font-weight: var(--fw-semibold);
   }
+}
 
-  &--dashboard {
-    border-color: var(--border-strong);
-    opacity: var(--opacity-strong);
-  }
+.dag-tier {
+  font-size: var(--fs-xs);
+  opacity: var(--opacity-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .dag-arrow {

@@ -24,8 +24,13 @@
   max-width: 46ch;
 }
 
-.ctas {
-  display: flex;
-  gap: 0.75rem;
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
   margin-top: 0.5rem;
+
+  @media (width <= 768px) {
+    grid-template-columns: 1fr;
+  }
 }

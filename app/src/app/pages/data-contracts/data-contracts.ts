@@ -7,9 +7,12 @@ import { BarChart } from '../../labs/components/bar-chart/bar-chart';
 import { SchemaPanel } from '../../labs/components/schema-panel/schema-panel';
 import { getDB, query } from '../../labs/db/duckdb';
 import { dimCustomers, fctOrdersBatch1, fctOrdersBatch2, FctOrder } from '../../labs/data/seed';
+import { DIM_CUSTOMERS, FCT_ORDERS } from '../../labs/data/schema';
 import { ChartRow } from '../../labs/components/chart-colors';
 import { runQuery, matchesExpected } from '../../labs/validation';
 import {
+  DagNode,
+  DC_DAG_NODES,
   DC_SKELETON,
   DC_SOLUTION,
   DC_STEP1_EXPECTED_ROWS,
@@ -23,13 +26,15 @@ import {
   DC_RUN_STEP2_LABEL,
   DC_NEXT_LABEL,
   DC_TOTAL_STEPS,
+  DC_CHART_PRIMARY_LABEL,
+  DC_CHART_COMPARISON_LABEL,
 } from './data-contracts.data';
 
 // ── schemas ──────────────────────────────────────────────────────────────────
 
 const FCT_ORDERS_SCHEMA = {
   $schema: 'http://json-schema.org/draft-07/schema#',
-  title: 'fct_orders row',
+  title: `${FCT_ORDERS} row`,
   type: 'object',
   required: ['order_id', 'customer_id', 'amount', 'order_date'],
   properties: {
@@ -50,6 +55,7 @@ const OUTPUT_SCHEMA = {
     customer_name: { type: 'string' },
     total_amount: { type: 'number' },
   },
+  additionalProperties: false,
 };
 
 const ajv = new Ajv({ allErrors: false });
@@ -88,6 +94,11 @@ export class DataContracts implements OnInit {
   readonly dbIcon = faDatabase;
   readonly starIcon = faStar;
 
+  readonly labCategory = 'Data contracts';
+  readonly labTitle = 'Catching schema drift';
+  readonly dagNodes: readonly DagNode[] = DC_DAG_NODES;
+  readonly chartPrimaryLabel = DC_CHART_PRIMARY_LABEL;
+  readonly chartComparisonLabel = DC_CHART_COMPARISON_LABEL;
   readonly solution = DC_SOLUTION;
   readonly skeleton = DC_SKELETON;
   readonly schemaDisplay = JSON.stringify(FCT_ORDERS_SCHEMA, null, 2);
@@ -131,22 +142,22 @@ export class DataContracts implements OnInit {
     const conn = await db.connect();
     const orders = n === 1 ? fctOrdersBatch1 : fctOrdersBatch2;
     try {
-      await conn.query(`DROP TABLE IF EXISTS fct_orders`);
-      await conn.query(`DROP TABLE IF EXISTS dim_customers`);
-      await conn.query(`CREATE TABLE dim_customers (customer_id INTEGER, customer_name VARCHAR, country VARCHAR)`);
+      await conn.query(`DROP TABLE IF EXISTS ${FCT_ORDERS}`);
+      await conn.query(`DROP TABLE IF EXISTS ${DIM_CUSTOMERS}`);
+      await conn.query(`CREATE TABLE ${DIM_CUSTOMERS} (customer_id INTEGER, customer_name VARCHAR, country VARCHAR)`);
       await conn.query(
-        `CREATE TABLE fct_orders (order_id INTEGER, customer_id INTEGER, amount INTEGER, order_date VARCHAR)`,
+        `CREATE TABLE ${FCT_ORDERS} (order_id INTEGER, customer_id INTEGER, amount INTEGER, order_date VARCHAR)`,
       );
 
       const customerVals = dimCustomers
         .map((c) => `(${c.customer_id}, '${c.customer_name.replace("'", "''")}', '${c.country}')`)
         .join(',');
-      await conn.query(`INSERT INTO dim_customers VALUES ${customerVals}`);
+      await conn.query(`INSERT INTO ${DIM_CUSTOMERS} VALUES ${customerVals}`);
 
       const orderVals = orders
         .map((o) => `(${o.order_id}, ${o.customer_id}, ${o.amount === null ? 'NULL' : o.amount}, '${o.order_date}')`)
         .join(',');
-      await conn.query(`INSERT INTO fct_orders VALUES ${orderVals}`);
+      await conn.query(`INSERT INTO ${FCT_ORDERS} VALUES ${orderVals}`);
     } finally {
       await conn.close();
     }
@@ -175,17 +186,12 @@ export class DataContracts implements OnInit {
     const { rows } = data;
     const invalid = rows.find((r) => !validateOutput(r));
     if (invalid) {
-      this.outputHint.set(
-        'Your query ran but the output does not match what the chart expects. ' +
-          'Make sure you return customer_name (text) and total_amount (number).',
-      );
+      this.outputHint.set('Query ran but the output structure does not match the expected schema.');
       return;
     }
 
     if (!matchesExpected(rows, DC_STEP1_EXPECTED_ROWS)) {
-      this.outputHint.set(
-        'Close — check your filter or aggregation. The column structure is right but the values differ.',
-      );
+      this.outputHint.set("Close. The column structure is right but the values don't match the expected output.");
       return;
     }
 

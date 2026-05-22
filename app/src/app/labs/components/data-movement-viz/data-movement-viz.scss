@@ -62,7 +62,7 @@ $cell-w: 22px;
 $cell-h: 10px;
 $dc-cols: 5; // dim_customers full width (id, name, country, created_at, updated_at)
 $dc-rows: 5; // all rows — column pruning is about width, not row count
-$dc-narrow-cols: 3; // pruned: customer_id, customer_name, country
+$dc-narrow-cols: 2; // pruned: customer_id, customer_name
 
 .partition {
   position: absolute;

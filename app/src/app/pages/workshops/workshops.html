@@ -4,6 +4,7 @@
       <span class="eyebrow">{{ eyebrow }}</span>
       <button
         class="btn-icon schema-btn"
+        [class.is-pulsing]="schemaIconPulse()"
         (click)="schemaOpen.update(v => !v)"
         [attr.aria-expanded]="schemaOpen()"
         aria-label="Toggle data model"
@@ -19,8 +20,13 @@
 
   <div class="scenario">
     @for (line of scenarioLines; track $index) {
-    <p [innerHTML]="line"></p>
+    <p>{{ line }}</p>
     }
+    <p>
+      {{ scenario3Pre }}<button type="button" class="inline-link" (click)="highlightSchema()">
+        {{ scenario3Available }}</button
+      >{{ scenario3Post }}
+    </p>
   </div>
 
   <div class="schema-inline" [class.is-open]="schemaOpen()">

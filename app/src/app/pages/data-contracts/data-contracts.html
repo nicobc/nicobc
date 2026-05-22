@@ -1,7 +1,7 @@
 <div class="lab-page">
   <header class="lab-header">
     <div class="lab-eyebrow-row">
-      <span class="eyebrow">Data Engineering · Contracts</span>
+      <span class="eyebrow">{{ labCategory }}</span>
       <button
         class="btn-icon schema-btn"
         (click)="schemaOpen.update(v => !v)"
@@ -14,7 +14,7 @@
         </span>
       </button>
     </div>
-    <h1>When good queries go wrong</h1>
+    <h1>{{ labTitle }}</h1>
   </header>
 
   <div class="schema-inline" [class.is-open]="schemaOpen()">
@@ -38,18 +38,15 @@
       <p class="step-intro">{{ step1Intro }}</p>
 
       <div class="pipeline-dag">
-        <div class="dag-node">Source DB</div>
+        @for (node of dagNodes; track $index) { @if ($index > 0) {
         <div class="dag-arrow">→</div>
-        <div class="dag-node">Upstream job</div>
-        <div class="dag-arrow">→</div>
-        <div class="dag-node dag-node--tables">
-          <span>fct_orders</span>
-          <span>dim_customers</span>
+        }
+        <div class="dag-node" [class.dag-node--storage]="node.tier" [class.dag-node--active]="node.active">
+          @if (node.tier) {
+          <span class="dag-tier">{{ node.tier }}</span>
+          } {{ node.label }}
         </div>
-        <div class="dag-arrow">→</div>
-        <div class="dag-node dag-node--highlight">Mart job</div>
-        <div class="dag-arrow">→</div>
-        <div class="dag-node dag-node--dashboard">Dashboard</div>
+        }
       </div>
 
       <p class="step-task">{{ step1Task }}</p>
@@ -79,7 +76,7 @@
 
       @if (sqlError()) {
       <p class="error-sql">{{ sqlError() }}</p>
-      } @if (step2Rows().length >= 0 && step2Done()) {
+      } @if (step2Done()) {
       <div class="chart-wrap">
         <app-bar-chart [rows]="step2Rows()" />
       </div>
@@ -92,7 +89,12 @@
     <div class="step-content">
       @if (step1Rows().length > 0 && step2Rows().length > 0) {
       <div class="chart-wrap">
-        <app-bar-chart [rows]="step1Rows()" [comparisonRows]="step2Rows()" />
+        <app-bar-chart
+          [rows]="step1Rows()"
+          [comparisonRows]="step2Rows()"
+          [primaryLabel]="chartPrimaryLabel"
+          [comparisonLabel]="chartComparisonLabel"
+        />
       </div>
       } @for (p of step3Prose; track $index) {
       <p [innerHTML]="p"></p>

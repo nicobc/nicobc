@@ -1,31 +1,35 @@
+import { DIM_CUSTOMERS, DIM_PRODUCTS, FCT_ORDERS, FCT_ORDER_ITEMS } from '../../labs/data/schema';
+
 // ── SQL ───────────────────────────────────────────────────────────────────────
 
-export const CP_STARTING_SQL = `WITH enriched_items AS (
+export const CP_STARTING_SQL = `WITH products AS (
   SELECT *
-  FROM dim_products
+  FROM ${DIM_PRODUCTS}
+  WHERE unit_price > 0
 ),
 category_revenue AS (
   SELECT
     p.category,
     SUM(i.quantity * p.unit_price) AS revenue
-  FROM enriched_items p
-  JOIN fct_order_items i ON p.product_id = i.product_id
+  FROM products p
+  JOIN ${FCT_ORDER_ITEMS} i ON p.product_id = i.product_id
   GROUP BY p.category
 )
 SELECT category, revenue
 FROM category_revenue
 ORDER BY revenue DESC`;
 
-export const CP_SOLUTION_SQL = `WITH enriched_items AS (
+export const CP_SOLUTION_SQL = `WITH products AS (
   SELECT product_id, category, unit_price
-  FROM dim_products
+  FROM ${DIM_PRODUCTS}
+  WHERE unit_price > 0
 ),
 category_revenue AS (
   SELECT
     p.category,
     SUM(i.quantity * p.unit_price) AS revenue
-  FROM enriched_items p
-  JOIN fct_order_items i ON p.product_id = i.product_id
+  FROM products p
+  JOIN ${FCT_ORDER_ITEMS} i ON p.product_id = i.product_id
   GROUP BY p.category
 )
 SELECT category, revenue
@@ -34,7 +38,7 @@ ORDER BY revenue DESC`;
 
 export const PP_STARTING_SQL = `WITH product_counts AS (
   SELECT category, COUNT(*) AS product_count
-  FROM dim_products
+  FROM ${DIM_PRODUCTS}
   GROUP BY category
   HAVING COUNT(*) >= 2
     AND category != 'Food'
@@ -45,7 +49,7 @@ ORDER BY product_count DESC`;
 
 export const PP_SOLUTION_SQL = `WITH product_counts AS (
   SELECT category, COUNT(*) AS product_count
-  FROM dim_products
+  FROM ${DIM_PRODUCTS}
   WHERE category != 'Food'
   GROUP BY category
   HAVING COUNT(*) >= 2
@@ -56,27 +60,27 @@ ORDER BY product_count DESC`;
 
 export const CAPSTONE_STARTING_SQL = `WITH customer_totals AS (
   SELECT o.customer_id, SUM(i.quantity) AS total_items
-  FROM fct_orders o
-  JOIN fct_order_items i ON o.order_id = i.order_id
+  FROM ${FCT_ORDERS} o
+  JOIN ${FCT_ORDER_ITEMS} i ON o.order_id = i.order_id
   GROUP BY o.customer_id
 )
 SELECT c.customer_name, t.total_items
 FROM customer_totals t
-JOIN dim_customers c ON t.customer_id = c.customer_id
+JOIN ${DIM_CUSTOMERS} c ON t.customer_id = c.customer_id
 WHERE c.country = 'Spain'
 ORDER BY t.total_items DESC
 LIMIT 5`;
 
 export const CAPSTONE_SOLUTION_SQL = `WITH spanish_customers AS (
   SELECT customer_id, customer_name
-  FROM dim_customers
+  FROM ${DIM_CUSTOMERS}
   WHERE country = 'Spain'
 ),
 customer_totals AS (
   SELECT s.customer_name, SUM(i.quantity) AS total_items
   FROM spanish_customers s
-  JOIN fct_orders o ON s.customer_id = o.customer_id
-  JOIN fct_order_items i ON o.order_id = i.order_id
+  JOIN ${FCT_ORDERS} o ON s.customer_id = o.customer_id
+  JOIN ${FCT_ORDER_ITEMS} i ON o.order_id = i.order_id
   GROUP BY s.customer_name
 )
 SELECT customer_name, total_items

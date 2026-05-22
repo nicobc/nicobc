@@ -23,7 +23,7 @@ tickets:
     description: Learner navigates to UT lab and sees page structure.
     acceptance_criteria:
       - /lab/unit-testing route renders UT lab component
-      - UT lab card added to /lab landing page
+      - UT lab card added to workshops landing page with a title consistent with the register of the existing workshop cards
 
   - id: T2
     title: Pyodide + pytest runner
