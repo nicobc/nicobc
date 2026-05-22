@@ -11,6 +11,20 @@
   --code-bg: color-mix(in srgb, var(--fg) 9%, transparent);
 }
 
+// ── sql editor ────────────────────────────────────────────────────────────────
+// HighlightStyle generates global CSS outside Angular encapsulation;
+// component SCSS cannot scope these, so they live here by necessity.
+:root,
+[data-theme='dark'] {
+  --kw-color: #60a5fa;
+  --string-color: #4ade80;
+}
+
+[data-theme='light'] {
+  --kw-color: #2563eb;
+  --string-color: #16a34a;
+}
+
 :root {
   --nav-height: 56px;
   --accent: #f87171;

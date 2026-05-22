@@ -1,11 +1,10 @@
 import { ChallengeController } from './challenge-controller';
 
 describe('ChallengeController', () => {
-  it('initialises closed with initial state and no flags set', () => {
+  it('initialises closed with initial state and not checking', () => {
     const ctrl = new ChallengeController('idle');
     expect(ctrl.show()).toBe(false);
     expect(ctrl.state()).toBe('idle');
-    expect(ctrl.solutionRevealed()).toBe(false);
     expect(ctrl.checking()).toBe(false);
   });
 
@@ -16,16 +15,10 @@ describe('ChallengeController', () => {
     expect(ctrl.state()).toBe('idle');
   });
 
-  it('open resets all flags even after reveal', () => {
+  it('open resets checking flag', () => {
     const ctrl = new ChallengeController('idle');
-    ctrl.reveal();
-
     ctrl.open();
-
-    expect(ctrl.show()).toBe(true);
-    expect(ctrl.solutionRevealed()).toBe(false);
     expect(ctrl.checking()).toBe(false);
-    expect(ctrl.state()).toBe('idle');
   });
 
   it('close hides the modal', () => {
@@ -35,11 +28,14 @@ describe('ChallengeController', () => {
     expect(ctrl.show()).toBe(false);
   });
 
-  it('reveal marks solution revealed and forces state to correct', () => {
+  it('restart resets state and checking without touching show', () => {
     const ctrl = new ChallengeController<'idle' | 'correct'>('idle');
-    ctrl.reveal();
-    expect(ctrl.solutionRevealed()).toBe(true);
-    expect(ctrl.state()).toBe('correct');
+    ctrl.open();
+    ctrl.state.set('correct');
+    ctrl.restart();
+    expect(ctrl.show()).toBe(true);
+    expect(ctrl.state()).toBe('idle');
+    expect(ctrl.checking()).toBe(false);
   });
 
   it('check sets checking during execution and clears it on completion', async () => {

@@ -24,21 +24,23 @@
 <app-challenge-modal [showClose]="config.controller.state() !== 'correct'" (closed)="closeChallenge()">
   <p class="challenge-intro" [innerHTML]="config.intro"></p>
 
-  <app-sql-editor
-    [initialValue]="config.startingSql"
-    [showActions]="false"
-    [readonly]="config.controller.state() === 'correct'"
-    (valueChange)="onChallengeInput($event)"
-  />
+  <app-sql-editor [initialValue]="config.startingSql" [showActions]="false" (valueChange)="onChallengeInput($event)" />
 
-  @if (config.controller.state() !== 'correct') {
   <div class="challenge-actions-row">
-    <button class="btn-outline" (click)="submitChallenge()" [disabled]="config.controller.checking()">
-      {{ config.controller.checking() ? checkingLabel : checkLabel }}
+    <button class="btn-icon" (click)="restartChallenge()" aria-label="Restart challenge">&#x21BA;</button>
+    <button class="btn-outline" (click)="runChallenge()" [disabled]="config.controller.checking()">
+      {{ runLabel }}
     </button>
-    <button class="btn-ghost" (click)="revealSolution()">{{ revealSolutionLabel }}</button>
+    <button class="btn-ghost" (click)="revealSolution()">{{ revealLabel }}</button>
+    <button class="btn-outline" (click)="submitChallenge()" [disabled]="config.controller.checking()">
+      {{ config.controller.checking() ? submittingLabel : submitLabel }}
+    </button>
+    @if (config.controller.state() === 'correct') {
+    <button class="btn-primary" (click)="onTerminalAction()">{{ terminalLabel }}</button>
+    }
   </div>
-  } @switch (feedback.kind) { @case ('trace') {
+
+  @switch (feedback.kind) { @case ('trace') {
   <div [class]="feedbackClass"><pre class="code-block feedback-error-trace">{{ feedback.error }}</pre></div>
   } @case ('message') {
   <div [class]="feedbackClass"><p [innerHTML]="feedback.html"></p></div>
@@ -62,10 +64,6 @@
         }
       </tbody>
     </table>
-  </div>
-  } @if (config.controller.state() === 'correct') {
-  <div class="challenge-actions">
-    <button class="btn-primary" (click)="onTerminalAction()">{{ terminalLabel }}</button>
   </div>
   }
 </app-challenge-modal>
