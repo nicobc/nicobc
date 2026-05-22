@@ -110,19 +110,28 @@ tickets:
       - Data contracts lab forward arrow unlocks on step completion (step1Done / step2Done), consistent with the distributed computing lab
 
   - id: T7
-    title: Challenge modal — Run, Submit, Reveal, Restart interaction model
+    title: Challenge controls overhaul, SQL editor theme, and step navigation polish
     type: feat
-    status: IN PROGRESS
-    description: As a learner, I can freely run queries to explore results before submitting for validation, restart from the starting query at any point, and compare my solution to the canonical answer even after solving the challenge.
+    status: TESTING
+    description: >
+      Replace the single Check button with a full Run / Submit / Reveal / Restart control model.
+      Drop the solutionRevealed state and revealed feedback variant. Add a custom site-themed SQL
+      editor that adapts to light/dark automatically. Fix validation to reject extra projected
+      columns. Polish the viz phase button and preserve step phase on back-navigation for cleared steps.
     acceptance_criteria:
-      - Control row layout in unanswered/wrong states — [↺] [ Run ]  [ Reveal ]  [ Submit ]
-      - Control row layout in correct state — [↺] [ Run ]  [ Reveal ]  [ Submit ]  [ Next ]
-      - Run executes the query and displays the result table; no validation, no feedback message change
-      - Submit validates the query and updates state and feedback as before (renamed from Check)
-      - Restart (↺ icon, no label) resets the editor to the starting SQL and clears state and result table; available in all states including correct
-      - Reveal shows the canonical solution SQL in the editor in all states including correct; does not change challenge state if already correct
+      - Control row layout in unanswered/wrong states — [↺] [ Run ] [ Reveal ] [ Submit ]
+      - Control row layout in correct state — [↺] [ Run ] [ Reveal ] [ Submit ] [ Next ]
+      - Run clears prior validation state (unless correct) then executes and displays the result table without validating
+      - Submit validates and updates state and feedback; button shows Submitting… during execution
+      - Restart resets editor to starting SQL, clears result table and state; available in all states including correct
+      - Reveal loads solution SQL into editor without auto-passing; correct state preserved if already correct
       - Editor remains editable in the correct state
-      - Mobile layout deferred to T12 — icon-only buttons at narrow viewports acceptable as out-of-scope here
+      - solutionRevealed signal and revealed FeedbackMap key removed; correct copy serves both cases
+      - matchesExpected rejects queries projecting extra columns — exact column count enforced
+      - SQL editor uses custom site theme (--kw-color, --string-color, --accent); adapts to light/dark via CSS vars with no Compartment swap
+      - Viz phase advance button uses btn-outline and label Continue → instead of btn-primary Next
+      - Back-navigating to a cleared step lands in copy phase with seenUnlockMode true; learner never re-watches a completed viz
+      - Mobile layout deferred to T12
 
   - id: T8
     title: Carousel factorization and data contracts lab structural overhaul
