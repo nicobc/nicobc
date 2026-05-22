@@ -134,27 +134,26 @@ tickets:
       - Mobile layout deferred to T12
 
   - id: T8
-    title: Carousel factorization and data contracts lab structural overhaul
+    title: Extract SubstepProgression; migrate both labs to substep structure
     type: feat
-    status: READY
+    status: IN PROGRESS
     description: >
-      Unify both workshops on a shared carousel abstraction — typed slides (viz | copy | challenge)
-      with gated progression. Drop the ChallengeModal overlay entirely; challenge becomes a slide.
-      Migrate the data contracts lab from its current scroll/inline layout to the carousel.
-      Differentiate DAG node shapes and make step 3 contract validation interactive.
+      Unify both workshops on a shared SubstepProgression abstraction — substeps typed as free
+      (always advanceable) or gated (locked until a done signal). Remove ChallengeModal entirely;
+      challenge becomes a gated substep. Migrate the data contracts lab from its current step
+      layout to the agreed 3-step × substep structure. Make step 3 contract validation interactive.
     acceptance_criteria:
-      - Shared carousel abstraction extracted (slide types viz | copy | challenge; gated progression logic lives in carousel, not in modal lifecycle)
-      - ChallengeModal component removed; challenge content renders as a carousel slide in both labs
-      - ChallengeController show/open/close removed (carousel navigation replaces modal show state); restart() and check() retained
-      - Data contracts lab migrated to carousel — step 1 (SQL challenge), step 2 (batch 2 run), step 3 (contract + violation) each become slides
-      - Distributed computing lab updated to use shared carousel abstraction; WorkshopStep refactored or replaced
-      - Storage nodes in data contracts DAG rendered as cylinders; job nodes (ingestion, transformation) rendered as rectangles
-      - Step 3 contract validation made interactive — Validate button runs AJV against batch 2 data and displays the violation dynamically, replacing the static violation block
-      - Run/Submit/Reveal/Restart controls (T7) preserved in the challenge slide
-      - No horizontal scroll at 375px on either lab (carousel slides are full-width)
+      - SubstepProgression component extracted; accepts a Substeps array and manages forward/back navigation with gating
+      - Substep is a discriminated union — free (forward always available) or gated (forward locked until done signal is true); content is configuration not type
+      - Distributed computing lab uses SubstepProgression per step with three substeps each — viz (gated), copy (free), challenge (gated)
+      - WorkshopStep refactored or replaced by SubstepProgression; ChallengeModal deleted; ChallengeController show/open/close removed; restart() and check() retained
+      - Data contracts lab restructured into 3 steps — step 1 (ss1 intro+DAG free, ss2 challenge+chart gated), step 2 (ss1 copy+run+chart gated), step 3 (ss1 silent-failure copy free, ss2 data-contracts copy free, ss3 interactive JSON validate free/terminal)
+      - Step 3 SS3 contract validation interactive — Validate button runs AJV against batch 2 data; violation displayed dynamically replacing the static block
+      - Run/Submit/Reveal/Restart controls preserved in all challenge substeps
     notes:
+      - Vocabulary locked — Workshop → Step → Substep; component SubstepProgression; collection type Substeps; behavioral types free | gated
+      - ChallengeController show signal and open()/close() are dead code; remove when SubstepProgression is wired
       - Modal removal makes T12 (mobile pass) easier for challenge views
-      - data contracts step 2 (batch 2 run) has no challenge — it is a copy+action slide, not a challenge slide
 
   - id: T9
     title: Challenge info icon — how the challenge environment works
