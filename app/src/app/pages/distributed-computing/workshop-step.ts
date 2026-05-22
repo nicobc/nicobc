@@ -91,8 +91,9 @@ export class WorkshopStep implements OnChanges {
   }
 
   ngOnChanges(): void {
-    this.phase.set(this.config.vizScenario ? 'viz' : 'copy');
-    this.seenUnlockMode.set(false);
+    const cleared = this.config.controller.state() === 'correct';
+    this.phase.set(cleared || !this.config.vizScenario ? 'copy' : 'viz');
+    this.seenUnlockMode.set(cleared);
   }
 
   replay(): void {
