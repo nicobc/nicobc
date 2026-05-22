@@ -98,7 +98,7 @@ tickets:
   - id: T6
     title: Step navigation — back from step 1, unlockable forward arrows, StepNav component
     type: feat
-    status: IN PROGRESS
+    status: DONE
     description: As a learner, I can navigate back to the workshop landing page from step 1, and forward to the next step once the current step is complete — consistently across both workshops.
     acceptance_criteria:
       - StepNav component extracted to labs/components/step-nav; renders back arrow, step indicator, and conditional forward arrow
