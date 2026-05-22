@@ -50,7 +50,7 @@ tickets:
     status: IN PROGRESS
     description: Navigation stripped to essentials; site-wide copy updated to match the distributed computing register across all lab prose, challenge intros, and feedback messages.
     acceptance_criteria:
-      - Workshop titles updated — data contracts to "Catching schema drift"; unit testing to "I/O isolation in pytest" (in data only, not shown until EPIC-004)
+      - Workshop titles updated — data contracts to "Catching schema drift"
       - Lab header category eyebrow updated — "Query optimisation" for distributed computing, "Data contracts" for data contracts
       - All lab prose, step paragraphs, challenge intros, and feedback messages reviewed in distributed computing and data contracts
       - Broetry patterns removed: staccato fragment punchlines and em-dash payoff clauses
