@@ -1,4 +1,5 @@
 import { Component, ElementRef, ViewChild, computed, inject, OnInit, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import Ajv, { ErrorObject } from 'ajv';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faDatabase, faStar } from '@fortawesome/free-solid-svg-icons';
@@ -114,6 +115,7 @@ export class DataContracts implements OnInit {
   readonly violationBlockTitle = DC_VIOLATION_BLOCK_TITLE;
 
   private readonly elRef = inject(ElementRef);
+  private readonly router = inject(Router);
 
   readonly dbReady = signal(false);
   readonly step = signal<1 | 2 | 3>(1);
@@ -261,6 +263,10 @@ export class DataContracts implements OnInit {
   }
 
   async goBack() {
+    if (this.step() === 1) {
+      await this.router.navigate(['/lab/workshops']);
+      return;
+    }
     const prev = (this.step() - 1) as 1 | 2;
     if (prev === 1) await this.seedBatch(1);
     this.step.set(prev);

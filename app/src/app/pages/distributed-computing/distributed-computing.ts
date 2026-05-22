@@ -1,4 +1,15 @@
-import { Component, ElementRef, ViewChild, computed, OnInit, signal, Signal, WritableSignal } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  ViewChild,
+  computed,
+  inject,
+  OnInit,
+  signal,
+  Signal,
+  WritableSignal,
+} from '@angular/core';
+import { Router } from '@angular/router';
 import { parse, Statement } from 'pgsql-ast-parser';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faDatabase, faStar } from '@fortawesome/free-solid-svg-icons';
@@ -77,6 +88,8 @@ function makeValidator(
 })
 export class DistributedComputing implements OnInit {
   @ViewChild('stepShell') private readonly stepShellRef!: ElementRef<HTMLElement>;
+
+  private readonly router = inject(Router);
 
   readonly schemaOpen = signal(false);
   readonly dbIcon = faDatabase;
@@ -221,6 +234,10 @@ export class DistributedComputing implements OnInit {
   }
 
   goBack(): void {
+    if (this.step() === 1) {
+      this.router.navigate(['/lab/workshops']);
+      return;
+    }
     this.step.set((this.step() - 1) as 1 | 2);
     setTimeout(() => this.stepShellRef.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0);
   }
