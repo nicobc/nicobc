@@ -47,7 +47,7 @@ tickets:
   - id: T3
     title: Copy pass — site-wide navigation simplification and lab prose
     type: style
-    status: IN PROGRESS
+    status: TESTING
     description: Navigation stripped to essentials; site-wide copy updated to match the distributed computing register across all lab prose, challenge intros, and feedback messages.
     acceptance_criteria:
       - Workshop titles updated — data contracts to "Catching schema drift"
