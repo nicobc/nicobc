@@ -42,13 +42,15 @@
       <div class="pipeline-dag">
         @for (node of dagNodes; track $index) { @if ($index > 0) {
         <div class="dag-arrow">→</div>
-        }
-        <div class="dag-node" [class.dag-node--storage]="node.tier" [class.dag-node--active]="node.active">
-          @if (node.tier) {
+        } @if (node.tier) {
+        <div class="dag-node dag-node--storage" [class.dag-node--active]="node.active">
+          <app-db-icon />
           <span class="dag-tier">{{ node.tier }}</span>
-          } {{ node.label }}
+          <span class="dag-node-label">{{ node.label }}</span>
         </div>
-        }
+        } @else {
+        <div class="dag-node" [class.dag-node--active]="node.active">{{ node.label }}</div>
+        } }
       </div>
 
       <p class="step-task">{{ step1Task }}</p>

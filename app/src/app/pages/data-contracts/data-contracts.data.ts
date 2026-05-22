@@ -11,7 +11,7 @@ export interface DagNode {
 export const DC_DAG_NODES: DagNode[] = [
   { tier: 'Bronze', label: 'Orders backend' },
   { label: 'Ingestion' },
-  { tier: 'Silver', label: 'Warehouse' },
+  { tier: 'Silver', label: 'DWH' },
   { label: 'Transformation', active: true },
   { tier: 'Gold', label: 'KPI mart' },
 ];

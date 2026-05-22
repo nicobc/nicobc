@@ -7,6 +7,7 @@ import { SqlEditor } from '../../labs/components/sql-editor/sql-editor';
 import { BarChart } from '../../labs/components/bar-chart/bar-chart';
 import { SchemaPanel } from '../../labs/components/schema-panel/schema-panel';
 import { StepNav } from '../../labs/components/step-nav/step-nav';
+import { DbIcon } from '../../labs/components/db-icon/db-icon';
 import { getDB, query } from '../../labs/db/duckdb';
 import { dimCustomers, fctOrdersBatch1, fctOrdersBatch2, FctOrder } from '../../labs/data/seed';
 import { DIM_CUSTOMERS, FCT_ORDERS } from '../../labs/data/schema';
@@ -85,7 +86,7 @@ interface ContractViolation {
 
 @Component({
   selector: 'app-data-contracts',
-  imports: [SqlEditor, BarChart, FaIconComponent, SchemaPanel, StepNav],
+  imports: [SqlEditor, BarChart, FaIconComponent, SchemaPanel, StepNav, DbIcon],
   templateUrl: './data-contracts.html',
   styleUrl: './data-contracts.scss',
 })

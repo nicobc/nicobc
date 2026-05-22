@@ -26,10 +26,9 @@
   height: 90px;
   color: var(--fg); // SVG shapes use currentColor
 
-  svg {
+  app-db-icon {
     width: 100%;
     height: 100%;
-    overflow: visible;
   }
 }
 
