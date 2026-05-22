@@ -1,0 +1,5 @@
+<button class="btn-ghost step-back" (click)="back.emit()">&#8592;</button>
+<span class="step-indicator">{{ step }} / {{ totalSteps }}{{ label ? ' — ' + label : '' }}</span>
+@if (canAdvance && step < totalSteps) {
+<button class="btn-ghost step-forward" (click)="forward.emit()">&#8594;</button>
+}

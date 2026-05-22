@@ -21,6 +21,7 @@ import { runQuery, matchesExpected } from '../../labs/validation';
 import { dimProducts, dimCustomers, fctOrdersBatch1, fctOrderItems } from '../../labs/data/seed';
 import { DIM_CUSTOMERS, FCT_ORDERS, FCT_ORDER_ITEMS } from '../../labs/data/schema';
 import { SchemaPanel } from '../../labs/components/schema-panel/schema-panel';
+import { StepNav } from '../../labs/components/step-nav/step-nav';
 import {
   CP_STARTING_SQL,
   CP_SOLUTION_SQL,
@@ -82,7 +83,7 @@ function makeValidator(
 
 @Component({
   selector: 'app-distributed-computing',
-  imports: [WorkshopStep, FaIconComponent, SchemaPanel],
+  imports: [WorkshopStep, FaIconComponent, SchemaPanel, StepNav],
   templateUrl: './distributed-computing.html',
   styleUrl: './distributed-computing.scss',
 })

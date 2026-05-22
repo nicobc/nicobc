@@ -26,9 +26,13 @@
   } @else {
 
   <div class="step-shell" #stepShell>
-    <button class="btn-ghost step-back" (click)="goBack()">&#8592;</button>
-
-    <span class="step-indicator">{{ step() }} / {{ totalSteps }}</span>
+    <app-step-nav
+      [step]="step()"
+      [totalSteps]="totalSteps"
+      [canAdvance]="canGoNext()"
+      (back)="goBack()"
+      (forward)="goNext()"
+    />
 
     <!-- ── step 1 ─────────────────────────────────────────────── -->
     @if (step() === 1) {
