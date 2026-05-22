@@ -1,7 +1,18 @@
-import { Component, EventEmitter, Input, OnChanges, Output, signal, ViewChild, WritableSignal } from '@angular/core';
+import {
+  Component,
+  computed,
+  EventEmitter,
+  input,
+  OnChanges,
+  Output,
+  signal,
+  ViewChild,
+  WritableSignal,
+} from '@angular/core';
 import { ChallengeHandle } from '../../labs/challenge-controller';
 import { SqlEditor } from '../../labs/components/sql-editor/sql-editor';
 import { DataMovementViz, VizMode, VizScenario } from '../../labs/components/data-movement-viz/data-movement-viz';
+import { SubstepProgression, Substeps } from '../../labs/components/substep-progression/substep-progression';
 import { QueryResult } from '../../labs/db/duckdb';
 
 const UNLOCK_MODE: Partial<Record<VizScenario, VizMode>> = {
@@ -32,20 +43,34 @@ export interface WorkshopStepConfig {
 
 @Component({
   selector: 'app-workshop-step',
-  imports: [DataMovementViz, SqlEditor],
+  imports: [DataMovementViz, SqlEditor, SubstepProgression],
   templateUrl: './workshop-step.html',
   styleUrl: './workshop-step.scss',
 })
 export class WorkshopStep implements OnChanges {
-  @Input({ required: true }) config!: WorkshopStepConfig;
+  readonly config = input.required<WorkshopStepConfig>();
   @Output() readonly advance = new EventEmitter<void>();
   @Output() readonly scrollToStep = new EventEmitter<void>();
 
   @ViewChild(DataMovementViz) private readonly viz?: DataMovementViz;
   @ViewChild(SqlEditor) private readonly sqlEditorRef?: SqlEditor;
 
-  readonly phase = signal<'viz' | 'copy' | 'challenge'>('viz');
   readonly seenUnlockMode = signal(false);
+
+  private readonly challengeCorrect = computed(() => this.config().controller.state() === 'correct');
+
+  // New array on every config change → triggers SubstepProgression.ngOnChanges → resets activeIndex.
+  readonly substeps = computed<Substeps>(() => {
+    this.config();
+    return [
+      { kind: 'gated' as const, done: this.seenUnlockMode },
+      { kind: 'free' as const },
+      { kind: 'gated' as const, done: this.challengeCorrect },
+    ];
+  });
+
+  readonly copySubstepIndex = computed(() => (this.config().vizScenario ? 1 : 0));
+  readonly challengeSubstepIndex = computed(() => this.substeps().length - 1);
 
   readonly runLabel = 'Run';
   readonly revealLabel = 'Reveal';
@@ -57,31 +82,29 @@ export class WorkshopStep implements OnChanges {
   readonly continueLabel = 'Continue →';
 
   get terminalLabel(): string {
-    return this.config.isFinalStep ? 'Done' : 'Next';
+    return this.config().isFinalStep ? 'Done' : 'Next';
   }
 
   get feedback(): FeedbackDisplay {
-    const state = this.config.controller.state();
+    const state = this.config().controller.state();
     if (state === 'unanswered') return { kind: 'none' };
     if (state === 'wrong-sql') {
-      const error = this.config.queryError();
+      const error = this.config().queryError();
       return error ? { kind: 'trace', error } : { kind: 'none' };
     }
     if (state === 'unsafe-sql') return { kind: 'message', html: 'Only SELECT queries are allowed here.' };
     if (state === 'wrong-output') return { kind: 'message', html: 'The query ran, but the output does not match.' };
-    return { kind: 'message', html: this.config.feedback[state as keyof FeedbackMap] };
+    return { kind: 'message', html: this.config().feedback[state as keyof FeedbackMap] };
   }
 
   get feedbackClass(): string {
-    return this.config.controller.state() === 'correct'
+    return this.config().controller.state() === 'correct'
       ? 'feedback-block feedback-block--success'
       : 'feedback-block feedback-block--error';
   }
 
   ngOnChanges(): void {
-    const cleared = this.config.controller.state() === 'correct';
-    this.phase.set(cleared || !this.config.vizScenario ? 'copy' : 'viz');
-    this.seenUnlockMode.set(cleared);
+    this.seenUnlockMode.set(this.config().controller.state() === 'correct');
   }
 
   replay(): void {
@@ -89,55 +112,40 @@ export class WorkshopStep implements OnChanges {
   }
 
   onModeChange(mode: VizMode): void {
-    const unlockMode = this.config.vizScenario ? UNLOCK_MODE[this.config.vizScenario] : undefined;
+    const unlockMode = this.config().vizScenario ? UNLOCK_MODE[this.config().vizScenario!] : undefined;
     if (mode === unlockMode) this.seenUnlockMode.set(true);
   }
 
-  advanceVizPhase(): void {
-    this.phase.set('copy');
+  onExitBack(): void {
     this.scrollToStep.emit();
-  }
-
-  returnToViz(): void {
-    this.phase.set('viz');
-    this.scrollToStep.emit();
-  }
-
-  openChallenge(): void {
-    this.phase.set('challenge');
-  }
-
-  closeChallenge(): void {
-    this.phase.set('copy');
   }
 
   onChallengeInput(value: string): void {
-    this.config.sql.set(value);
+    this.config().sql.set(value);
   }
 
   async runChallenge(): Promise<void> {
-    await this.config.controller.check(this.config.execute);
+    await this.config().controller.check(this.config().execute);
   }
 
   async submitChallenge(): Promise<void> {
-    await this.config.controller.check(this.config.validate);
+    await this.config().controller.check(this.config().validate);
   }
 
   revealSolution(): void {
-    this.sqlEditorRef?.setValue(this.config.solutionSql);
-    this.config.sql.set(this.config.solutionSql);
+    this.sqlEditorRef?.setValue(this.config().solutionSql);
+    this.config().sql.set(this.config().solutionSql);
   }
 
   restartChallenge(): void {
-    this.config.controller.restart();
-    this.config.sql.set(this.config.startingSql);
-    this.config.queryResult.set(null);
-    this.config.queryError.set(null);
-    this.sqlEditorRef?.setValue(this.config.startingSql);
+    this.config().controller.restart();
+    this.config().sql.set(this.config().startingSql);
+    this.config().queryResult.set(null);
+    this.config().queryError.set(null);
+    this.sqlEditorRef?.setValue(this.config().startingSql);
   }
 
   onTerminalAction(): void {
-    this.phase.set('copy');
     this.advance.emit();
   }
 }
