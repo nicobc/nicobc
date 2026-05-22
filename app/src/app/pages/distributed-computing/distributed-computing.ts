@@ -1,4 +1,15 @@
-import { Component, ElementRef, ViewChild, computed, OnInit, signal, Signal, WritableSignal } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  ViewChild,
+  computed,
+  inject,
+  OnInit,
+  signal,
+  Signal,
+  WritableSignal,
+} from '@angular/core';
+import { Router } from '@angular/router';
 import { parse, Statement } from 'pgsql-ast-parser';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faDatabase, faStar } from '@fortawesome/free-solid-svg-icons';
@@ -10,6 +21,7 @@ import { runQuery, matchesExpected } from '../../labs/validation';
 import { dimProducts, dimCustomers, fctOrdersBatch1, fctOrderItems } from '../../labs/data/seed';
 import { DIM_CUSTOMERS, FCT_ORDERS, FCT_ORDER_ITEMS } from '../../labs/data/schema';
 import { SchemaPanel } from '../../labs/components/schema-panel/schema-panel';
+import { StepNav } from '../../labs/components/step-nav/step-nav';
 import {
   CP_STARTING_SQL,
   CP_SOLUTION_SQL,
@@ -71,12 +83,14 @@ function makeValidator(
 
 @Component({
   selector: 'app-distributed-computing',
-  imports: [WorkshopStep, FaIconComponent, SchemaPanel],
+  imports: [WorkshopStep, FaIconComponent, SchemaPanel, StepNav],
   templateUrl: './distributed-computing.html',
   styleUrl: './distributed-computing.scss',
 })
 export class DistributedComputing implements OnInit {
   @ViewChild('stepShell') private readonly stepShellRef!: ElementRef<HTMLElement>;
+
+  private readonly router = inject(Router);
 
   readonly schemaOpen = signal(false);
   readonly dbIcon = faDatabase;
@@ -221,6 +235,10 @@ export class DistributedComputing implements OnInit {
   }
 
   goBack(): void {
+    if (this.step() === 1) {
+      this.router.navigate(['/lab/workshops']);
+      return;
+    }
     this.step.set((this.step() - 1) as 1 | 2);
     setTimeout(() => this.stepShellRef.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0);
   }

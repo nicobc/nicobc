@@ -22,15 +22,14 @@
   </div>
 
   <div class="step-shell" #stepShell>
-    @if (step() > 1) {
-    <button class="btn-ghost step-back" (click)="goBack()">&#8592;</button>
-    }
-
-    <span class="step-indicator">{{ step() }} / {{ totalSteps }} — {{ conceptName() }}</span>
-
-    @if (step() < totalSteps && stepCleared()) {
-    <button class="btn-ghost step-forward" (click)="goNext()">&#8594;</button>
-    }
+    <app-step-nav
+      [step]="step()"
+      [totalSteps]="totalSteps"
+      [label]="conceptName()"
+      [canAdvance]="stepCleared()"
+      (back)="goBack()"
+      (forward)="goNext()"
+    />
 
     <div class="step-content">
       <app-workshop-step [config]="currentStepConfig()" (advance)="onStepAdvance()" (scrollToStep)="onScrollToStep()" />

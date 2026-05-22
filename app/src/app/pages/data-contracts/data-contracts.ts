@@ -1,10 +1,12 @@
 import { Component, ElementRef, ViewChild, computed, inject, OnInit, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import Ajv, { ErrorObject } from 'ajv';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faDatabase, faStar } from '@fortawesome/free-solid-svg-icons';
 import { SqlEditor } from '../../labs/components/sql-editor/sql-editor';
 import { BarChart } from '../../labs/components/bar-chart/bar-chart';
 import { SchemaPanel } from '../../labs/components/schema-panel/schema-panel';
+import { StepNav } from '../../labs/components/step-nav/step-nav';
 import { getDB, query } from '../../labs/db/duckdb';
 import { dimCustomers, fctOrdersBatch1, fctOrdersBatch2, FctOrder } from '../../labs/data/seed';
 import { DIM_CUSTOMERS, FCT_ORDERS } from '../../labs/data/schema';
@@ -83,7 +85,7 @@ interface ContractViolation {
 
 @Component({
   selector: 'app-data-contracts',
-  imports: [SqlEditor, BarChart, FaIconComponent, SchemaPanel],
+  imports: [SqlEditor, BarChart, FaIconComponent, SchemaPanel, StepNav],
   templateUrl: './data-contracts.html',
   styleUrl: './data-contracts.scss',
 })
@@ -114,6 +116,7 @@ export class DataContracts implements OnInit {
   readonly violationBlockTitle = DC_VIOLATION_BLOCK_TITLE;
 
   private readonly elRef = inject(ElementRef);
+  private readonly router = inject(Router);
 
   readonly dbReady = signal(false);
   readonly step = signal<1 | 2 | 3>(1);
@@ -261,6 +264,10 @@ export class DataContracts implements OnInit {
   }
 
   async goBack() {
+    if (this.step() === 1) {
+      await this.router.navigate(['/lab/workshops']);
+      return;
+    }
     const prev = (this.step() - 1) as 1 | 2;
     if (prev === 1) await this.seedBatch(1);
     this.step.set(prev);

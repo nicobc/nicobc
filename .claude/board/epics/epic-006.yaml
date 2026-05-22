@@ -96,14 +96,18 @@ tickets:
       - New vizScenario 'dag-race' wired to step 3 in distributed-computing.ts; step 3 viz phase uses this component
 
   - id: T6
-    title: Back navigation — step 1 to workshop landing page
+    title: Step navigation — back from step 1, unlockable forward arrows, StepNav component
     type: feat
-    status: READY
-    description: As a learner, I can navigate back to the workshop landing page from step 1.
+    status: DONE
+    description: As a learner, I can navigate back to the workshop landing page from step 1, and forward to the next step once the current step is complete — consistently across both workshops.
     acceptance_criteria:
-      - Step 1 of every workshop displays a back arrow consistent with the one shown on steps 2+
-      - Clicking the back arrow from step 1 navigates to the workshop landing page
-      - No other step navigation is affected
+      - StepNav component extracted to labs/components/step-nav; renders back arrow, step indicator, and conditional forward arrow
+      - StepNav accepts step, totalSteps, optional label (appended to indicator), canAdvance, and emits back and forward events
+      - Both workshops use StepNav; no raw step navigation HTML remains in either lab template
+      - Back arrow visible on all steps in both workshops
+      - Clicking back on step 1 navigates to /lab/workshops; on steps 2+ decrements the step as before
+      - Forward arrow visible and active only when canAdvance is true and the current step is not the final step
+      - Data contracts lab forward arrow unlocks on step completion (step1Done / step2Done), consistent with the distributed computing lab
 
   - id: T7
     title: Challenge modal — Run, Submit, Reveal, Restart interaction model
