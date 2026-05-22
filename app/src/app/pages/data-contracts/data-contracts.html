@@ -76,7 +76,7 @@
 
       @if (sqlError()) {
       <p class="error-sql">{{ sqlError() }}</p>
-      } @if (step2Rows().length >= 0 && step2Done()) {
+      } @if (step2Done()) {
       <div class="chart-wrap">
         <app-bar-chart [rows]="step2Rows()" />
       </div>

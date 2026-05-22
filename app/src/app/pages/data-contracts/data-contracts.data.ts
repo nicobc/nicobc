@@ -61,7 +61,7 @@ export const DC_STEP1_TASK =
   'Write one of the queries this transformation job runs: total order amount per customer for Spain, top 5.';
 
 export const DC_STEP2_INTRO =
-  'The pipeline ran again overnight. The upstream team pushed new data. Run your query on the refreshed table and see what comes back.';
+  'A new batch of orders landed overnight. The upstream team pushed fresh data into the warehouse.';
 
 export const DC_STEP3_PROSE = [
   'The query did not throw. DuckDB returned rows and the chart rendered. But look at who is in the top 5.',
