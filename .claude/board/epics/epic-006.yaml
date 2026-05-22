@@ -112,7 +112,7 @@ tickets:
   - id: T7
     title: Challenge modal — Run, Submit, Reveal, Restart interaction model
     type: feat
-    status: READY
+    status: IN PROGRESS
     description: As a learner, I can freely run queries to explore results before submitting for validation, restart from the starting query at any point, and compare my solution to the canonical answer even after solving the challenge.
     acceptance_criteria:
       - Control row layout in unanswered/wrong states — [↺] [ Run ]  [ Reveal ]  [ Submit ]
