@@ -38,18 +38,15 @@
       <p class="step-intro">{{ step1Intro }}</p>
 
       <div class="pipeline-dag">
-        <div class="dag-node">Source DB</div>
+        @for (node of dagNodes; track $index) { @if ($index > 0) {
         <div class="dag-arrow">→</div>
-        <div class="dag-node">Upstream job</div>
-        <div class="dag-arrow">→</div>
-        <div class="dag-node dag-node--tables">
-          <span>{{ fctOrdersLabel }}</span>
-          <span>{{ dimCustomersLabel }}</span>
+        }
+        <div class="dag-node" [class.dag-node--storage]="node.tier" [class.dag-node--active]="node.active">
+          @if (node.tier) {
+          <span class="dag-tier">{{ node.tier }}</span>
+          } {{ node.label }}
         </div>
-        <div class="dag-arrow">→</div>
-        <div class="dag-node dag-node--highlight">Mart job</div>
-        <div class="dag-arrow">→</div>
-        <div class="dag-node dag-node--dashboard">Dashboard</div>
+        }
       </div>
 
       <p class="step-task">{{ step1Task }}</p>

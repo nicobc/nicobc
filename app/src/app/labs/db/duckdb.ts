@@ -34,7 +34,17 @@ export async function query(sql: string): Promise<QueryResult> {
   try {
     const result = await conn.query(sql);
     const columns = result.schema.fields.map((f) => f.name);
-    const rows = result.toArray().map((row) => Object.fromEntries(columns.map((col) => [col, row[col]])));
+    // Arrow 17 serialises DuckDB HUGEINT (SUM of INTEGER) as Uint32Array(4) — little-endian Int128.
+    // Normalise to a plain number so AJV, matchesExpected, and the chart all see consistent types.
+    const rows = result.toArray().map((row) =>
+      Object.fromEntries(
+        columns.map((col) => {
+          const val = row[col];
+          if (val instanceof Uint32Array) return [col, val[0] + val[1] * 4294967296];
+          return [col, val];
+        }),
+      ),
+    );
     return { columns, rows };
   } finally {
     await conn.close();

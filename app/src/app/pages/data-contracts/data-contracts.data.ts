@@ -1,18 +1,32 @@
 import { DIM_CUSTOMERS, FCT_ORDERS } from '../../labs/data/schema';
 
+// ── DAG ──────────────────────────────────────────────────────────────────────
+
+export interface DagNode {
+  tier?: 'Bronze' | 'Silver' | 'Gold';
+  label: string;
+  active?: true;
+}
+
+export const DC_DAG_NODES: DagNode[] = [
+  { tier: 'Bronze', label: 'Orders backend' },
+  { label: 'Ingestion' },
+  { tier: 'Silver', label: 'Warehouse' },
+  { label: 'Transformation', active: true },
+  { tier: 'Gold', label: 'KPI mart' },
+];
+
 // ── SQL ───────────────────────────────────────────────────────────────────────
 
-export const DC_SKELETON = `-- Compute total order amount per customer name for Spain
--- Tables: ${FCT_ORDERS} (order_id, customer_id, amount, order_date)
---         ${DIM_CUSTOMERS} (customer_id, customer_name, country)
--- Return: customer_name, total_amount::INTEGER — top 5 DESC
+export const DC_SKELETON = `-- Write your query here
+-- Return: customer_name, total_amount
 
 `;
 
 export const DC_SOLUTION = `WITH total_amounts AS (
   SELECT
     c.customer_name,
-    SUM(o.amount)::INTEGER AS total_amount
+    SUM(o.amount) AS total_amount
   FROM ${FCT_ORDERS} o
   JOIN ${DIM_CUSTOMERS} c ON o.customer_id = c.customer_id
   WHERE c.country = 'Spain'
@@ -41,10 +55,10 @@ export const DC_STEP1_EXPECTED_ROWS: Record<string, unknown>[] = [
 // ── copy ──────────────────────────────────────────────────────────────────────
 
 export const DC_STEP1_INTRO =
-  'There is a pipeline that runs every night. It pulls raw orders from a source database, loads them into a Kimball model, then runs a mart job that feeds a dashboard. Someone senior watches that dashboard. Wrong numbers erode trust quickly.';
+  "Every night a pipeline pulls raw order data from the company's orders backend into the warehouse, where a transformation job computes KPIs for leadership.";
 
 export const DC_STEP1_TASK =
-  'You are writing the mart job. Write a CTE that computes the total order amount per customer name for Spanish customers and returns the top 5.';
+  'Write one of the queries this transformation job runs: total order amount per customer for Spain, top 5.';
 
 export const DC_STEP2_INTRO =
   'The pipeline ran again overnight. The upstream team pushed new data. Run your query on the refreshed table and see what comes back.';

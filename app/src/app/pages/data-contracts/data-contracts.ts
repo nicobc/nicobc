@@ -11,6 +11,8 @@ import { DIM_CUSTOMERS, FCT_ORDERS } from '../../labs/data/schema';
 import { ChartRow } from '../../labs/components/chart-colors';
 import { runQuery, matchesExpected } from '../../labs/validation';
 import {
+  DagNode,
+  DC_DAG_NODES,
   DC_SKELETON,
   DC_SOLUTION,
   DC_STEP1_EXPECTED_ROWS,
@@ -51,6 +53,7 @@ const OUTPUT_SCHEMA = {
     customer_name: { type: 'string' },
     total_amount: { type: 'number' },
   },
+  additionalProperties: false,
 };
 
 const ajv = new Ajv({ allErrors: false });
@@ -91,8 +94,7 @@ export class DataContracts implements OnInit {
 
   readonly labCategory = 'Data contracts';
   readonly labTitle = 'Catching schema drift';
-  readonly fctOrdersLabel = FCT_ORDERS;
-  readonly dimCustomersLabel = DIM_CUSTOMERS;
+  readonly dagNodes: readonly DagNode[] = DC_DAG_NODES;
   readonly solution = DC_SOLUTION;
   readonly skeleton = DC_SKELETON;
   readonly schemaDisplay = JSON.stringify(FCT_ORDERS_SCHEMA, null, 2);
@@ -180,17 +182,12 @@ export class DataContracts implements OnInit {
     const { rows } = data;
     const invalid = rows.find((r) => !validateOutput(r));
     if (invalid) {
-      this.outputHint.set(
-        'Your query ran but the output does not match what the chart expects. ' +
-          'Make sure you return customer_name (text) and total_amount (number).',
-      );
+      this.outputHint.set('Query ran but the output structure does not match the expected schema.');
       return;
     }
 
     if (!matchesExpected(rows, DC_STEP1_EXPECTED_ROWS)) {
-      this.outputHint.set(
-        'Close — check your filter or aggregation. The column structure is right but the values differ.',
-      );
+      this.outputHint.set("Close. The column structure is right but the values don't match the expected output.");
       return;
     }
 
