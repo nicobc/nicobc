@@ -66,7 +66,7 @@ export class WorkshopStep implements OnChanges {
   readonly backToAnimationLabel = 'Back to animation';
   readonly replayLabel = 'Replay';
   readonly testUnderstandingLabel = 'Test your understanding';
-  readonly nextLabel = 'Next';
+  readonly continueLabel = 'Continue →';
 
   get terminalLabel(): string {
     return this.config.isFinalStep ? 'Done' : 'Next';
