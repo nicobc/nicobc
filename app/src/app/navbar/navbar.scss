@@ -17,6 +17,12 @@ nav {
   }
 }
 
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
 .brand-prefix {
   font-weight: var(--fw-light);
   display: inline-block;
@@ -25,4 +31,14 @@ nav {
 
 .brand-suffix {
   font-weight: var(--fw-bold);
+}
+
+.social-link {
+  font-size: 1.1rem;
+  opacity: var(--opacity-muted);
+  transition: opacity var(--transition);
+
+  &:hover {
+    opacity: 0.85;
+  }
 }

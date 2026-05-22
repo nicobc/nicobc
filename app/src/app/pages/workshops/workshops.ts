@@ -48,8 +48,7 @@ export class Workshops {
       seq: '1 of 2',
       title: 'Minimizing data movement',
       description:
-        'Build a mental model for distributed computing from simple optimization techniques, ' +
-        'using animated walkthroughs and SQL challenges.',
+        'Build a mental model for query optimization from simple techniques, using animated walkthroughs and SQL challenges.',
       route: '/lab/distributed-computing',
     },
     {

@@ -2,5 +2,12 @@
   <a routerLink="/home"
     ><span class="brand-prefix">{{ brandPrefix }}</span><span class="brand-suffix">{{ brandSuffix }}</span></a
   >
-  <app-theme-toggle />
+  <div class="nav-right">
+    @for (link of socialLinks; track link.label) {
+    <a class="social-link" [href]="link.href" target="_blank" rel="noopener noreferrer" [attr.aria-label]="link.label">
+      <fa-icon [icon]="link.icon" />
+    </a>
+    }
+    <app-theme-toggle />
+  </div>
 </nav>

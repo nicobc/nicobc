@@ -186,7 +186,7 @@ export class DistributedComputing implements OnInit {
       isFinalStep: true,
       paragraphs: [
         'Both column pruning and predicate pushdown minimize data scanning. They can also make shuffles more manageable by reducing the data that enters a join or an aggregation.',
-        'The principle generalizes: distributed computing optimization is about minimizing data movement. In practice this is achieved via scan, shuffle and pass minimization: use as little data as possible, avoid moving it across nodes — but if you must, do it as late as possible — and always try to compute as much as possible in one go.',
+        'Minimizing data movement becomes even more important in distributed engines, where shuffling data across nodes adds network cost to every join and aggregation. The same question applies to every operation in the plan: how much data should it process, and when?',
       ],
       controller: this.step3Challenge,
       sql: this.capstoneChallengeSQL,
