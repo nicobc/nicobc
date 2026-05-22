@@ -118,9 +118,20 @@ tickets:
       - Restart (↺ icon, no label) resets the editor to the starting SQL and clears state and result table; available in all states including correct
       - Reveal shows the canonical solution SQL in the editor in all states including correct; does not change challenge state if already correct
       - Editor remains editable in the correct state
-      - Mobile layout deferred to T11 — icon-only buttons at narrow viewports acceptable as out-of-scope here
+      - Mobile layout deferred to T12 — icon-only buttons at narrow viewports acceptable as out-of-scope here
 
   - id: T8
+    title: Data contracts lab — DAG node shapes and challenge controls
+    type: feat
+    status: IDEATION
+    description: Structural and interaction overhaul of the data contracts lab. Differentiate storage vs job nodes by shape and align challenge controls and output formatting with the distributed computing lab.
+    acceptance_criteria:
+      - Storage nodes rendered as cylinders; job nodes (ingestion, transformation) rendered as rectangles
+      - Challenge controls and output formatting aligned with the distributed computing lab (specifics at grooming)
+    notes:
+      - Depends on T7 (controls pattern); open questions around inline vs modal, control set, and output formatting to resolve at grooming
+
+  - id: T9
     title: Challenge info icon — how the challenge environment works
     type: feat
     status: READY
@@ -131,7 +142,7 @@ tickets:
       - Copy and design are extensible — the pattern must accommodate future challenge types (e.g. Spark UI) without structural changes
       - Tooltip pattern is consistent with the query-hint tooltip introduced in T3
 
-  - id: T9
+  - id: T10
     title: Workshop conclusion — pass minimization and next workshop nudge
     type: feat
     status: READY
@@ -145,7 +156,7 @@ tickets:
     notes:
       - Forward reference to Spark UI workshop (EPIC-009) to be added once EPIC-009 is groomed to READY
 
-  - id: T10
+  - id: T11
     title: Distributed computing lab — vertical density pass
     type: style
     status: READY
@@ -156,7 +167,7 @@ tickets:
       - Spacing reductions reviewed iteratively across all elements of the distributed computing lab
       - No visual regression on other lab pages (data-contracts shares global lab styles)
 
-  - id: T11
+  - id: T12
     title: Responsive design — site-wide mobile pass
     type: style
     status: READY
