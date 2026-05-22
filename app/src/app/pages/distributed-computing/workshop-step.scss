@@ -36,23 +36,6 @@
   }
 }
 
-// ── copy phase footer ─────────────────────────────────────────────────────────
-
-.copy-footer {
-  margin-top: 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.copy-footer .btn-ghost {
-  font-size: var(--fs-sm);
-}
-
-.copy-footer--end {
-  justify-content: flex-end;
-}
-
 // ── schema hint ────────────────────────────────────────────────────────────────
 
 .challenge-schema {
@@ -70,14 +53,6 @@
 
 .challenge-slide {
   margin-top: 2rem;
-}
-
-.challenge-nav {
-  margin-top: 1.5rem;
-
-  .btn-ghost {
-    font-size: var(--fs-sm);
-  }
 }
 
 // ── challenge control row (restart / run / reveal / submit / next) ────────────

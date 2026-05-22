@@ -63,10 +63,13 @@ export const DC_STEP1_TASK =
 export const DC_STEP2_INTRO =
   'A new batch of orders landed overnight. The upstream team pushed fresh data into the warehouse.';
 
-export const DC_STEP3_PROSE = [
+export const DC_STEP3_SILENT_FAILURE_PROSE = [
   'The query ran without error and the chart rendered, but the top customers from yesterday are gone.',
   'The upstream team made <code>amount</code> nullable. When the new batch came through, several top customers had null amounts; the query engine returned NULL for those rows and they dropped out of the ranking entirely.',
   `Leadership checks this chart each morning and knows these customers by name. Grupo Valera, the company's largest account, has dropped out of the top five entirely, and there is nothing to flag that the data is wrong.`,
+];
+
+export const DC_STEP3_CONTRACT_PROSE = [
   `A data contract on <code>${FCT_ORDERS}</code> would have caught this at the start of the transformation job, before corrupted data reached the KPI layer. A data contract is a formal agreement between producer and consumer. At minimum, the producing team declares field types, nullability, and constraints; the consuming team validates incoming data against that declaration at the boundary.`,
   'Several formats can express a contract; this lab uses JSON Schema:',
 ];

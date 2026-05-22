@@ -8,6 +8,7 @@ import { BarChart } from '../../labs/components/bar-chart/bar-chart';
 import { SchemaPanel } from '../../labs/components/schema-panel/schema-panel';
 import { StepNav } from '../../labs/components/step-nav/step-nav';
 import { DbIcon } from '../../labs/components/db-icon/db-icon';
+import { SubstepProgression, Substeps } from '../../labs/components/substep-progression/substep-progression';
 import { getDB, query } from '../../labs/db/duckdb';
 import { dimCustomers, fctOrdersBatch1, fctOrdersBatch2, FctOrder } from '../../labs/data/seed';
 import { DIM_CUSTOMERS, FCT_ORDERS } from '../../labs/data/schema';
@@ -22,12 +23,12 @@ import {
   DC_STEP1_INTRO,
   DC_STEP1_TASK,
   DC_STEP2_INTRO,
-  DC_STEP3_PROSE,
+  DC_STEP3_SILENT_FAILURE_PROSE,
+  DC_STEP3_CONTRACT_PROSE,
   DC_STEP3_META_REVEAL,
   DC_VIOLATION_BLOCK_TITLE,
   DC_LOADING_TEXT,
   DC_RUN_STEP2_LABEL,
-  DC_NEXT_LABEL,
   DC_TOTAL_STEPS,
   DC_CHART_PRIMARY_LABEL,
   DC_CHART_COMPARISON_LABEL,
@@ -86,12 +87,15 @@ interface ContractViolation {
 
 @Component({
   selector: 'app-data-contracts',
-  imports: [SqlEditor, BarChart, FaIconComponent, SchemaPanel, StepNav, DbIcon],
+  imports: [SqlEditor, BarChart, FaIconComponent, SchemaPanel, StepNav, DbIcon, SubstepProgression],
   templateUrl: './data-contracts.html',
   styleUrl: './data-contracts.scss',
 })
 export class DataContracts implements OnInit {
   @ViewChild('stepShell') private readonly stepShellRef?: ElementRef<HTMLElement>;
+
+  private readonly elRef = inject(ElementRef);
+  private readonly router = inject(Router);
 
   readonly schemaOpen = signal(false);
   readonly dbIcon = faDatabase;
@@ -107,17 +111,18 @@ export class DataContracts implements OnInit {
   readonly schemaDisplay = JSON.stringify(FCT_ORDERS_SCHEMA, null, 2);
   readonly loadingText = DC_LOADING_TEXT;
   readonly runStep2Label = DC_RUN_STEP2_LABEL;
-  readonly nextLabel = DC_NEXT_LABEL;
   readonly totalSteps = DC_TOTAL_STEPS;
   readonly step1Intro = DC_STEP1_INTRO;
   readonly step1Task = DC_STEP1_TASK;
   readonly step2Intro = DC_STEP2_INTRO;
-  readonly step3Prose = DC_STEP3_PROSE;
+  readonly step3SilentFailureProse = DC_STEP3_SILENT_FAILURE_PROSE;
+  readonly step3ContractProse = DC_STEP3_CONTRACT_PROSE;
   readonly step3MetaReveal = DC_STEP3_META_REVEAL;
   readonly violationBlockTitle = DC_VIOLATION_BLOCK_TITLE;
 
-  private readonly elRef = inject(ElementRef);
-  private readonly router = inject(Router);
+  readonly testUnderstandingLabel = 'Test your understanding';
+  readonly continueLabel = 'Continue →';
+  readonly nextLabel = 'Next';
 
   readonly dbReady = signal(false);
   readonly step = signal<1 | 2 | 3>(1);
@@ -134,6 +139,15 @@ export class DataContracts implements OnInit {
     const v = this.inputViolation();
     if (!v) return '';
     return `Field <code>${v.field}</code> — ${v.constraint}, received ${v.received}`;
+  });
+
+  readonly step1Substeps: Substeps = [{ kind: 'free' }, { kind: 'gated', done: this.step1Done }];
+  readonly step3Substeps: Substeps = [{ kind: 'free' }, { kind: 'free' }, { kind: 'free' }];
+
+  readonly canGoNext = computed(() => {
+    if (this.step() === 1) return this.step1Done();
+    if (this.step() === 2) return this.step2Done();
+    return false;
   });
 
   async ngOnInit() {
@@ -241,7 +255,7 @@ export class DataContracts implements OnInit {
 
   // ── step 3 ──────────────────────────────────────────────────────────────────
 
-  onEnterStep3() {
+  private onEnterStep3() {
     const v = firstInputViolation(fctOrdersBatch2);
     if (v) {
       const field =
@@ -274,10 +288,4 @@ export class DataContracts implements OnInit {
     this.step.set(prev);
     setTimeout(() => this.stepShellRef?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0);
   }
-
-  readonly canGoNext = computed(() => {
-    if (this.step() === 1) return this.step1Done();
-    if (this.step() === 2) return this.step2Done();
-    return false;
-  });
 }

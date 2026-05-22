@@ -37,35 +37,51 @@
     <!-- ── step 1 ─────────────────────────────────────────────── -->
     @if (step() === 1) {
     <div class="step-content">
-      <p class="step-intro">{{ step1Intro }}</p>
+      <app-substep-progression #sp1 [substeps]="step1Substeps">
+        @if (sp1.activeIndex() === 0) {
+        <p class="step-intro">{{ step1Intro }}</p>
 
-      <div class="pipeline-dag">
-        @for (node of dagNodes; track $index) { @if ($index > 0) {
-        <div class="dag-arrow">→</div>
-        } @if (node.tier) {
-        <div class="dag-node dag-node--storage" [class.dag-node--active]="node.active">
-          <app-db-icon />
-          <span class="dag-tier">{{ node.tier }}</span>
-          <span class="dag-node-label">{{ node.label }}</span>
+        <div class="pipeline-dag">
+          @for (node of dagNodes; track $index) { @if ($index > 0) {
+          <div class="dag-arrow">→</div>
+          } @if (node.tier) {
+          <div class="dag-node dag-node--storage" [class.dag-node--active]="node.active">
+            <app-db-icon />
+            <span class="dag-tier">{{ node.tier }}</span>
+            <span class="dag-node-label">{{ node.label }}</span>
+          </div>
+          } @else {
+          <div class="dag-node" [class.dag-node--active]="node.active">{{ node.label }}</div>
+          } }
         </div>
-        } @else {
-        <div class="dag-node" [class.dag-node--active]="node.active">{{ node.label }}</div>
-        } }
-      </div>
 
-      <p class="step-task">{{ step1Task }}</p>
+        <div class="copy-footer copy-footer--end">
+          <button class="btn-outline" (click)="sp1.goForward()">{{ testUnderstandingLabel }} &#8594;</button>
+        </div>
+        } @if (sp1.activeIndex() === 1) {
+        <p class="step-task">{{ step1Task }}</p>
 
-      <app-sql-editor [initialValue]="skeleton" [solution]="solution" (run)="onRunStep1($event)" />
+        <app-sql-editor [initialValue]="skeleton" [solution]="solution" (run)="onRunStep1($event)" />
 
-      @if (sqlError()) {
-      <p class="error-sql">{{ sqlError() }}</p>
-      } @if (outputHint()) {
-      <p class="hint-output">{{ outputHint() }}</p>
-      } @if (step1Rows().length > 0) {
-      <div class="chart-wrap">
-        <app-bar-chart [rows]="step1Rows()" />
-      </div>
-      }
+        @if (sqlError()) {
+        <p class="error-sql">{{ sqlError() }}</p>
+        } @if (outputHint()) {
+        <p class="hint-output">{{ outputHint() }}</p>
+        } @if (step1Rows().length > 0) {
+        <div class="chart-wrap">
+          <app-bar-chart [rows]="step1Rows()" />
+        </div>
+        } @if (step1Done()) {
+        <div class="step-terminal">
+          <button class="btn-primary" (click)="goNext()">{{ nextLabel }}</button>
+        </div>
+        }
+
+        <div class="challenge-nav">
+          <button class="btn-ghost" (click)="sp1.goBack()">&#8592; Back</button>
+        </div>
+        }
+      </app-substep-progression>
     </div>
     }
 
@@ -82,7 +98,15 @@
       <p class="error-sql">{{ sqlError() }}</p>
       } @if (step2Done()) {
       <div class="chart-wrap">
-        <app-bar-chart [rows]="step2Rows()" />
+        <app-bar-chart
+          [rows]="step1Rows()"
+          [comparisonRows]="step2Rows()"
+          [primaryLabel]="chartPrimaryLabel"
+          [comparisonLabel]="chartComparisonLabel"
+        />
+      </div>
+      <div class="step-terminal">
+        <button class="btn-primary" (click)="goNext()">{{ nextLabel }}</button>
       </div>
       }
     </div>
@@ -91,32 +115,41 @@
     <!-- ── step 3 ─────────────────────────────────────────────── -->
     @if (step() === 3) {
     <div class="step-content">
-      @if (step1Rows().length > 0 && step2Rows().length > 0) {
-      <div class="chart-wrap">
-        <app-bar-chart
-          [rows]="step1Rows()"
-          [comparisonRows]="step2Rows()"
-          [primaryLabel]="chartPrimaryLabel"
-          [comparisonLabel]="chartComparisonLabel"
-        />
-      </div>
-      } @for (p of step3Prose; track $index) {
-      <p [innerHTML]="p"></p>
-      }
+      <app-substep-progression #sp3 [substeps]="step3Substeps">
+        @if (sp3.activeIndex() === 0) { @for (p of step3SilentFailureProse; track $index) {
+        <p [innerHTML]="p"></p>
+        }
+        <div class="copy-footer copy-footer--end">
+          <button class="btn-outline" (click)="sp3.goForward()">{{ continueLabel }}</button>
+        </div>
+        } @if (sp3.activeIndex() === 1) { @for (p of step3ContractProse; track $index) {
+        <p [innerHTML]="p"></p>
+        }
+        <div class="copy-footer copy-footer--end">
+          <button class="btn-outline" (click)="sp3.goForward()">{{ continueLabel }}</button>
+        </div>
 
-      <pre class="code-block contract-block">{{ schemaDisplay }}</pre>
+        <div class="challenge-nav">
+          <button class="btn-ghost" (click)="sp3.goBack()">&#8592; Back</button>
+        </div>
+        } @if (sp3.activeIndex() === 2) {
+        <pre class="code-block contract-block">{{ schemaDisplay }}</pre>
 
-      @if (inputViolation()) {
-      <div class="violation-block">
-        <p class="violation-block__title">{{ violationBlockTitle }}</p>
-        <p class="violation-block__detail" [innerHTML]="violationDetail()"></p>
-      </div>
-      }
+        @if (inputViolation()) {
+        <div class="violation-block">
+          <p class="violation-block__title">{{ violationBlockTitle }}</p>
+          <p class="violation-block__detail" [innerHTML]="violationDetail()"></p>
+        </div>
+        }
 
-      <p class="meta-reveal">{{ step3MetaReveal }}</p>
+        <p class="meta-reveal">{{ step3MetaReveal }}</p>
+
+        <div class="challenge-nav">
+          <button class="btn-ghost" (click)="sp3.goBack()">&#8592; Back</button>
+        </div>
+        }
+      </app-substep-progression>
     </div>
-    } @if (canGoNext()) {
-    <button class="btn-primary" (click)="goNext()">{{ nextLabel }}</button>
     }
   </div>
   }

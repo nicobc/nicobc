@@ -527,6 +527,38 @@ main {
   margin-bottom: 2rem;
 }
 
+// ── substep nav buttons ───────────────────────────────────────────────────────
+
+// footer row at the bottom of copy/intro substeps — back left, forward right
+.copy-footer {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .btn-ghost {
+    font-size: var(--fs-sm);
+  }
+
+  &--end {
+    justify-content: flex-end;
+  }
+}
+
+// back link below a challenge or terminal substep
+.challenge-nav {
+  margin-top: 1.5rem;
+
+  .btn-ghost {
+    font-size: var(--fs-sm);
+  }
+}
+
+// primary CTA after a gated substep completes (e.g. "Next" after chart renders)
+.step-terminal {
+  margin-top: 2rem;
+}
+
 // ── challenge feedback block ──────────────────────────────────────────────────
 
 .feedback-block {
