@@ -18,13 +18,13 @@
   @if (config.vizScenario) {
   <button class="btn-ghost" (click)="returnToViz()">&#8592; {{ backToAnimationLabel }}</button>
   }
-  <button #challengeTrigger class="btn-outline" (click)="openChallenge()">{{ testUnderstandingLabel }} &#8594;</button>
+  <button class="btn-outline" (click)="openChallenge()">{{ testUnderstandingLabel }} &#8594;</button>
 </div>
-} @if (config.controller.show()) {
-<app-challenge-modal [showClose]="config.controller.state() !== 'correct'" (closed)="closeChallenge()">
+} @if (phase() === 'challenge') {
+<div class="challenge-slide">
   <p class="challenge-intro" [innerHTML]="config.intro"></p>
 
-  <app-sql-editor [initialValue]="config.startingSql" [showActions]="false" (valueChange)="onChallengeInput($event)" />
+  <app-sql-editor [initialValue]="config.sql()" [showActions]="false" (valueChange)="onChallengeInput($event)" />
 
   <div class="challenge-actions-row">
     <button class="btn-icon" (click)="restartChallenge()" aria-label="Restart challenge">&#x21BA;</button>
@@ -66,5 +66,9 @@
     </table>
   </div>
   }
-</app-challenge-modal>
+
+  <div class="challenge-nav">
+    <button class="btn-ghost" (click)="closeChallenge()">&#8592; Back</button>
+  </div>
+</div>
 }

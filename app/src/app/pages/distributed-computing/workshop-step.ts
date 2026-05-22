@@ -1,16 +1,5 @@
-import {
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-  signal,
-  ViewChild,
-  WritableSignal,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, signal, ViewChild, WritableSignal } from '@angular/core';
 import { ChallengeHandle } from '../../labs/challenge-controller';
-import { ChallengeModal } from '../../labs/components/challenge-modal/challenge-modal';
 import { SqlEditor } from '../../labs/components/sql-editor/sql-editor';
 import { DataMovementViz, VizMode, VizScenario } from '../../labs/components/data-movement-viz/data-movement-viz';
 import { QueryResult } from '../../labs/db/duckdb';
@@ -43,7 +32,7 @@ export interface WorkshopStepConfig {
 
 @Component({
   selector: 'app-workshop-step',
-  imports: [DataMovementViz, ChallengeModal, SqlEditor],
+  imports: [DataMovementViz, SqlEditor],
   templateUrl: './workshop-step.html',
   styleUrl: './workshop-step.scss',
 })
@@ -54,9 +43,8 @@ export class WorkshopStep implements OnChanges {
 
   @ViewChild(DataMovementViz) private readonly viz?: DataMovementViz;
   @ViewChild(SqlEditor) private readonly sqlEditorRef?: SqlEditor;
-  @ViewChild('challengeTrigger') private readonly challengeTrigger?: ElementRef<HTMLButtonElement>;
 
-  readonly phase = signal<'viz' | 'copy'>('viz');
+  readonly phase = signal<'viz' | 'copy' | 'challenge'>('viz');
   readonly seenUnlockMode = signal(false);
 
   readonly runLabel = 'Run';
@@ -116,15 +104,11 @@ export class WorkshopStep implements OnChanges {
   }
 
   openChallenge(): void {
-    this.config.sql.set(this.config.startingSql);
-    this.config.queryResult.set(null);
-    this.config.queryError.set(null);
-    this.config.controller.open();
+    this.phase.set('challenge');
   }
 
   closeChallenge(): void {
-    this.config.controller.close();
-    this.challengeTrigger?.nativeElement.focus();
+    this.phase.set('copy');
   }
 
   onChallengeInput(value: string): void {
@@ -153,7 +137,7 @@ export class WorkshopStep implements OnChanges {
   }
 
   onTerminalAction(): void {
-    this.config.controller.close();
+    this.phase.set('copy');
     this.advance.emit();
   }
 }

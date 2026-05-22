@@ -66,6 +66,20 @@
   }
 }
 
+// ── challenge slide ───────────────────────────────────────────────────────────
+
+.challenge-slide {
+  margin-top: 2rem;
+}
+
+.challenge-nav {
+  margin-top: 1.5rem;
+
+  .btn-ghost {
+    font-size: var(--fs-sm);
+  }
+}
+
 // ── challenge control row (restart / run / reveal / submit / next) ────────────
 
 .challenge-actions-row {
