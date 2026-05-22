@@ -128,8 +128,9 @@ tickets:
     acceptance_criteria:
       - Storage nodes rendered as cylinders; job nodes (ingestion, transformation) rendered as rectangles
       - Challenge controls and output formatting aligned with the distributed computing lab (specifics at grooming)
+      - Step 3 contract validation made interactive — JSON Schema block followed by a Validate button that runs AJV against the batch 2 data and displays the violation dynamically, replacing the current static violation block
     notes:
-      - Depends on T7 (controls pattern); open questions around inline vs modal, control set, and output formatting to resolve at grooming
+      - Depends on T7 (controls pattern); open questions around inline vs modal, control set, output formatting, and Validate button design to resolve at grooming
 
   - id: T9
     title: Challenge info icon — how the challenge environment works
