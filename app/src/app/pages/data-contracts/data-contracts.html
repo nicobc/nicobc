@@ -89,7 +89,12 @@
     <div class="step-content">
       @if (step1Rows().length > 0 && step2Rows().length > 0) {
       <div class="chart-wrap">
-        <app-bar-chart [rows]="step1Rows()" [comparisonRows]="step2Rows()" />
+        <app-bar-chart
+          [rows]="step1Rows()"
+          [comparisonRows]="step2Rows()"
+          [primaryLabel]="chartPrimaryLabel"
+          [comparisonLabel]="chartComparisonLabel"
+        />
       </div>
       } @for (p of step3Prose; track $index) {
       <p [innerHTML]="p"></p>

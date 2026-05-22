@@ -26,6 +26,8 @@ import {
   DC_RUN_STEP2_LABEL,
   DC_NEXT_LABEL,
   DC_TOTAL_STEPS,
+  DC_CHART_PRIMARY_LABEL,
+  DC_CHART_COMPARISON_LABEL,
 } from './data-contracts.data';
 
 // ── schemas ──────────────────────────────────────────────────────────────────
@@ -95,6 +97,8 @@ export class DataContracts implements OnInit {
   readonly labCategory = 'Data contracts';
   readonly labTitle = 'Catching schema drift';
   readonly dagNodes: readonly DagNode[] = DC_DAG_NODES;
+  readonly chartPrimaryLabel = DC_CHART_PRIMARY_LABEL;
+  readonly chartComparisonLabel = DC_CHART_COMPARISON_LABEL;
   readonly solution = DC_SOLUTION;
   readonly skeleton = DC_SKELETON;
   readonly schemaDisplay = JSON.stringify(FCT_ORDERS_SCHEMA, null, 2);

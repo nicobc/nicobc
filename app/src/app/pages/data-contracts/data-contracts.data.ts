@@ -64,16 +64,15 @@ export const DC_STEP2_INTRO =
   'A new batch of orders landed overnight. The upstream team pushed fresh data into the warehouse.';
 
 export const DC_STEP3_PROSE = [
-  'The query did not throw. DuckDB returned rows and the chart rendered. But look at who is in the top 5.',
-  "The upstream team made <code>amount</code> nullable. A batch came through with no amounts for the top customers — DuckDB's <code>SUM</code> returned NULL for those rows, and they dropped out of the ranking entirely.",
-  'A stakeholder looking at that dashboard would see their top customers disappear overnight.',
-  `A contract on <code>${FCT_ORDERS}</code> would have caught this at ingestion, before the mart job ran and faulty data reached the dashboard.`,
-  'A data contract is a formal agreement between producer and consumer. At minimum, the producing team declares field types, nullability, and constraints; the consuming team validates incoming data against that declaration at the boundary. A batch that violates the contract fails there instead of propagating silently downstream.',
+  'The query ran without error and the chart rendered, but the top customers from yesterday are gone.',
+  'The upstream team made <code>amount</code> nullable. When the new batch came through, several top customers had null amounts; the query engine returned NULL for those rows and they dropped out of the ranking entirely.',
+  `Leadership checks this chart each morning and knows these customers by name. Grupo Valera, the company's largest account, has dropped out of the top five entirely, and there is nothing to flag that the data is wrong.`,
+  `A data contract on <code>${FCT_ORDERS}</code> would have caught this at the start of the transformation job, before corrupted data reached the KPI layer. A data contract is a formal agreement between producer and consumer. At minimum, the producing team declares field types, nullability, and constraints; the consuming team validates incoming data against that declaration at the boundary.`,
   'Several formats can express a contract; this lab uses JSON Schema:',
 ];
 
 export const DC_STEP3_META_REVEAL =
-  'One more thing: this lab validated your query output against a contract before rendering the chart in step 1. That is why a query with wrong column names or types returned a hint instead of a broken chart. The same principle, applied one step earlier in the pipeline.';
+  'Step 1 also enforced an output contract between your query and the chart. The same pattern, one layer further.';
 
 export const DC_VIOLATION_BLOCK_TITLE = 'What the contract would have thrown at ingestion';
 
@@ -81,3 +80,5 @@ export const DC_LOADING_TEXT = 'Loading DuckDB...';
 export const DC_RUN_STEP2_LABEL = 'Run';
 export const DC_NEXT_LABEL = 'Next';
 export const DC_TOTAL_STEPS = 3;
+export const DC_CHART_PRIMARY_LABEL = 'Yesterday';
+export const DC_CHART_COMPARISON_LABEL = 'Today';
