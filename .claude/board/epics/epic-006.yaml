@@ -125,16 +125,27 @@ tickets:
       - Mobile layout deferred to T12 — icon-only buttons at narrow viewports acceptable as out-of-scope here
 
   - id: T8
-    title: Data contracts lab — DAG node shapes and challenge controls
+    title: Carousel factorization and data contracts lab structural overhaul
     type: feat
-    status: IDEATION
-    description: Structural and interaction overhaul of the data contracts lab. Differentiate storage vs job nodes by shape and align challenge controls and output formatting with the distributed computing lab.
+    status: READY
+    description: >
+      Unify both workshops on a shared carousel abstraction — typed slides (viz | copy | challenge)
+      with gated progression. Drop the ChallengeModal overlay entirely; challenge becomes a slide.
+      Migrate the data contracts lab from its current scroll/inline layout to the carousel.
+      Differentiate DAG node shapes and make step 3 contract validation interactive.
     acceptance_criteria:
-      - Storage nodes rendered as cylinders; job nodes (ingestion, transformation) rendered as rectangles
-      - Challenge controls and output formatting aligned with the distributed computing lab (specifics at grooming)
-      - Step 3 contract validation made interactive — JSON Schema block followed by a Validate button that runs AJV against the batch 2 data and displays the violation dynamically, replacing the current static violation block
+      - Shared carousel abstraction extracted (slide types viz | copy | challenge; gated progression logic lives in carousel, not in modal lifecycle)
+      - ChallengeModal component removed; challenge content renders as a carousel slide in both labs
+      - ChallengeController show/open/close removed (carousel navigation replaces modal show state); restart() and check() retained
+      - Data contracts lab migrated to carousel — step 1 (SQL challenge), step 2 (batch 2 run), step 3 (contract + violation) each become slides
+      - Distributed computing lab updated to use shared carousel abstraction; WorkshopStep refactored or replaced
+      - Storage nodes in data contracts DAG rendered as cylinders; job nodes (ingestion, transformation) rendered as rectangles
+      - Step 3 contract validation made interactive — Validate button runs AJV against batch 2 data and displays the violation dynamically, replacing the static violation block
+      - Run/Submit/Reveal/Restart controls (T7) preserved in the challenge slide
+      - No horizontal scroll at 375px on either lab (carousel slides are full-width)
     notes:
-      - Depends on T7 (controls pattern); open questions around inline vs modal, control set, output formatting, and Validate button design to resolve at grooming
+      - Modal removal makes T12 (mobile pass) easier for challenge views
+      - data contracts step 2 (batch 2 run) has no challenge — it is a copy+action slide, not a challenge slide
 
   - id: T9
     title: Challenge info icon — how the challenge environment works
