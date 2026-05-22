@@ -112,7 +112,7 @@ tickets:
   - id: T7
     title: Challenge controls overhaul, SQL editor theme, and step navigation polish
     type: feat
-    status: TESTING
+    status: DONE
     description: >
       Replace the single Check button with a full Run / Submit / Reveal / Restart control model.
       Drop the solutionRevealed state and revealed feedback variant. Add a custom site-themed SQL
