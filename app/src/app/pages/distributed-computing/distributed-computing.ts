@@ -19,7 +19,7 @@ import { ChallengeController } from '../../labs/challenge-controller';
 import { execute, QueryResult } from '../../labs/db/duckdb';
 import { runQuery, matchesExpected } from '../../labs/validation';
 import { dimProducts, dimCustomers, fctOrdersBatch1, fctOrderItems } from '../../labs/data/seed';
-import { DIM_CUSTOMERS, FCT_ORDERS, FCT_ORDER_ITEMS } from '../../labs/data/schema';
+import { DIM_CUSTOMERS, FCT_ORDERS } from '../../labs/data/schema';
 import { SchemaPanel } from '../../labs/components/schema-panel/schema-panel';
 import { StepNav } from '../../labs/components/step-nav/step-nav';
 import {
@@ -41,6 +41,49 @@ type ChallengeState = 'unanswered' | 'unsafe-sql' | 'wrong-sql' | 'wrong-output'
 
 // ── validation pipeline ───────────────────────────────────────────────────────
 
+type ExecResult = { ok: false } | { ok: true; stmts: Statement[] | undefined };
+
+async function executeQuery(
+  sql: string,
+  controller: ChallengeController<ChallengeState>,
+  queryResult: WritableSignal<QueryResult | null>,
+  queryError: WritableSignal<string | null>,
+): Promise<ExecResult> {
+  queryResult.set(null);
+  queryError.set(null);
+  let stmts: Statement[] | undefined;
+  try {
+    const parsed = parse(sql);
+    if (!parsed.length || !parsed.every((st) => st.type === 'select' || st.type === 'with')) {
+      controller.state.set('unsafe-sql');
+      return { ok: false };
+    }
+    stmts = parsed;
+  } catch {
+    /* malformed SQL — runQuery will surface the error */
+  }
+  const { data: result, error } = await runQuery(sql);
+  if (!result) {
+    queryError.set(error);
+    controller.state.set('wrong-sql');
+    return { ok: false };
+  }
+  queryResult.set(result);
+  return { ok: true, stmts };
+}
+
+function makeExecutor(
+  sql: Signal<string>,
+  controller: ChallengeController<ChallengeState>,
+  queryResult: WritableSignal<QueryResult | null>,
+  queryError: WritableSignal<string | null>,
+): () => Promise<void> {
+  return async () => {
+    controller.state.set('unanswered');
+    await executeQuery(sql(), controller, queryResult, queryError);
+  };
+}
+
 function makeValidator(
   sql: Signal<string>,
   controller: ChallengeController<ChallengeState>,
@@ -50,32 +93,14 @@ function makeValidator(
   queryError: WritableSignal<string | null>,
 ): () => Promise<void> {
   return async () => {
-    const s = sql();
-    queryResult.set(null);
-    queryError.set(null);
-    let stmts: Statement[] | undefined;
-    try {
-      const parsed = parse(s);
-      if (!parsed.length || !parsed.every((st) => st.type === 'select' || st.type === 'with')) {
-        controller.state.set('unsafe-sql');
-        return;
-      }
-      stmts = parsed;
-    } catch {
-      /* malformed SQL — runQuery will surface the error */
-    }
-    const { data: result, error } = await runQuery(s);
-    if (!result) {
-      queryError.set(error);
-      controller.state.set('wrong-sql');
-      return;
-    }
-    queryResult.set(result);
-    if (!matchesExpected(result.rows, expectedRows)) {
+    const result = await executeQuery(sql(), controller, queryResult, queryError);
+    if (!result.ok) return;
+    const rows = queryResult();
+    if (!rows || !matchesExpected(rows.rows, expectedRows)) {
       controller.state.set('wrong-output');
       return;
     }
-    controller.state.set(stmts ? checkStructure(stmts) : 'correct');
+    controller.state.set(result.stmts ? checkStructure(result.stmts) : 'correct');
   };
 }
 
@@ -152,9 +177,8 @@ export class DistributedComputing implements OnInit {
           'Not quite. Trace what <code>category_revenue</code> needs from <code>products</code> and only project those columns.',
         correct:
           'Right. <code>product_id</code> for the join, <code>category</code> for the group-by, <code>unit_price</code> for the aggregation.',
-        revealed:
-          'The answer is <code>product_id</code> for the join, <code>category</code> for the group-by, <code>unit_price</code> for the aggregation. Everything else in <code>dim_products</code> is unnecessary.',
       } satisfies FeedbackMap,
+      execute: makeExecutor(this.cpChallengeSQL, this.step1Challenge, this.step1QueryResult, this.step1QueryError),
       validate: makeValidator(
         this.cpChallengeSQL,
         this.step1Challenge,
@@ -183,9 +207,8 @@ export class DistributedComputing implements OnInit {
           "Both predicates are in <code>HAVING</code>, which runs after <code>GROUP BY</code>. One of them doesn't depend on any aggregated value — which one can be evaluated before the rows are grouped?",
         correct:
           "Right. <code>category != 'Food'</code> belongs in <code>WHERE</code> — it filters rows before aggregation. <code>COUNT(*) >= 2</code> stays in <code>HAVING</code> — it needs the grouped result.",
-        revealed:
-          "The <code>category</code> filter belongs in <code>WHERE</code>: it doesn't depend on aggregated values and evaluating it before <code>GROUP BY</code> reduces the rows that enter the aggregation. <code>COUNT(*) >= 2</code> is a post-aggregation predicate — it can't move.",
       } satisfies FeedbackMap,
+      execute: makeExecutor(this.ppChallengeSQL, this.step2Challenge, this.step2QueryResult, this.step2QueryError),
       validate: makeValidator(
         this.ppChallengeSQL,
         this.step2Challenge,
@@ -214,8 +237,13 @@ export class DistributedComputing implements OnInit {
         'not-optimized':
           'Think about minimizing data movement. Which table can be filtered and pruned first, before the joins?',
         correct: `Right. Filter and prune <code>${DIM_CUSTOMERS}</code> first, join the fact tables after, group last. Each step carries only the rows the next step actually needs.`,
-        revealed: `<code>WHERE country = 'Spain'</code> and <code>SELECT customer_id, customer_name</code> go inside the first CTE. That gives the engine a small set to join against <code>${FCT_ORDERS}</code>, which then feeds <code>${FCT_ORDER_ITEMS}</code>. <code>GROUP BY</code> runs last on the already-reduced data.`,
       } satisfies FeedbackMap,
+      execute: makeExecutor(
+        this.capstoneChallengeSQL,
+        this.step3Challenge,
+        this.step3QueryResult,
+        this.step3QueryError,
+      ),
       validate: makeValidator(
         this.capstoneChallengeSQL,
         this.step3Challenge,

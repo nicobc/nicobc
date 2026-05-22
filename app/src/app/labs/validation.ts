@@ -12,9 +12,13 @@ export async function runQuery(sql: string): Promise<QueryRunResult> {
 
 export function matchesExpected(rows: QueryResult['rows'], expected: Record<string, unknown>[]): boolean {
   if (rows.length !== expected.length) return false;
-  return expected.every((exp, i) =>
-    Object.entries(exp).every(([key, val]) =>
-      typeof val === 'number' ? Math.abs(Number(rows[i][key]) - val) < 0.01 : String(rows[i][key]) === String(val),
-    ),
-  );
+  return expected.every((exp, i) => {
+    const row = rows[i];
+    const expKeys = Object.keys(exp);
+    if (Object.keys(row).length !== expKeys.length) return false;
+    return expKeys.every((key) => {
+      const val = exp[key];
+      return typeof val === 'number' ? Math.abs(Number(row[key]) - val) < 0.01 : String(row[key]) === String(val);
+    });
+  });
 }

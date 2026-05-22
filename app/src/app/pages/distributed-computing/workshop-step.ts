@@ -21,7 +21,7 @@ const UNLOCK_MODE: Partial<Record<VizScenario, VizMode>> = {
   'dag-race': 'dag-race-done',
 };
 
-export type FeedbackMap = Record<'not-optimized' | 'correct' | 'revealed', string>;
+export type FeedbackMap = Record<'not-optimized' | 'correct', string>;
 
 type FeedbackDisplay = { kind: 'none' } | { kind: 'trace'; error: string } | { kind: 'message'; html: string };
 
@@ -37,6 +37,7 @@ export interface WorkshopStepConfig {
   solutionSql: string;
   intro: string;
   feedback: FeedbackMap;
+  execute: () => Promise<void>;
   validate: () => Promise<void>;
 }
 
@@ -58,13 +59,14 @@ export class WorkshopStep implements OnChanges {
   readonly phase = signal<'viz' | 'copy'>('viz');
   readonly seenUnlockMode = signal(false);
 
-  readonly checkLabel = 'Check';
-  readonly checkingLabel = 'Checking…';
-  readonly revealSolutionLabel = 'Reveal solution';
+  readonly runLabel = 'Run';
+  readonly revealLabel = 'Reveal';
+  readonly submitLabel = 'Submit';
+  readonly submittingLabel = 'Submitting…';
   readonly backToAnimationLabel = 'Back to animation';
   readonly replayLabel = 'Replay';
   readonly testUnderstandingLabel = 'Test your understanding';
-  readonly nextLabel = 'Next';
+  readonly continueLabel = 'Continue →';
 
   get terminalLabel(): string {
     return this.config.isFinalStep ? 'Done' : 'Next';
@@ -79,25 +81,19 @@ export class WorkshopStep implements OnChanges {
     }
     if (state === 'unsafe-sql') return { kind: 'message', html: 'Only SELECT queries are allowed here.' };
     if (state === 'wrong-output') return { kind: 'message', html: 'The query ran, but the output does not match.' };
-    const key = (
-      state === 'correct' ? (this.config.controller.solutionRevealed() ? 'revealed' : 'correct') : state
-    ) as keyof FeedbackMap;
-    return { kind: 'message', html: this.config.feedback[key] };
+    return { kind: 'message', html: this.config.feedback[state as keyof FeedbackMap] };
   }
 
   get feedbackClass(): string {
-    const state = this.config.controller.state();
-    if (state === 'correct') {
-      return this.config.controller.solutionRevealed()
-        ? 'feedback-block feedback-block--reveal'
-        : 'feedback-block feedback-block--success';
-    }
-    return 'feedback-block feedback-block--error';
+    return this.config.controller.state() === 'correct'
+      ? 'feedback-block feedback-block--success'
+      : 'feedback-block feedback-block--error';
   }
 
   ngOnChanges(): void {
-    this.phase.set(this.config.vizScenario ? 'viz' : 'copy');
-    this.seenUnlockMode.set(false);
+    const cleared = this.config.controller.state() === 'correct';
+    this.phase.set(cleared || !this.config.vizScenario ? 'copy' : 'viz');
+    this.seenUnlockMode.set(cleared);
   }
 
   replay(): void {
@@ -135,6 +131,10 @@ export class WorkshopStep implements OnChanges {
     this.config.sql.set(value);
   }
 
+  async runChallenge(): Promise<void> {
+    await this.config.controller.check(this.config.execute);
+  }
+
   async submitChallenge(): Promise<void> {
     await this.config.controller.check(this.config.validate);
   }
@@ -142,7 +142,14 @@ export class WorkshopStep implements OnChanges {
   revealSolution(): void {
     this.sqlEditorRef?.setValue(this.config.solutionSql);
     this.config.sql.set(this.config.solutionSql);
-    this.config.controller.reveal();
+  }
+
+  restartChallenge(): void {
+    this.config.controller.restart();
+    this.config.sql.set(this.config.startingSql);
+    this.config.queryResult.set(null);
+    this.config.queryError.set(null);
+    this.sqlEditorRef?.setValue(this.config.startingSql);
   }
 
   onTerminalAction(): void {
