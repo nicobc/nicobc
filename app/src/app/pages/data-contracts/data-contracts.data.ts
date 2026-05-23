@@ -71,7 +71,7 @@ export const DC_STEP3_SILENT_FAILURE_PROSE = [
 
 export const DC_STEP3_CONTRACT_PROSE = [
   `A data contract on <code>${FCT_ORDERS}</code> would have caught this at the start of the transformation job, before corrupted data reached the KPI layer. A data contract is a formal agreement between producer and consumer. At minimum, the producing team declares field types, nullability, and constraints; the consuming team validates incoming data against that declaration at the boundary.`,
-  'Several formats can express a contract; this lab uses JSON Schema:',
+  'Several formats can express a contract; this lab uses JSON Schema.',
 ];
 
 export const DC_STEP3_META_REVEAL =

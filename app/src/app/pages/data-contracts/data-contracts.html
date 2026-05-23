@@ -37,7 +37,7 @@
     <!-- ── step 1 ─────────────────────────────────────────────── -->
     @if (step() === 1) {
     <div class="step-content">
-      <app-substep-progression #sp1 [substeps]="step1Substeps">
+      <app-substep-progression #sp1 [substeps]="step1Substeps" [hasPrev]="false" (exitForward)="goNext()">
         @if (sp1.activeIndex() === 0) {
         <p class="step-intro">{{ step1Intro }}</p>
 
@@ -54,10 +54,6 @@
           <div class="dag-node" [class.dag-node--active]="node.active">{{ node.label }}</div>
           } }
         </div>
-
-        <div class="copy-footer copy-footer--end">
-          <button class="btn-outline" (click)="sp1.goForward()">{{ testUnderstandingLabel }} &#8594;</button>
-        </div>
         } @if (sp1.activeIndex() === 1) {
         <p class="step-task">{{ step1Task }}</p>
 
@@ -71,16 +67,7 @@
         <div class="chart-wrap">
           <app-bar-chart [rows]="step1Rows()" />
         </div>
-        } @if (step1Done()) {
-        <div class="step-terminal">
-          <button class="btn-primary" (click)="goNext()">{{ nextLabel }}</button>
-        </div>
-        }
-
-        <div class="challenge-nav">
-          <button class="btn-ghost" (click)="sp1.goBack()">&#8592; Back</button>
-        </div>
-        }
+        } }
       </app-substep-progression>
     </div>
     }
@@ -88,51 +75,44 @@
     <!-- ── step 2 ─────────────────────────────────────────────── -->
     @if (step() === 2) {
     <div class="step-content">
-      <p class="step-intro">{{ step2Intro }}</p>
+      <app-substep-progression [substeps]="step2Substeps" (exitBack)="goBack()" (exitForward)="goNext()">
+        <p class="step-intro">{{ step2Intro }}</p>
 
-      <pre class="code-block sql-readonly">{{ lastSql() }}</pre>
+        <pre class="code-block sql-readonly">{{ lastSql() }}</pre>
 
-      <button class="btn-primary" (click)="onRunStep2()">{{ runStep2Label }}</button>
+        <button class="btn-primary" (click)="onRunStep2()">{{ runStep2Label }}</button>
 
-      @if (sqlError()) {
-      <p class="error-sql">{{ sqlError() }}</p>
-      } @if (step2Done()) {
-      <div class="chart-wrap">
-        <app-bar-chart
-          [rows]="step1Rows()"
-          [comparisonRows]="step2Rows()"
-          [primaryLabel]="chartPrimaryLabel"
-          [comparisonLabel]="chartComparisonLabel"
-        />
-      </div>
-      <div class="step-terminal">
-        <button class="btn-primary" (click)="goNext()">{{ nextLabel }}</button>
-      </div>
-      }
+        @if (sqlError()) {
+        <p class="error-sql">{{ sqlError() }}</p>
+        } @if (step2Done()) {
+        <div class="chart-wrap">
+          <app-bar-chart
+            [rows]="step1Rows()"
+            [comparisonRows]="step2Rows()"
+            [primaryLabel]="chartPrimaryLabel"
+            [comparisonLabel]="chartComparisonLabel"
+          />
+        </div>
+        }
+      </app-substep-progression>
     </div>
     }
 
     <!-- ── step 3 ─────────────────────────────────────────────── -->
     @if (step() === 3) {
     <div class="step-content">
-      <app-substep-progression #sp3 [substeps]="step3Substeps">
+      <app-substep-progression
+        #sp3
+        [substeps]="step3Substeps"
+        [hasNext]="false"
+        (exitBack)="goBack()"
+        (exitForward)="onDone()"
+      >
         @if (sp3.activeIndex() === 0) { @for (p of step3SilentFailureProse; track $index) {
         <p [innerHTML]="p"></p>
-        }
-        <div class="copy-footer copy-footer--end">
-          <button class="btn-outline" (click)="sp3.goForward()">{{ continueLabel }}</button>
-        </div>
-        } @if (sp3.activeIndex() === 1) { @for (p of step3ContractProse; track $index) {
+        } } @if (sp3.activeIndex() === 1) { @for (p of step3ContractProse; track $index) {
         <p [innerHTML]="p"></p>
-        }
-        <div class="copy-footer copy-footer--end">
-          <button class="btn-outline" (click)="sp3.goForward()">{{ continueLabel }}</button>
-        </div>
-
-        <div class="challenge-nav">
-          <button class="btn-ghost" (click)="sp3.goBack()">&#8592; Back</button>
-        </div>
-        } @if (sp3.activeIndex() === 2) {
+        } } @if (sp3.activeIndex() === 2) {
         <pre class="code-block contract-block">{{ schemaDisplay }}</pre>
 
         @if (inputViolation()) {
@@ -143,10 +123,6 @@
         }
 
         <p class="meta-reveal">{{ step3MetaReveal }}</p>
-
-        <div class="challenge-nav">
-          <button class="btn-ghost" (click)="sp3.goBack()">&#8592; Back</button>
-        </div>
         }
       </app-substep-progression>
     </div>

@@ -150,7 +150,7 @@ tickets:
       - Data contracts lab restructured into 3 steps — step 1 (ss1 intro+DAG free, ss2 challenge+chart gated), step 2 (ss1 copy+run+chart gated), step 3 (ss1 silent-failure copy free, ss2 data-contracts copy free, ss3 interactive JSON validate free/terminal)
       - Step 3 SS3 contract validation interactive — Validate button runs AJV against batch 2 data; violation displayed dynamically replacing the static block
       - Run/Submit/Reveal/Restart controls preserved in all challenge substeps
-      - Substep navigation labels normalized to ← Back, Continue →, and Done across both labs — no 'Back to animation' or 'Test your understanding'
+      - Substep navigation uses ← Back / Continue → / Done — Back hidden only on the very first substep of the entire workshop; Done appears only on the final substep of the final step; Continue → on all other forward actions
     notes:
       - Vocabulary locked — Workshop → Step → Substep; component SubstepProgression; collection type Substeps; behavioral types free | gated
       - ChallengeController show signal and open()/close() are dead code; remove when SubstepProgression is wired

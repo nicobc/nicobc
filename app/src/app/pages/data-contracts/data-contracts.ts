@@ -120,10 +120,6 @@ export class DataContracts implements OnInit {
   readonly step3MetaReveal = DC_STEP3_META_REVEAL;
   readonly violationBlockTitle = DC_VIOLATION_BLOCK_TITLE;
 
-  readonly testUnderstandingLabel = 'Test your understanding';
-  readonly continueLabel = 'Continue →';
-  readonly nextLabel = 'Next';
-
   readonly dbReady = signal(false);
   readonly step = signal<1 | 2 | 3>(1);
   readonly step1Done = signal(false);
@@ -142,6 +138,7 @@ export class DataContracts implements OnInit {
   });
 
   readonly step1Substeps: Substeps = [{ kind: 'free' }, { kind: 'gated', done: this.step1Done }];
+  readonly step2Substeps: Substeps = [{ kind: 'gated', done: this.step2Done }];
   readonly step3Substeps: Substeps = [{ kind: 'free' }, { kind: 'free' }, { kind: 'free' }];
 
   readonly canGoNext = computed(() => {
@@ -276,6 +273,10 @@ export class DataContracts implements OnInit {
     if (next === 3) this.onEnterStep3();
     this.step.set(next);
     setTimeout(() => this.stepShellRef?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0);
+  }
+
+  async onDone(): Promise<void> {
+    await this.router.navigate(['/lab/workshops']);
   }
 
   async goBack() {

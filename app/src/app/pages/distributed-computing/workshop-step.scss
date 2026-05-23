@@ -10,19 +10,13 @@
   }
 }
 
-// ── viz nav row (replay left, next right) ─────────────────────────────────────
+// ── viz nav row (replay, centered) ────────────────────────────────────────────
 
 .viz-nav {
-  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   margin-top: 0.75rem;
-}
-
-.viz-nav-right {
-  position: absolute;
-  right: 0;
 }
 
 // .btn-outline provides visual style; overrides for compact replay size

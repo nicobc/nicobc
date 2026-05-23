@@ -1,25 +1,21 @@
-<app-substep-progression #sp [substeps]="substeps()" (exitBack)="onExitBack()">
+<app-substep-progression
+  #sp
+  [substeps]="substeps()"
+  [hasPrev]="!config().isFirstStep"
+  [hasNext]="!config().isFinalStep"
+  (exitBack)="onExitBack()"
+  (exitForward)="onTerminalAction()"
+>
   @if (config().vizScenario && sp.activeIndex() === 0) {
   <app-data-movement-viz [scenario]="config().vizScenario!" (modeChange)="onModeChange($event)" />
   <div class="viz-nav">
     <button class="btn-outline btn-replay" (click)="replay()">&#8635; {{ replayLabel }}</button>
-    <div class="viz-nav-right">
-      @if (sp.canAdvance()) {
-      <button class="btn-outline" (click)="sp.goForward()">{{ continueLabel }}</button>
-      }
-    </div>
   </div>
   } @if (sp.activeIndex() === copySubstepIndex()) {
   <div class="step-copy">
     @for (para of config().paragraphs; track $index) {
     <p [innerHTML]="para"></p>
     }
-  </div>
-  <div class="copy-footer" [class.copy-footer--end]="!config().vizScenario">
-    @if (config().vizScenario) {
-    <button class="btn-ghost" (click)="sp.goBack()">&#8592; {{ backToAnimationLabel }}</button>
-    }
-    <button class="btn-outline" (click)="sp.goForward()">{{ testUnderstandingLabel }} &#8594;</button>
   </div>
   } @if (sp.activeIndex() === challengeSubstepIndex()) {
   <div class="challenge-slide">
@@ -36,9 +32,6 @@
       <button class="btn-outline" (click)="submitChallenge()" [disabled]="config().controller.checking()">
         {{ config().controller.checking() ? submittingLabel : submitLabel }}
       </button>
-      @if (config().controller.state() === 'correct') {
-      <button class="btn-primary" (click)="onTerminalAction()">{{ terminalLabel }}</button>
-      }
     </div>
 
     @switch (feedback.kind) { @case ('trace') {
@@ -67,10 +60,6 @@
       </table>
     </div>
     }
-
-    <div class="challenge-nav">
-      <button class="btn-ghost" (click)="sp.goBack()">&#8592; Back</button>
-    </div>
   </div>
   }
 </app-substep-progression>

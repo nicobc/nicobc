@@ -27,6 +27,7 @@ type FeedbackDisplay = { kind: 'none' } | { kind: 'trace'; error: string } | { k
 
 export interface WorkshopStepConfig {
   vizScenario?: VizScenario;
+  isFirstStep: boolean;
   isFinalStep: boolean;
   paragraphs: string[];
   controller: ChallengeHandle;
@@ -50,6 +51,7 @@ export interface WorkshopStepConfig {
 export class WorkshopStep implements OnChanges {
   readonly config = input.required<WorkshopStepConfig>();
   @Output() readonly advance = new EventEmitter<void>();
+  @Output() readonly retreat = new EventEmitter<void>();
   @Output() readonly scrollToStep = new EventEmitter<void>();
 
   @ViewChild(DataMovementViz) private readonly viz?: DataMovementViz;
@@ -76,14 +78,7 @@ export class WorkshopStep implements OnChanges {
   readonly revealLabel = 'Reveal';
   readonly submitLabel = 'Submit';
   readonly submittingLabel = 'Submitting…';
-  readonly backToAnimationLabel = 'Back to animation';
   readonly replayLabel = 'Replay';
-  readonly testUnderstandingLabel = 'Test your understanding';
-  readonly continueLabel = 'Continue →';
-
-  get terminalLabel(): string {
-    return this.config().isFinalStep ? 'Done' : 'Next';
-  }
 
   get feedback(): FeedbackDisplay {
     const state = this.config().controller.state();
@@ -117,7 +112,7 @@ export class WorkshopStep implements OnChanges {
   }
 
   onExitBack(): void {
-    this.scrollToStep.emit();
+    this.retreat.emit();
   }
 
   onChallengeInput(value: string): void {
