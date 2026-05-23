@@ -527,6 +527,19 @@ main {
   margin-bottom: 2rem;
 }
 
+// ── challenge control row (restart / run / reveal / submit) ──────────────────
+
+.challenge-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.challenge-actions-row .btn-ghost {
+  font-size: var(--fs-code);
+}
+
 // ── challenge feedback block ──────────────────────────────────────────────────
 
 .feedback-block {

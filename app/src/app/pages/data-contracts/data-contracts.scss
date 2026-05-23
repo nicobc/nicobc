@@ -97,28 +97,18 @@ app-db-icon {
   margin-bottom: 2rem;
 }
 
+// ── step 1 ────────────────────────────────────────────────────────────────────
+
+app-sql-editor {
+  display: block;
+  margin-bottom: 1.25rem;
+}
+
 // ── step 2 ────────────────────────────────────────────────────────────────────
 
 // .code-block provides visual style; margin scoped here
 .sql-readonly {
   margin-bottom: 1rem;
-}
-
-// ── errors + hints ────────────────────────────────────────────────────────────
-
-.error-sql {
-  color: var(--accent);
-  font-size: var(--fs-code);
-  font-family: var(--font-mono);
-  margin-top: 0.75rem;
-  opacity: 1 !important;
-}
-
-.hint-output {
-  color: #fbbf24;
-  font-size: var(--fs-sm);
-  margin-top: 0.75rem;
-  opacity: 1 !important;
 }
 
 // ── step 3 ────────────────────────────────────────────────────────────────────

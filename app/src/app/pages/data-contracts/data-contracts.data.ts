@@ -79,9 +79,17 @@ export const DC_STEP3_META_REVEAL =
 
 export const DC_VIOLATION_BLOCK_TITLE = 'What the contract would have thrown at ingestion';
 
+export const DC_STEP1_FEEDBACK_EMPTY = 'Write a query first.';
+export const DC_STEP1_FEEDBACK_WRONG_STRUCTURE = 'Query ran but the output does not match the expected schema.';
+export const DC_STEP1_FEEDBACK_WRONG_VALUES =
+  "Close. The column structure is right but the values don't match the expected output.";
+export const DC_STEP1_FEEDBACK_CORRECT = "Right. Spain's top 5 customers by total order amount.";
+
+export const DC_CONCLUSION_COPY =
+  'You wrote the KPI query, watched it silently produce wrong results after a schema change upstream, and caught the violation with a JSON Schema contract at the source.';
+
 export const DC_LOADING_TEXT = 'Loading DuckDB...';
 export const DC_RUN_STEP2_LABEL = 'Run';
-export const DC_NEXT_LABEL = 'Next';
-export const DC_TOTAL_STEPS = 3;
+export const DC_TOTAL_STEPS = 4;
 export const DC_CHART_PRIMARY_LABEL = 'Yesterday';
 export const DC_CHART_COMPARISON_LABEL = 'Today';

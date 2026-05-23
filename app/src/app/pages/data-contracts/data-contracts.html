@@ -57,13 +57,47 @@
         } @if (sp1.activeIndex() === 1) {
         <p class="step-task">{{ step1Task }}</p>
 
-        <app-sql-editor [initialValue]="skeleton" [solution]="solution" (run)="onRunStep1($event)" />
+        <app-sql-editor [initialValue]="step1Sql()" [showActions]="false" (valueChange)="onStep1Input($event)" />
 
-        @if (sqlError()) {
-        <p class="error-sql">{{ sqlError() }}</p>
-        } @if (outputHint()) {
-        <p class="hint-output">{{ outputHint() }}</p>
-        } @if (step1Rows().length > 0) {
+        <div class="challenge-actions-row">
+          <button class="btn-icon" (click)="restartStep1()" aria-label="Restart">&#x21BA;</button>
+          <button class="btn-outline" (click)="runStep1()" [disabled]="step1Checking()">{{ runLabel }}</button>
+          <button class="btn-ghost" (click)="revealStep1()">{{ revealLabel }}</button>
+          <button class="btn-outline" (click)="submitStep1()" [disabled]="step1Checking()">
+            {{ step1Checking() ? submittingLabel : submitLabel }}
+          </button>
+        </div>
+
+        @switch (step1FeedbackDisplay.kind) { @case ('trace') {
+        <div [class]="step1FeedbackClass">
+          <pre class="code-block feedback-error-trace">{{ step1FeedbackDisplay.error }}</pre>
+        </div>
+        } @case ('message') {
+        <div [class]="step1FeedbackClass"><p [innerHTML]="step1FeedbackDisplay.html"></p></div>
+        } @case ('correct') {
+        <div [class]="step1FeedbackClass"><p [innerHTML]="step1FeedbackDisplay.html"></p></div>
+        } } @if (step1QueryResult(); as result) {
+        <div class="query-result-table">
+          <table>
+            <thead>
+              <tr>
+                @for (col of result.columns; track col) {
+                <th>{{ col }}</th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of result.rows; track $index) {
+              <tr>
+                @for (col of result.columns; track col) {
+                <td>{{ row[col] }}</td>
+                }
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        } @if (step1Done()) {
         <div class="chart-wrap">
           <app-bar-chart [rows]="step1Rows()" />
         </div>
@@ -78,20 +112,15 @@
       <app-substep-progression [substeps]="step2Substeps" (exitBack)="goBack()" (exitForward)="goNext()">
         <p class="step-intro">{{ step2Intro }}</p>
 
-        <pre class="code-block sql-readonly">{{ lastSql() }}</pre>
+        <pre class="code-block sql-readonly">{{ step1CommittedSql() }}</pre>
 
-        <button class="btn-primary" (click)="onRunStep2()">{{ runStep2Label }}</button>
+        <button class="btn-outline" (click)="onRunStep2()">{{ runStep2Label }}</button>
 
-        @if (sqlError()) {
-        <p class="error-sql">{{ sqlError() }}</p>
+        @if (step2Error()) {
+        <div class="feedback-block feedback-block--error"><p>{{ step2Error() }}</p></div>
         } @if (step2Done()) {
         <div class="chart-wrap">
-          <app-bar-chart
-            [rows]="step1Rows()"
-            [comparisonRows]="step2Rows()"
-            [primaryLabel]="chartPrimaryLabel"
-            [comparisonLabel]="chartComparisonLabel"
-          />
+          <app-bar-chart [rows]="step2Rows()" />
         </div>
         }
       </app-substep-progression>
@@ -101,18 +130,21 @@
     <!-- ── step 3 ─────────────────────────────────────────────── -->
     @if (step() === 3) {
     <div class="step-content">
-      <app-substep-progression
-        #sp3
-        [substeps]="step3Substeps"
-        [hasNext]="false"
-        (exitBack)="goBack()"
-        (exitForward)="onDone()"
-      >
+      <app-substep-progression #sp3 [substeps]="step3Substeps" (exitBack)="goBack()" (exitForward)="goNext()">
         @if (sp3.activeIndex() === 0) { @for (p of step3SilentFailureProse; track $index) {
         <p [innerHTML]="p"></p>
-        } } @if (sp3.activeIndex() === 1) { @for (p of step3ContractProse; track $index) {
+        } } @if (sp3.activeIndex() === 1) {
+        <div class="chart-wrap">
+          <app-bar-chart
+            [rows]="step1Rows()"
+            [comparisonRows]="step2Rows()"
+            [primaryLabel]="chartPrimaryLabel"
+            [comparisonLabel]="chartComparisonLabel"
+          />
+        </div>
+        } @if (sp3.activeIndex() === 2) { @for (p of step3ContractProse; track $index) {
         <p [innerHTML]="p"></p>
-        } } @if (sp3.activeIndex() === 2) {
+        } } @if (sp3.activeIndex() === 3) {
         <pre class="code-block contract-block">{{ schemaDisplay }}</pre>
 
         @if (inputViolation()) {
@@ -120,10 +152,22 @@
           <p class="violation-block__title">{{ violationBlockTitle }}</p>
           <p class="violation-block__detail" [innerHTML]="violationDetail()"></p>
         </div>
-        }
+        } }
+      </app-substep-progression>
+    </div>
+    }
 
+    <!-- ── step 4 ─────────────────────────────────────────────── -->
+    @if (step() === 4) {
+    <div class="step-content">
+      <app-substep-progression
+        [substeps]="step4Substeps"
+        [hasNext]="false"
+        (exitBack)="goBack()"
+        (exitForward)="onDone()"
+      >
+        <p>{{ conclusionCopy }}</p>
         <p class="meta-reveal">{{ step3MetaReveal }}</p>
-        }
       </app-substep-progression>
     </div>
     }
