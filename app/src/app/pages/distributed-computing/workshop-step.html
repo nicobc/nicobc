@@ -34,32 +34,7 @@
       </button>
     </div>
 
-    @switch (feedback.kind) { @case ('trace') {
-    <div [class]="feedbackClass"><pre class="code-block feedback-error-trace">{{ feedback.error }}</pre></div>
-    } @case ('message') {
-    <div [class]="feedbackClass"><p [innerHTML]="feedback.html"></p></div>
-    } } @if (config().queryResult(); as result) {
-    <div class="query-result-table">
-      <table>
-        <thead>
-          <tr>
-            @for (col of result.columns; track col) {
-            <th>{{ col }}</th>
-            }
-          </tr>
-        </thead>
-        <tbody>
-          @for (row of result.rows; track $index) {
-          <tr>
-            @for (col of result.columns; track col) {
-            <td>{{ row[col] }}</td>
-            }
-          </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-    }
+    <app-query-output [feedback]="feedback" [result]="config().queryResult()" />
   </div>
   }
 </app-substep-progression>

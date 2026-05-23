@@ -1,6 +1,6 @@
 import { Component, ElementRef, ViewChild, computed, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import Ajv, { ErrorObject } from 'ajv';
+import Ajv from 'ajv/dist/2020';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faDatabase, faStar } from '@fortawesome/free-solid-svg-icons';
 import { SqlEditor } from '../../labs/components/sql-editor/sql-editor';
@@ -9,8 +9,9 @@ import { SchemaPanel } from '../../labs/components/schema-panel/schema-panel';
 import { StepNav } from '../../labs/components/step-nav/step-nav';
 import { DbIcon } from '../../labs/components/db-icon/db-icon';
 import { SubstepProgression, Substeps } from '../../labs/components/substep-progression/substep-progression';
+import { QueryOutput, QueryFeedback } from '../../labs/components/query-output/query-output';
 import { getDB, query, QueryResult } from '../../labs/db/duckdb';
-import { dimCustomers, fctOrdersBatch1, fctOrdersBatch2, FctOrder } from '../../labs/data/seed';
+import { dimCustomers, fctOrdersBatch1, fctOrdersBatch2 } from '../../labs/data/seed';
 import { DIM_CUSTOMERS, FCT_ORDERS } from '../../labs/data/schema';
 import { ChartRow } from '../../labs/components/chart-colors';
 import { runQuery, matchesExpected } from '../../labs/validation';
@@ -31,7 +32,6 @@ import {
   DC_STEP3_CONTRACT_PROSE,
   DC_STEP3_META_REVEAL,
   DC_CONCLUSION_COPY,
-  DC_VIOLATION_BLOCK_TITLE,
   DC_LOADING_TEXT,
   DC_RUN_STEP2_LABEL,
   DC_TOTAL_STEPS,
@@ -42,7 +42,7 @@ import {
 // ── schemas ──────────────────────────────────────────────────────────────────
 
 const FCT_ORDERS_SCHEMA = {
-  $schema: 'http://json-schema.org/draft-07/schema#',
+  $schema: 'https://json-schema.org/draft/2020-12/schema',
   title: `${FCT_ORDERS} row`,
   type: 'object',
   required: ['order_id', 'customer_id', 'amount', 'order_date'],
@@ -68,37 +68,34 @@ const OUTPUT_SCHEMA = {
 };
 
 const ajv = new Ajv({ allErrors: false });
-const validateInput = ajv.compile(FCT_ORDERS_SCHEMA);
 const validateOutput = ajv.compile(OUTPUT_SCHEMA);
 
-function firstInputViolation(rows: FctOrder[]): { row: FctOrder; error: ErrorObject } | null {
-  for (const row of rows) {
-    if (!validateInput(row)) {
-      return { row, error: (validateInput.errors as ErrorObject[])[0] };
-    }
-  }
-  return null;
+// ── DDL validator ─────────────────────────────────────────────────────────────
+
+interface DdlViolation {
+  table: string;
+  column: string;
+  expected: string;
+  actual: string;
 }
 
-// ── types ─────────────────────────────────────────────────────────────────────
-
-interface ContractViolation {
-  field: string;
-  constraint: string;
-  received: string;
+function checkDdl(rows: Record<string, unknown>[], required: string[]): DdlViolation[] {
+  const nullability = Object.fromEntries(rows.map((r) => [r['column_name'] as string, r['is_nullable'] as string]));
+  return required
+    .filter((field) => nullability[field] !== 'NO')
+    .map((field) => ({
+      table: FCT_ORDERS,
+      column: field,
+      expected: 'NOT NULL',
+      actual: nullability[field] === 'YES' ? 'NULL' : 'missing',
+    }));
 }
-
-type Step1Feedback =
-  | { kind: 'none' }
-  | { kind: 'trace'; error: string }
-  | { kind: 'message'; html: string }
-  | { kind: 'correct'; html: string };
 
 // ── component ─────────────────────────────────────────────────────────────────
 
 @Component({
   selector: 'app-data-contracts',
-  imports: [SqlEditor, BarChart, FaIconComponent, SchemaPanel, StepNav, DbIcon, SubstepProgression],
+  imports: [SqlEditor, BarChart, FaIconComponent, SchemaPanel, StepNav, DbIcon, SubstepProgression, QueryOutput],
   templateUrl: './data-contracts.html',
   styleUrl: './data-contracts.scss',
 })
@@ -118,7 +115,15 @@ export class DataContracts implements OnInit {
   readonly dagNodes: readonly DagNode[] = DC_DAG_NODES;
   readonly chartPrimaryLabel = DC_CHART_PRIMARY_LABEL;
   readonly chartComparisonLabel = DC_CHART_COMPARISON_LABEL;
-  readonly schemaDisplay = JSON.stringify(FCT_ORDERS_SCHEMA, null, 2);
+  readonly schemaSegments = (() => {
+    const lines = JSON.stringify(FCT_ORDERS_SCHEMA, null, 2).split('\n');
+    const idx = lines.findIndex((l) => l.trim() === '"amount",');
+    return {
+      top: lines.slice(0, idx).join('\n'),
+      amountLine: lines[idx],
+      bottom: lines.slice(idx + 1).join('\n'),
+    };
+  })();
   readonly loadingText = DC_LOADING_TEXT;
   readonly runStep2Label = DC_RUN_STEP2_LABEL;
   readonly totalSteps = DC_TOTAL_STEPS;
@@ -129,18 +134,18 @@ export class DataContracts implements OnInit {
   readonly step3ContractProse = DC_STEP3_CONTRACT_PROSE;
   readonly step3MetaReveal = DC_STEP3_META_REVEAL;
   readonly conclusionCopy = DC_CONCLUSION_COPY;
-  readonly violationBlockTitle = DC_VIOLATION_BLOCK_TITLE;
   readonly runLabel = 'Run';
   readonly submitLabel = 'Submit';
   readonly submittingLabel = 'Submitting…';
   readonly revealLabel = 'Reveal';
+  readonly validateLabel = 'Validate';
 
   readonly dbReady = signal(false);
   readonly step = signal<1 | 2 | 3 | 4>(1);
 
   // ── step 1 state ────────────────────────────────────────────────────────────
   readonly step1Sql = signal(DC_SKELETON);
-  readonly step1Feedback = signal<Step1Feedback>({ kind: 'none' });
+  readonly step1Feedback = signal<QueryFeedback>({ kind: 'none' });
   readonly step1Checking = signal(false);
   readonly step1QueryResult = signal<QueryResult | null>(null);
   readonly step1Rows = signal<ChartRow[]>([]);
@@ -153,13 +158,8 @@ export class DataContracts implements OnInit {
   readonly step2Error = signal<string | null>(null);
 
   // ── step 3 state ────────────────────────────────────────────────────────────
-  readonly inputViolation = signal<ContractViolation | null>(null);
-
-  readonly violationDetail = computed(() => {
-    const v = this.inputViolation();
-    if (!v) return '';
-    return `Field <code>${v.field}</code> — ${v.constraint}, received ${v.received}`;
-  });
+  readonly amountRequired = signal(false);
+  readonly step3ValidationFeedback = signal<QueryFeedback>({ kind: 'none' });
 
   readonly step1Substeps: Substeps = [{ kind: 'free' }, { kind: 'gated', done: this.step1Done }];
   readonly step2Substeps: Substeps = [{ kind: 'gated', done: this.step2Done }];
@@ -172,14 +172,8 @@ export class DataContracts implements OnInit {
     return false;
   });
 
-  get step1FeedbackDisplay(): Step1Feedback {
+  get step1FeedbackDisplay(): QueryFeedback {
     return this.step1Feedback();
-  }
-
-  get step1FeedbackClass(): string {
-    return this.step1Feedback().kind === 'correct'
-      ? 'feedback-block feedback-block--success'
-      : 'feedback-block feedback-block--error';
   }
 
   async ngOnInit() {
@@ -195,9 +189,11 @@ export class DataContracts implements OnInit {
       await conn.query(`DROP TABLE IF EXISTS ${FCT_ORDERS}`);
       await conn.query(`DROP TABLE IF EXISTS ${DIM_CUSTOMERS}`);
       await conn.query(`CREATE TABLE ${DIM_CUSTOMERS} (customer_id INTEGER, customer_name VARCHAR, country VARCHAR)`);
-      await conn.query(
-        `CREATE TABLE ${FCT_ORDERS} (order_id INTEGER, customer_id INTEGER, amount INTEGER, order_date VARCHAR)`,
-      );
+      const fctDdl =
+        n === 1
+          ? `CREATE TABLE ${FCT_ORDERS} (order_id INTEGER NOT NULL, customer_id INTEGER NOT NULL, amount INTEGER NOT NULL, order_date VARCHAR NOT NULL)`
+          : `CREATE TABLE ${FCT_ORDERS} (order_id INTEGER NOT NULL, customer_id INTEGER NOT NULL, amount INTEGER, order_date VARCHAR NOT NULL)`;
+      await conn.query(fctDdl);
 
       const customerVals = dimCustomers
         .map((c) => `(${c.customer_id}, '${c.customer_name.replace("'", "''")}', '${c.country}')`)
@@ -319,17 +315,35 @@ export class DataContracts implements OnInit {
 
   // ── step 3 ──────────────────────────────────────────────────────────────────
 
-  private onEnterStep3() {
-    const v = firstInputViolation(fctOrdersBatch2);
-    if (v) {
-      const field =
-        v.error.instancePath.replace('/', '') || (v.error.params as Record<string, string>)['missingProperty'];
-      const received = (v.row as unknown as Record<string, unknown>)[field];
-      this.inputViolation.set({
-        field,
-        constraint: `type must be ${(v.error.params as Record<string, string>)['type']}`,
-        received: received === null ? 'null' : String(received),
+  private onEnterStep3(): void {
+    this.amountRequired.set(false);
+    this.step3ValidationFeedback.set({ kind: 'none' });
+  }
+
+  restartStep3(): void {
+    this.step3ValidationFeedback.set({ kind: 'none' });
+  }
+
+  toggleAmountRequired(): void {
+    this.amountRequired.update((v) => !v);
+    this.step3ValidationFeedback.set({ kind: 'none' });
+  }
+
+  async validateStep3(): Promise<void> {
+    const required = this.amountRequired()
+      ? FCT_ORDERS_SCHEMA.required
+      : FCT_ORDERS_SCHEMA.required.filter((f) => f !== 'amount');
+    const { rows } = await query(
+      `SELECT column_name, is_nullable FROM information_schema.columns WHERE table_name = '${FCT_ORDERS}'`,
+    );
+    const violations = checkDdl(rows, required);
+    if (violations.length) {
+      this.step3ValidationFeedback.set({
+        kind: 'trace',
+        error: JSON.stringify(violations, null, 2),
       });
+    } else {
+      this.step3ValidationFeedback.set({ kind: 'correct', html: 'No violations found.' });
     }
   }
 

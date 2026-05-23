@@ -77,8 +77,6 @@ export const DC_STEP3_CONTRACT_PROSE = [
 export const DC_STEP3_META_REVEAL =
   'Step 1 also enforced an output contract between your query and the chart. The same pattern, one layer further.';
 
-export const DC_VIOLATION_BLOCK_TITLE = 'What the contract would have thrown at ingestion';
-
 export const DC_STEP1_FEEDBACK_EMPTY = 'Write a query first.';
 export const DC_STEP1_FEEDBACK_WRONG_STRUCTURE = 'Query ran but the output does not match the expected schema.';
 export const DC_STEP1_FEEDBACK_WRONG_VALUES =

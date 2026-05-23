@@ -13,6 +13,7 @@ import { ChallengeHandle } from '../../labs/challenge-controller';
 import { SqlEditor } from '../../labs/components/sql-editor/sql-editor';
 import { DataMovementViz, VizMode, VizScenario } from '../../labs/components/data-movement-viz/data-movement-viz';
 import { SubstepProgression, Substeps } from '../../labs/components/substep-progression/substep-progression';
+import { QueryOutput, QueryFeedback } from '../../labs/components/query-output/query-output';
 import { QueryResult } from '../../labs/db/duckdb';
 
 const UNLOCK_MODE: Partial<Record<VizScenario, VizMode>> = {
@@ -22,8 +23,6 @@ const UNLOCK_MODE: Partial<Record<VizScenario, VizMode>> = {
 };
 
 export type FeedbackMap = Record<'not-optimized' | 'correct', string>;
-
-type FeedbackDisplay = { kind: 'none' } | { kind: 'trace'; error: string } | { kind: 'message'; html: string };
 
 export interface WorkshopStepConfig {
   vizScenario?: VizScenario;
@@ -44,7 +43,7 @@ export interface WorkshopStepConfig {
 
 @Component({
   selector: 'app-workshop-step',
-  imports: [DataMovementViz, SqlEditor, SubstepProgression],
+  imports: [DataMovementViz, SqlEditor, SubstepProgression, QueryOutput],
   templateUrl: './workshop-step.html',
   styleUrl: './workshop-step.scss',
 })
@@ -80,7 +79,7 @@ export class WorkshopStep implements OnChanges {
   readonly submittingLabel = 'Submitting…';
   readonly replayLabel = 'Replay';
 
-  get feedback(): FeedbackDisplay {
+  get feedback(): QueryFeedback {
     const state = this.config().controller.state();
     if (state === 'unanswered') return { kind: 'none' };
     if (state === 'wrong-sql') {
@@ -89,13 +88,8 @@ export class WorkshopStep implements OnChanges {
     }
     if (state === 'unsafe-sql') return { kind: 'message', html: 'Only SELECT queries are allowed here.' };
     if (state === 'wrong-output') return { kind: 'message', html: 'The query ran, but the output does not match.' };
-    return { kind: 'message', html: this.config().feedback[state as keyof FeedbackMap] };
-  }
-
-  get feedbackClass(): string {
-    return this.config().controller.state() === 'correct'
-      ? 'feedback-block feedback-block--success'
-      : 'feedback-block feedback-block--error';
+    const html = this.config().feedback[state as keyof FeedbackMap];
+    return state === 'correct' ? { kind: 'correct', html } : { kind: 'message', html };
   }
 
   ngOnChanges(): void {

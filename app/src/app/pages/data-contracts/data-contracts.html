@@ -68,36 +68,7 @@
           </button>
         </div>
 
-        @switch (step1FeedbackDisplay.kind) { @case ('trace') {
-        <div [class]="step1FeedbackClass">
-          <pre class="code-block feedback-error-trace">{{ step1FeedbackDisplay.error }}</pre>
-        </div>
-        } @case ('message') {
-        <div [class]="step1FeedbackClass"><p [innerHTML]="step1FeedbackDisplay.html"></p></div>
-        } @case ('correct') {
-        <div [class]="step1FeedbackClass"><p [innerHTML]="step1FeedbackDisplay.html"></p></div>
-        } } @if (step1QueryResult(); as result) {
-        <div class="query-result-table">
-          <table>
-            <thead>
-              <tr>
-                @for (col of result.columns; track col) {
-                <th>{{ col }}</th>
-                }
-              </tr>
-            </thead>
-            <tbody>
-              @for (row of result.rows; track $index) {
-              <tr>
-                @for (col of result.columns; track col) {
-                <td>{{ row[col] }}</td>
-                }
-              </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-        } @if (step1Done()) {
+        <app-query-output [feedback]="step1FeedbackDisplay" [result]="step1QueryResult()" /> @if (step1Done()) {
         <div class="chart-wrap">
           <app-bar-chart [rows]="step1Rows()" />
         </div>
@@ -145,14 +116,25 @@
         } @if (sp3.activeIndex() === 2) { @for (p of step3ContractProse; track $index) {
         <p [innerHTML]="p"></p>
         } } @if (sp3.activeIndex() === 3) {
-        <pre class="code-block contract-block">{{ schemaDisplay }}</pre>
-
-        @if (inputViolation()) {
-        <div class="violation-block">
-          <p class="violation-block__title">{{ violationBlockTitle }}</p>
-          <p class="violation-block__detail" [innerHTML]="violationDetail()"></p>
+        <div class="schema-toggle-control">
+          <code class="schema-segment schema-segment--top">{{ schemaSegments.top }}</code>
+          <button
+            class="toggle-pill schema-amount-pill"
+            [class.active]="amountRequired()"
+            [attr.aria-pressed]="amountRequired()"
+            (click)="toggleAmountRequired()"
+          >
+            {{ schemaSegments.amountLine }}
+          </button>
+          <code class="schema-segment schema-segment--bottom">{{ schemaSegments.bottom }}</code>
         </div>
-        } }
+
+        <div class="challenge-actions-row">
+          <button class="btn-icon" (click)="restartStep3()" aria-label="Restart">&#x21BA;</button>
+          <button class="btn-outline" (click)="validateStep3()">{{ validateLabel }}</button>
+        </div>
+
+        <app-query-output [feedback]="step3ValidationFeedback()" /> }
       </app-substep-progression>
     </div>
     }

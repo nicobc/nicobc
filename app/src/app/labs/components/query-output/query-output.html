@@ -1,0 +1,30 @@
+@switch (feedbackValue.kind) { @case ('trace') {
+<div class="feedback-block feedback-block--error">
+  <pre class="code-block feedback-error-trace">{{ feedbackValue.error }}</pre>
+</div>
+} @case ('message') {
+<div class="feedback-block feedback-block--error"><p [innerHTML]="feedbackValue.html"></p></div>
+} @case ('correct') {
+<div class="feedback-block feedback-block--success"><p [innerHTML]="feedbackValue.html"></p></div>
+} } @if (result(); as r) {
+<div class="query-result-table">
+  <table>
+    <thead>
+      <tr>
+        @for (col of r.columns; track col) {
+        <th>{{ col }}</th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of r.rows; track $index) {
+      <tr>
+        @for (col of r.columns; track col) {
+        <td>{{ row[col] }}</td>
+        }
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>
+}
