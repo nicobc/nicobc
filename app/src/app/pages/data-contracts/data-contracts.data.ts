@@ -11,7 +11,7 @@ export interface DagNode {
 export const DC_DAG_NODES: DagNode[] = [
   { tier: 'Bronze', label: 'Orders backend' },
   { label: 'Ingestion' },
-  { tier: 'Silver', label: 'Warehouse' },
+  { tier: 'Silver', label: 'DWH' },
   { label: 'Transformation', active: true },
   { tier: 'Gold', label: 'KPI mart' },
 ];
@@ -63,22 +63,31 @@ export const DC_STEP1_TASK =
 export const DC_STEP2_INTRO =
   'A new batch of orders landed overnight. The upstream team pushed fresh data into the warehouse.';
 
-export const DC_STEP3_PROSE = [
+export const DC_STEP3_SILENT_FAILURE_PROSE = [
   'The query ran without error and the chart rendered, but the top customers from yesterday are gone.',
   'The upstream team made <code>amount</code> nullable. When the new batch came through, several top customers had null amounts; the query engine returned NULL for those rows and they dropped out of the ranking entirely.',
   `Leadership checks this chart each morning and knows these customers by name. Grupo Valera, the company's largest account, has dropped out of the top five entirely, and there is nothing to flag that the data is wrong.`,
+];
+
+export const DC_STEP3_CONTRACT_PROSE = [
   `A data contract on <code>${FCT_ORDERS}</code> would have caught this at the start of the transformation job, before corrupted data reached the KPI layer. A data contract is a formal agreement between producer and consumer. At minimum, the producing team declares field types, nullability, and constraints; the consuming team validates incoming data against that declaration at the boundary.`,
-  'Several formats can express a contract; this lab uses JSON Schema:',
+  'Several formats can express a contract; this lab uses JSON Schema.',
 ];
 
 export const DC_STEP3_META_REVEAL =
   'Step 1 also enforced an output contract between your query and the chart. The same pattern, one layer further.';
 
-export const DC_VIOLATION_BLOCK_TITLE = 'What the contract would have thrown at ingestion';
+export const DC_STEP1_FEEDBACK_EMPTY = 'Write a query first.';
+export const DC_STEP1_FEEDBACK_WRONG_STRUCTURE = 'Query ran but the output does not match the expected schema.';
+export const DC_STEP1_FEEDBACK_WRONG_VALUES =
+  "Close. The column structure is right but the values don't match the expected output.";
+export const DC_STEP1_FEEDBACK_CORRECT = "Right. Spain's top 5 customers by total order amount.";
+
+export const DC_CONCLUSION_COPY =
+  'You wrote the KPI query, watched it silently produce wrong results after a schema change upstream, and caught the violation with a JSON Schema contract at the source.';
 
 export const DC_LOADING_TEXT = 'Loading DuckDB...';
 export const DC_RUN_STEP2_LABEL = 'Run';
-export const DC_NEXT_LABEL = 'Next';
-export const DC_TOTAL_STEPS = 3;
+export const DC_TOTAL_STEPS = 4;
 export const DC_CHART_PRIMARY_LABEL = 'Yesterday';
 export const DC_CHART_COMPARISON_LABEL = 'Today';

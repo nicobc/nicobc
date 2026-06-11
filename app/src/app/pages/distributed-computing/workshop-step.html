@@ -1,70 +1,40 @@
-@if (phase() === 'viz' && config.vizScenario) {
-<app-data-movement-viz [scenario]="config.vizScenario" (modeChange)="onModeChange($event)" />
-<div class="viz-nav">
-  <button class="btn-outline btn-replay" (click)="replay()">&#8635; {{ replayLabel }}</button>
-  <div class="viz-nav-right">
-    @if (seenUnlockMode()) {
-    <button class="btn-outline" (click)="advanceVizPhase()">{{ continueLabel }}</button>
+<app-substep-progression
+  #sp
+  [substeps]="substeps()"
+  [hasPrev]="!config().isFirstStep"
+  [hasNext]="!config().isFinalStep"
+  (exitBack)="onExitBack()"
+  (exitForward)="onTerminalAction()"
+>
+  @if (config().vizScenario && sp.activeIndex() === 0) {
+  <app-data-movement-viz [scenario]="config().vizScenario!" (modeChange)="onModeChange($event)" />
+  <div class="viz-nav">
+    <button class="btn-outline btn-replay" (click)="replay()">&#8635; {{ replayLabel }}</button>
+  </div>
+  } @if (sp.activeIndex() === copySubstepIndex()) {
+  <div class="step-copy">
+    @for (para of config().paragraphs; track $index) {
+    <p [innerHTML]="para"></p>
     }
   </div>
-</div>
-} @if (phase() === 'copy') {
-<div class="step-copy">
-  @for (para of config.paragraphs; track $index) {
-  <p [innerHTML]="para"></p>
-  }
-</div>
-<div class="copy-footer" [class.copy-footer--end]="!config.vizScenario">
-  @if (config.vizScenario) {
-  <button class="btn-ghost" (click)="returnToViz()">&#8592; {{ backToAnimationLabel }}</button>
-  }
-  <button #challengeTrigger class="btn-outline" (click)="openChallenge()">{{ testUnderstandingLabel }} &#8594;</button>
-</div>
-} @if (config.controller.show()) {
-<app-challenge-modal [showClose]="config.controller.state() !== 'correct'" (closed)="closeChallenge()">
-  <p class="challenge-intro" [innerHTML]="config.intro"></p>
+  } @if (sp.activeIndex() === challengeSubstepIndex()) {
+  <div class="challenge-slide">
+    <p class="challenge-intro" [innerHTML]="config().intro"></p>
 
-  <app-sql-editor [initialValue]="config.startingSql" [showActions]="false" (valueChange)="onChallengeInput($event)" />
+    <app-sql-editor [initialValue]="config().sql()" [showActions]="false" (valueChange)="onChallengeInput($event)" />
 
-  <div class="challenge-actions-row">
-    <button class="btn-icon" (click)="restartChallenge()" aria-label="Restart challenge">&#x21BA;</button>
-    <button class="btn-outline" (click)="runChallenge()" [disabled]="config.controller.checking()">
-      {{ runLabel }}
-    </button>
-    <button class="btn-ghost" (click)="revealSolution()">{{ revealLabel }}</button>
-    <button class="btn-outline" (click)="submitChallenge()" [disabled]="config.controller.checking()">
-      {{ config.controller.checking() ? submittingLabel : submitLabel }}
-    </button>
-    @if (config.controller.state() === 'correct') {
-    <button class="btn-primary" (click)="onTerminalAction()">{{ terminalLabel }}</button>
-    }
-  </div>
+    <div class="challenge-actions-row">
+      <button class="btn-icon" (click)="restartChallenge()" aria-label="Restart challenge">&#x21BA;</button>
+      <button class="btn-outline" (click)="runChallenge()" [disabled]="config().controller.checking()">
+        {{ runLabel }}
+      </button>
+      <button class="btn-ghost" (click)="revealSolution()">{{ revealLabel }}</button>
+      <button class="btn-outline" (click)="submitChallenge()" [disabled]="config().controller.checking()">
+        {{ config().controller.checking() ? submittingLabel : submitLabel }}
+      </button>
+    </div>
 
-  @switch (feedback.kind) { @case ('trace') {
-  <div [class]="feedbackClass"><pre class="code-block feedback-error-trace">{{ feedback.error }}</pre></div>
-  } @case ('message') {
-  <div [class]="feedbackClass"><p [innerHTML]="feedback.html"></p></div>
-  } } @if (config.queryResult(); as result) {
-  <div class="query-result-table">
-    <table>
-      <thead>
-        <tr>
-          @for (col of result.columns; track col) {
-          <th>{{ col }}</th>
-          }
-        </tr>
-      </thead>
-      <tbody>
-        @for (row of result.rows; track $index) {
-        <tr>
-          @for (col of result.columns; track col) {
-          <td>{{ row[col] }}</td>
-          }
-        </tr>
-        }
-      </tbody>
-    </table>
+    <app-query-output [feedback]="feedback" [result]="config().queryResult()" />
   </div>
   }
-</app-challenge-modal>
-}
+</app-substep-progression>

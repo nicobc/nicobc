@@ -32,7 +32,12 @@
     />
 
     <div class="step-content">
-      <app-workshop-step [config]="currentStepConfig()" (advance)="onStepAdvance()" (scrollToStep)="onScrollToStep()" />
+      <app-workshop-step
+        [config]="currentStepConfig()"
+        (advance)="onStepAdvance()"
+        (retreat)="goBack()"
+        (scrollToStep)="onScrollToStep()"
+      />
     </div>
   </div>
 </div>

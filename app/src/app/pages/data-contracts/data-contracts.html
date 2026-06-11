@@ -37,84 +37,121 @@
     <!-- ── step 1 ─────────────────────────────────────────────── -->
     @if (step() === 1) {
     <div class="step-content">
-      <p class="step-intro">{{ step1Intro }}</p>
+      <app-substep-progression #sp1 [substeps]="step1Substeps" [hasPrev]="false" (exitForward)="goNext()">
+        @if (sp1.activeIndex() === 0) {
+        <p class="step-intro">{{ step1Intro }}</p>
 
-      <div class="pipeline-dag">
-        @for (node of dagNodes; track $index) { @if ($index > 0) {
-        <div class="dag-arrow">→</div>
-        }
-        <div class="dag-node" [class.dag-node--storage]="node.tier" [class.dag-node--active]="node.active">
-          @if (node.tier) {
-          <span class="dag-tier">{{ node.tier }}</span>
-          } {{ node.label }}
+        <div class="pipeline-dag">
+          @for (node of dagNodes; track $index) { @if ($index > 0) {
+          <div class="dag-arrow">→</div>
+          } @if (node.tier) {
+          <div class="dag-node dag-node--storage" [class.dag-node--active]="node.active">
+            <app-db-icon />
+            <span class="dag-tier">{{ node.tier }}</span>
+            <span class="dag-node-label">{{ node.label }}</span>
+          </div>
+          } @else {
+          <div class="dag-node" [class.dag-node--active]="node.active">{{ node.label }}</div>
+          } }
         </div>
-        }
-      </div>
+        } @if (sp1.activeIndex() === 1) {
+        <p class="step-task">{{ step1Task }}</p>
 
-      <p class="step-task">{{ step1Task }}</p>
+        <app-sql-editor [initialValue]="step1Sql()" [showActions]="false" (valueChange)="onStep1Input($event)" />
 
-      <app-sql-editor [initialValue]="skeleton" [solution]="solution" (run)="onRunStep1($event)" />
+        <div class="challenge-actions-row">
+          <button class="btn-icon" (click)="restartStep1()" aria-label="Restart">&#x21BA;</button>
+          <button class="btn-outline" (click)="runStep1()" [disabled]="step1Checking()">{{ runLabel }}</button>
+          <button class="btn-ghost" (click)="revealStep1()">{{ revealLabel }}</button>
+          <button class="btn-outline" (click)="submitStep1()" [disabled]="step1Checking()">
+            {{ step1Checking() ? submittingLabel : submitLabel }}
+          </button>
+        </div>
 
-      @if (sqlError()) {
-      <p class="error-sql">{{ sqlError() }}</p>
-      } @if (outputHint()) {
-      <p class="hint-output">{{ outputHint() }}</p>
-      } @if (step1Rows().length > 0) {
-      <div class="chart-wrap">
-        <app-bar-chart [rows]="step1Rows()" />
-      </div>
-      }
+        <app-query-output [feedback]="step1FeedbackDisplay" [result]="step1QueryResult()" /> @if (step1Done()) {
+        <div class="chart-wrap">
+          <app-bar-chart [rows]="step1Rows()" />
+        </div>
+        } }
+      </app-substep-progression>
     </div>
     }
 
     <!-- ── step 2 ─────────────────────────────────────────────── -->
     @if (step() === 2) {
     <div class="step-content">
-      <p class="step-intro">{{ step2Intro }}</p>
+      <app-substep-progression [substeps]="step2Substeps" (exitBack)="goBack()" (exitForward)="goNext()">
+        <p class="step-intro">{{ step2Intro }}</p>
 
-      <pre class="code-block sql-readonly">{{ lastSql() }}</pre>
+        <pre class="code-block sql-readonly">{{ step1CommittedSql() }}</pre>
 
-      <button class="btn-primary" (click)="onRunStep2()">{{ runStep2Label }}</button>
+        <button class="btn-outline" (click)="onRunStep2()">{{ runStep2Label }}</button>
 
-      @if (sqlError()) {
-      <p class="error-sql">{{ sqlError() }}</p>
-      } @if (step2Done()) {
-      <div class="chart-wrap">
-        <app-bar-chart [rows]="step2Rows()" />
-      </div>
-      }
+        @if (step2Error()) {
+        <div class="feedback-block feedback-block--error"><p>{{ step2Error() }}</p></div>
+        } @if (step2Done()) {
+        <div class="chart-wrap">
+          <app-bar-chart [rows]="step2Rows()" />
+        </div>
+        }
+      </app-substep-progression>
     </div>
     }
 
     <!-- ── step 3 ─────────────────────────────────────────────── -->
     @if (step() === 3) {
     <div class="step-content">
-      @if (step1Rows().length > 0 && step2Rows().length > 0) {
-      <div class="chart-wrap">
-        <app-bar-chart
-          [rows]="step1Rows()"
-          [comparisonRows]="step2Rows()"
-          [primaryLabel]="chartPrimaryLabel"
-          [comparisonLabel]="chartComparisonLabel"
-        />
-      </div>
-      } @for (p of step3Prose; track $index) {
-      <p [innerHTML]="p"></p>
-      }
+      <app-substep-progression #sp3 [substeps]="step3Substeps" (exitBack)="goBack()" (exitForward)="goNext()">
+        @if (sp3.activeIndex() === 0) { @for (p of step3SilentFailureProse; track $index) {
+        <p [innerHTML]="p"></p>
+        } } @if (sp3.activeIndex() === 1) {
+        <div class="chart-wrap">
+          <app-bar-chart
+            [rows]="step1Rows()"
+            [comparisonRows]="step2Rows()"
+            [primaryLabel]="chartPrimaryLabel"
+            [comparisonLabel]="chartComparisonLabel"
+          />
+        </div>
+        } @if (sp3.activeIndex() === 2) { @for (p of step3ContractProse; track $index) {
+        <p [innerHTML]="p"></p>
+        } } @if (sp3.activeIndex() === 3) {
+        <div class="schema-toggle-control">
+          <code class="schema-segment schema-segment--top">{{ schemaSegments.top }}</code>
+          <button
+            class="toggle-pill schema-amount-pill"
+            [class.active]="amountRequired()"
+            [attr.aria-pressed]="amountRequired()"
+            (click)="toggleAmountRequired()"
+          >
+            {{ schemaSegments.amountLine }}
+          </button>
+          <code class="schema-segment schema-segment--bottom">{{ schemaSegments.bottom }}</code>
+        </div>
 
-      <pre class="code-block contract-block">{{ schemaDisplay }}</pre>
+        <div class="challenge-actions-row">
+          <button class="btn-icon" (click)="restartStep3()" aria-label="Restart">&#x21BA;</button>
+          <button class="btn-outline" (click)="validateStep3()">{{ validateLabel }}</button>
+        </div>
 
-      @if (inputViolation()) {
-      <div class="violation-block">
-        <p class="violation-block__title">{{ violationBlockTitle }}</p>
-        <p class="violation-block__detail" [innerHTML]="violationDetail()"></p>
-      </div>
-      }
-
-      <p class="meta-reveal">{{ step3MetaReveal }}</p>
+        <app-query-output [feedback]="step3ValidationFeedback()" /> }
+      </app-substep-progression>
     </div>
-    } @if (canGoNext()) {
-    <button class="btn-primary" (click)="goNext()">{{ nextLabel }}</button>
+    }
+
+    <!-- ── step 4 ─────────────────────────────────────────────── -->
+    @if (step() === 4) {
+    <div class="step-content">
+      <app-substep-progression
+        [substeps]="step4Substeps"
+        [hasNext]="false"
+        (exitBack)="goBack()"
+        (exitForward)="onDone()"
+      >
+        <p>{{ conclusionCopy }}</p>
+        <p class="meta-reveal">{{ step3MetaReveal }}</p>
+      </app-substep-progression>
+    </div>
     }
   </div>
   }

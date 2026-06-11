@@ -10,19 +10,13 @@
   }
 }
 
-// ── viz nav row (replay left, next right) ─────────────────────────────────────
+// ── viz nav row (replay, centered) ────────────────────────────────────────────
 
 .viz-nav {
-  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   margin-top: 0.75rem;
-}
-
-.viz-nav-right {
-  position: absolute;
-  right: 0;
 }
 
 // .btn-outline provides visual style; overrides for compact replay size
@@ -34,23 +28,6 @@
   &:hover:not(:disabled) {
     opacity: 0.8;
   }
-}
-
-// ── copy phase footer ─────────────────────────────────────────────────────────
-
-.copy-footer {
-  margin-top: 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.copy-footer .btn-ghost {
-  font-size: var(--fs-sm);
-}
-
-.copy-footer--end {
-  justify-content: flex-end;
 }
 
 // ── schema hint ────────────────────────────────────────────────────────────────
@@ -66,21 +43,10 @@
   }
 }
 
-// ── challenge control row (restart / run / reveal / submit / next) ────────────
+// ── challenge slide ───────────────────────────────────────────────────────────
 
-.challenge-actions-row {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.challenge-actions-row .btn-ghost {
-  font-size: var(--fs-code);
-}
-
-.challenge-actions-row .btn-primary {
-  margin-left: auto;
+.challenge-slide {
+  margin-top: 2rem;
 }
 
 // ── challenge intro line ──────────────────────────────────────────────────────
@@ -90,14 +56,6 @@
   opacity: var(--opacity-dim);
   margin-bottom: 1rem;
   line-height: 1.6;
-}
-
-// ── error trace ───────────────────────────────────────────────────────────────
-
-.feedback-error-trace {
-  margin: 0;
-  white-space: pre-wrap;
-  overflow-wrap: break-word;
 }
 
 // ── SQL editor ────────────────────────────────────────────────────────────────

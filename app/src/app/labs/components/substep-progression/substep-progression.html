@@ -1,0 +1,9 @@
+<ng-content />
+<div class="substep-nav">
+  <span> @if (showBack()) { <button class="btn-ghost" (click)="goBack()">{{ backLabel }}</button> } </span>
+  <span>
+    @if (showForward()) {
+    <button class="btn-outline" (click)="goForward()">{{ isLast() && !hasNext ? doneLabel : continueLabel }}</button>
+    }
+  </span>
+</div>

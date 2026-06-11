@@ -52,7 +52,11 @@
   &--storage {
     display: flex;
     flex-direction: column;
-    gap: 0.1rem;
+    align-items: center;
+    gap: 0.15rem;
+    padding: 0;
+    border: none;
+    border-radius: 0;
   }
 
   &--active {
@@ -74,11 +78,30 @@
   font-size: var(--fs-sm);
 }
 
+app-db-icon {
+  width: 40px;
+  height: 45px;
+}
+
+.dag-node-label {
+  font-size: var(--fs-code);
+  text-align: center;
+  max-width: 56px;
+  line-height: 1.3;
+}
+
 // ── chart ─────────────────────────────────────────────────────────────────────
 
 .chart-wrap {
   margin-top: 2rem;
   margin-bottom: 2rem;
+}
+
+// ── step 1 ────────────────────────────────────────────────────────────────────
+
+app-sql-editor {
+  display: block;
+  margin-bottom: 1.25rem;
 }
 
 // ── step 2 ────────────────────────────────────────────────────────────────────
@@ -88,57 +111,53 @@
   margin-bottom: 1rem;
 }
 
-// ── errors + hints ────────────────────────────────────────────────────────────
-
-.error-sql {
-  color: var(--accent);
-  font-size: var(--fs-code);
-  font-family: var(--font-mono);
-  margin-top: 0.75rem;
-  opacity: 1 !important;
-}
-
-.hint-output {
-  color: #fbbf24;
-  font-size: var(--fs-sm);
-  margin-top: 0.75rem;
-  opacity: 1 !important;
-}
-
 // ── step 3 ────────────────────────────────────────────────────────────────────
 
-.violation-block {
-  border-left: 3px solid var(--accent);
-  padding: 0.875rem 1.25rem;
-  background: var(--accent-surface);
-  border-radius: 0 var(--br) var(--br) 0;
-  margin: 1.5rem 0;
+// ── schema toggle ─────────────────────────────────────────────────────────────
 
-  &__title {
-    font-weight: var(--fw-semibold);
-    font-size: var(--fs-sm);
-    color: var(--accent);
-    margin-bottom: 0.35rem;
-    opacity: 1 !important;
+.schema-toggle-control {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  margin: 1.5rem 0;
+}
+
+.schema-segment {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--fs-code);
+  line-height: 1.6;
+  white-space: pre;
+  padding: 0.35rem 1.25rem;
+  background: var(--surface-faint);
+  border: 1px solid var(--border-faint);
+  overflow-x: auto;
+
+  &--top {
+    border-bottom: none;
+    border-radius: var(--br-md) var(--br-md) 0 0;
+    padding-top: 1rem;
   }
 
-  &__detail {
-    font-size: var(--fs-sm);
-    font-family: var(--font-mono);
-    opacity: 1 !important;
-
-    code {
-      font-family: inherit;
-      background: var(--border-faint);
-      padding: 0.1em 0.3em;
-      border-radius: var(--br-sm);
-    }
+  &--bottom {
+    border-top: none;
+    border-radius: 0 0 var(--br-md) var(--br-md);
+    padding-bottom: 1rem;
   }
 }
 
-// .code-block provides visual style; margin scoped here
-.contract-block {
-  margin: 1.5rem 0;
+button.schema-amount-pill {
+  border-radius: 0;
+  border-color: var(--border-faint);
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  text-align: left;
+
+  &.active {
+    background: var(--surface-faint);
+    border-top-color: transparent;
+    border-bottom-color: transparent;
+  }
 }
 
 .meta-reveal {

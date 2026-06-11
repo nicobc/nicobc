@@ -12,6 +12,7 @@ import {
 } from '@angular/core';
 import { DIM_CUSTOMERS } from '../../data/schema';
 import { DagRaceViz } from '../dag-race-viz/dag-race-viz';
+import { DbIcon } from '../db-icon/db-icon';
 
 export type VizScenario = 'column-pruning' | 'predicate-pushdown' | 'dag-race';
 export type PruningMode = 'unpruned' | 'pruned';
@@ -21,7 +22,7 @@ export type VizMode = PruningMode | PushdownMode | DagRaceMode;
 
 @Component({
   selector: 'app-data-movement-viz',
-  imports: [DagRaceViz],
+  imports: [DagRaceViz, DbIcon],
   templateUrl: './data-movement-viz.html',
   styleUrl: './data-movement-viz.scss',
 })

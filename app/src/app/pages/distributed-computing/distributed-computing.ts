@@ -154,6 +154,7 @@ export class DistributedComputing implements OnInit {
   readonly stepConfigs: WorkshopStepConfig[] = [
     {
       vizScenario: 'column-pruning',
+      isFirstStep: true,
       isFinalStep: false,
       paragraphs: [
         `We need two columns from <code>${DIM_CUSTOMERS}</code> to retrieve the top 5 Spanish customers:
@@ -190,6 +191,7 @@ export class DistributedComputing implements OnInit {
     },
     {
       vizScenario: 'predicate-pushdown',
+      isFirstStep: false,
       isFinalStep: false,
       paragraphs: [
         `We only need Spanish customers to compute the top 5. We can either apply <code>WHERE country = 'Spain'</code> after joining <code>${DIM_CUSTOMERS}</code> with <code>${FCT_ORDERS}</code>, scanning every customer row, or push the predicate early in the query so only matching rows enter the join.`,
@@ -220,6 +222,7 @@ export class DistributedComputing implements OnInit {
     },
     {
       vizScenario: 'dag-race',
+      isFirstStep: false,
       isFinalStep: true,
       paragraphs: [
         'Both column pruning and predicate pushdown minimize data scanning. They can also make shuffles more manageable by reducing the data that enters a join or an aggregation.',

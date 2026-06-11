@@ -1,14 +1,17 @@
 import { Component, ElementRef, ViewChild, computed, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import Ajv, { ErrorObject } from 'ajv';
+import Ajv from 'ajv/dist/2020';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faDatabase, faStar } from '@fortawesome/free-solid-svg-icons';
 import { SqlEditor } from '../../labs/components/sql-editor/sql-editor';
 import { BarChart } from '../../labs/components/bar-chart/bar-chart';
 import { SchemaPanel } from '../../labs/components/schema-panel/schema-panel';
 import { StepNav } from '../../labs/components/step-nav/step-nav';
-import { getDB, query } from '../../labs/db/duckdb';
-import { dimCustomers, fctOrdersBatch1, fctOrdersBatch2, FctOrder } from '../../labs/data/seed';
+import { DbIcon } from '../../labs/components/db-icon/db-icon';
+import { SubstepProgression, Substeps } from '../../labs/components/substep-progression/substep-progression';
+import { QueryOutput, QueryFeedback } from '../../labs/components/query-output/query-output';
+import { getDB, query, QueryResult } from '../../labs/db/duckdb';
+import { dimCustomers, fctOrdersBatch1, fctOrdersBatch2 } from '../../labs/data/seed';
 import { DIM_CUSTOMERS, FCT_ORDERS } from '../../labs/data/schema';
 import { ChartRow } from '../../labs/components/chart-colors';
 import { runQuery, matchesExpected } from '../../labs/validation';
@@ -20,13 +23,17 @@ import {
   DC_STEP1_EXPECTED_ROWS,
   DC_STEP1_INTRO,
   DC_STEP1_TASK,
+  DC_STEP1_FEEDBACK_EMPTY,
+  DC_STEP1_FEEDBACK_WRONG_STRUCTURE,
+  DC_STEP1_FEEDBACK_WRONG_VALUES,
+  DC_STEP1_FEEDBACK_CORRECT,
   DC_STEP2_INTRO,
-  DC_STEP3_PROSE,
+  DC_STEP3_SILENT_FAILURE_PROSE,
+  DC_STEP3_CONTRACT_PROSE,
   DC_STEP3_META_REVEAL,
-  DC_VIOLATION_BLOCK_TITLE,
+  DC_CONCLUSION_COPY,
   DC_LOADING_TEXT,
   DC_RUN_STEP2_LABEL,
-  DC_NEXT_LABEL,
   DC_TOTAL_STEPS,
   DC_CHART_PRIMARY_LABEL,
   DC_CHART_COMPARISON_LABEL,
@@ -35,7 +42,7 @@ import {
 // ── schemas ──────────────────────────────────────────────────────────────────
 
 const FCT_ORDERS_SCHEMA = {
-  $schema: 'http://json-schema.org/draft-07/schema#',
+  $schema: 'https://json-schema.org/draft/2020-12/schema',
   title: `${FCT_ORDERS} row`,
   type: 'object',
   required: ['order_id', 'customer_id', 'amount', 'order_date'],
@@ -61,36 +68,43 @@ const OUTPUT_SCHEMA = {
 };
 
 const ajv = new Ajv({ allErrors: false });
-const validateInput = ajv.compile(FCT_ORDERS_SCHEMA);
 const validateOutput = ajv.compile(OUTPUT_SCHEMA);
 
-function firstInputViolation(rows: FctOrder[]): { row: FctOrder; error: ErrorObject } | null {
-  for (const row of rows) {
-    if (!validateInput(row)) {
-      return { row, error: (validateInput.errors as ErrorObject[])[0] };
-    }
-  }
-  return null;
+// ── DDL validator ─────────────────────────────────────────────────────────────
+
+interface DdlViolation {
+  table: string;
+  column: string;
+  expected: string;
+  actual: string;
 }
 
-// ── types ─────────────────────────────────────────────────────────────────────
-
-interface ContractViolation {
-  field: string;
-  constraint: string;
-  received: string;
+function checkDdl(rows: Record<string, unknown>[], required: string[]): DdlViolation[] {
+  const nullability = Object.fromEntries(rows.map((r) => [r['column_name'] as string, r['is_nullable'] as string]));
+  return required
+    .filter((field) => nullability[field] !== 'NO')
+    .map((field) => ({
+      table: FCT_ORDERS,
+      column: field,
+      expected: 'NOT NULL',
+      actual: nullability[field] === 'YES' ? 'NULL' : 'missing',
+    }));
 }
 
 // ── component ─────────────────────────────────────────────────────────────────
 
 @Component({
   selector: 'app-data-contracts',
-  imports: [SqlEditor, BarChart, FaIconComponent, SchemaPanel, StepNav],
+  imports: [SqlEditor, BarChart, FaIconComponent, SchemaPanel, StepNav, DbIcon, SubstepProgression, QueryOutput],
   templateUrl: './data-contracts.html',
   styleUrl: './data-contracts.scss',
 })
 export class DataContracts implements OnInit {
   @ViewChild('stepShell') private readonly stepShellRef?: ElementRef<HTMLElement>;
+  @ViewChild(SqlEditor) private readonly step1EditorRef?: SqlEditor;
+
+  private readonly elRef = inject(ElementRef);
+  private readonly router = inject(Router);
 
   readonly schemaOpen = signal(false);
   readonly dbIcon = faDatabase;
@@ -101,39 +115,66 @@ export class DataContracts implements OnInit {
   readonly dagNodes: readonly DagNode[] = DC_DAG_NODES;
   readonly chartPrimaryLabel = DC_CHART_PRIMARY_LABEL;
   readonly chartComparisonLabel = DC_CHART_COMPARISON_LABEL;
-  readonly solution = DC_SOLUTION;
-  readonly skeleton = DC_SKELETON;
-  readonly schemaDisplay = JSON.stringify(FCT_ORDERS_SCHEMA, null, 2);
+  readonly schemaSegments = (() => {
+    const lines = JSON.stringify(FCT_ORDERS_SCHEMA, null, 2).split('\n');
+    const idx = lines.findIndex((l) => l.trim() === '"amount",');
+    return {
+      top: lines.slice(0, idx).join('\n'),
+      amountLine: lines[idx],
+      bottom: lines.slice(idx + 1).join('\n'),
+    };
+  })();
   readonly loadingText = DC_LOADING_TEXT;
   readonly runStep2Label = DC_RUN_STEP2_LABEL;
-  readonly nextLabel = DC_NEXT_LABEL;
   readonly totalSteps = DC_TOTAL_STEPS;
   readonly step1Intro = DC_STEP1_INTRO;
   readonly step1Task = DC_STEP1_TASK;
   readonly step2Intro = DC_STEP2_INTRO;
-  readonly step3Prose = DC_STEP3_PROSE;
+  readonly step3SilentFailureProse = DC_STEP3_SILENT_FAILURE_PROSE;
+  readonly step3ContractProse = DC_STEP3_CONTRACT_PROSE;
   readonly step3MetaReveal = DC_STEP3_META_REVEAL;
-  readonly violationBlockTitle = DC_VIOLATION_BLOCK_TITLE;
-
-  private readonly elRef = inject(ElementRef);
-  private readonly router = inject(Router);
+  readonly conclusionCopy = DC_CONCLUSION_COPY;
+  readonly runLabel = 'Run';
+  readonly submitLabel = 'Submit';
+  readonly submittingLabel = 'Submitting…';
+  readonly revealLabel = 'Reveal';
+  readonly validateLabel = 'Validate';
 
   readonly dbReady = signal(false);
-  readonly step = signal<1 | 2 | 3>(1);
-  readonly step1Done = signal(false);
-  readonly step2Done = signal(false);
-  readonly step1Rows = signal<ChartRow[]>([]);
-  readonly step2Rows = signal<ChartRow[]>([]);
-  readonly lastSql = signal<string>('');
-  readonly sqlError = signal<string | null>(null);
-  readonly outputHint = signal<string | null>(null);
-  readonly inputViolation = signal<ContractViolation | null>(null);
+  readonly step = signal<1 | 2 | 3 | 4>(1);
 
-  readonly violationDetail = computed(() => {
-    const v = this.inputViolation();
-    if (!v) return '';
-    return `Field <code>${v.field}</code> — ${v.constraint}, received ${v.received}`;
+  // ── step 1 state ────────────────────────────────────────────────────────────
+  readonly step1Sql = signal(DC_SKELETON);
+  readonly step1Feedback = signal<QueryFeedback>({ kind: 'none' });
+  readonly step1Checking = signal(false);
+  readonly step1QueryResult = signal<QueryResult | null>(null);
+  readonly step1Rows = signal<ChartRow[]>([]);
+  readonly step1Done = computed(() => this.step1Feedback().kind === 'correct');
+  readonly step1CommittedSql = signal(DC_SKELETON);
+
+  // ── step 2 state ────────────────────────────────────────────────────────────
+  readonly step2Done = signal(false);
+  readonly step2Rows = signal<ChartRow[]>([]);
+  readonly step2Error = signal<string | null>(null);
+
+  // ── step 3 state ────────────────────────────────────────────────────────────
+  readonly amountRequired = signal(false);
+  readonly step3ValidationFeedback = signal<QueryFeedback>({ kind: 'none' });
+
+  readonly step1Substeps: Substeps = [{ kind: 'free' }, { kind: 'gated', done: this.step1Done }];
+  readonly step2Substeps: Substeps = [{ kind: 'gated', done: this.step2Done }];
+  readonly step3Substeps: Substeps = [{ kind: 'free' }, { kind: 'free' }, { kind: 'free' }, { kind: 'free' }];
+  readonly step4Substeps: Substeps = [{ kind: 'free' }];
+
+  readonly canGoNext = computed(() => {
+    if (this.step() === 1) return this.step1Done();
+    if (this.step() === 2) return this.step2Done();
+    return false;
   });
+
+  get step1FeedbackDisplay(): QueryFeedback {
+    return this.step1Feedback();
+  }
 
   async ngOnInit() {
     await this.seedBatch(1);
@@ -148,9 +189,11 @@ export class DataContracts implements OnInit {
       await conn.query(`DROP TABLE IF EXISTS ${FCT_ORDERS}`);
       await conn.query(`DROP TABLE IF EXISTS ${DIM_CUSTOMERS}`);
       await conn.query(`CREATE TABLE ${DIM_CUSTOMERS} (customer_id INTEGER, customer_name VARCHAR, country VARCHAR)`);
-      await conn.query(
-        `CREATE TABLE ${FCT_ORDERS} (order_id INTEGER, customer_id INTEGER, amount INTEGER, order_date VARCHAR)`,
-      );
+      const fctDdl =
+        n === 1
+          ? `CREATE TABLE ${FCT_ORDERS} (order_id INTEGER NOT NULL, customer_id INTEGER NOT NULL, amount INTEGER NOT NULL, order_date VARCHAR NOT NULL)`
+          : `CREATE TABLE ${FCT_ORDERS} (order_id INTEGER NOT NULL, customer_id INTEGER NOT NULL, amount INTEGER, order_date VARCHAR NOT NULL)`;
+      await conn.query(fctDdl);
 
       const customerVals = dimCustomers
         .map((c) => `(${c.customer_id}, '${c.customer_name.replace("'", "''")}', '${c.country}')`)
@@ -168,63 +211,95 @@ export class DataContracts implements OnInit {
 
   // ── step 1 ──────────────────────────────────────────────────────────────────
 
-  async onRunStep1(sql: string) {
-    this.sqlError.set(null);
-    this.outputHint.set(null);
+  onStep1Input(value: string): void {
+    this.step1Sql.set(value);
+  }
 
+  async runStep1(): Promise<void> {
+    const sql = this.step1Sql();
     const trimmed = sql.replace(/--[^\n]*/g, '').trim();
     if (!trimmed) {
-      this.outputHint.set('Write a query first.');
+      this.step1Feedback.set({ kind: 'message', html: DC_STEP1_FEEDBACK_EMPTY });
       return;
     }
-
-    this.lastSql.set(sql);
-
+    this.step1QueryResult.set(null);
+    if (this.step1Feedback().kind !== 'correct') {
+      this.step1Feedback.set({ kind: 'none' });
+    }
     const { data, error } = await runQuery(sql);
     if (!data) {
-      this.sqlError.set(error);
+      this.step1Feedback.set({ kind: 'trace', error: error ?? '' });
       return;
     }
+    this.step1QueryResult.set(data);
+  }
 
-    const { rows } = data;
-    const invalid = rows.find((r) => !validateOutput(r));
-    if (invalid) {
-      this.outputHint.set('Query ran but the output structure does not match the expected schema.');
+  async submitStep1(): Promise<void> {
+    if (this.step1Checking()) return;
+    const sql = this.step1Sql();
+    const trimmed = sql.replace(/--[^\n]*/g, '').trim();
+    if (!trimmed) {
+      this.step1Feedback.set({ kind: 'message', html: DC_STEP1_FEEDBACK_EMPTY });
       return;
     }
-
-    if (!matchesExpected(rows, DC_STEP1_EXPECTED_ROWS)) {
-      this.outputHint.set("Close. The column structure is right but the values don't match the expected output.");
-      return;
+    this.step1Checking.set(true);
+    this.step1QueryResult.set(null);
+    this.step1Feedback.set({ kind: 'none' });
+    try {
+      const { data, error } = await runQuery(sql);
+      if (!data) {
+        this.step1Feedback.set({ kind: 'trace', error: error ?? '' });
+        return;
+      }
+      this.step1QueryResult.set(data);
+      const { rows } = data;
+      if (rows.find((r) => !validateOutput(r))) {
+        this.step1Feedback.set({ kind: 'message', html: DC_STEP1_FEEDBACK_WRONG_STRUCTURE });
+        return;
+      }
+      if (!matchesExpected(rows, DC_STEP1_EXPECTED_ROWS)) {
+        this.step1Feedback.set({ kind: 'message', html: DC_STEP1_FEEDBACK_WRONG_VALUES });
+        return;
+      }
+      this.step1CommittedSql.set(sql);
+      this.step1Rows.set(
+        rows.map((r) => ({ label: r['customer_name'] as string, value: r['total_amount'] as number })),
+      );
+      this.step1Feedback.set({ kind: 'correct', html: DC_STEP1_FEEDBACK_CORRECT });
+      setTimeout(
+        () =>
+          (this.elRef.nativeElement as HTMLElement)
+            .querySelector('.chart-wrap')
+            ?.scrollIntoView({ behavior: 'smooth', block: 'center' }),
+        0,
+      );
+    } finally {
+      this.step1Checking.set(false);
     }
+  }
 
-    const chartRows: ChartRow[] = rows.map((r) => ({
-      label: r['customer_name'] as string,
-      value: r['total_amount'] as number,
-    }));
-    this.step1Rows.set(chartRows);
-    this.step1Done.set(true);
-    setTimeout(
-      () =>
-        (this.elRef.nativeElement as HTMLElement)
-          .querySelector('.chart-wrap')
-          ?.scrollIntoView({ behavior: 'smooth', block: 'center' }),
-      0,
-    );
+  revealStep1(): void {
+    this.step1Sql.set(DC_SOLUTION);
+    this.step1EditorRef?.setValue(DC_SOLUTION);
+  }
+
+  restartStep1(): void {
+    this.step1Sql.set(DC_SKELETON);
+    this.step1EditorRef?.setValue(DC_SKELETON);
+    this.step1QueryResult.set(null);
+    this.step1Feedback.set({ kind: 'none' });
   }
 
   // ── step 2 ──────────────────────────────────────────────────────────────────
 
   async onRunStep2() {
-    this.sqlError.set(null);
+    this.step2Error.set(null);
     try {
       await this.seedBatch(2);
-      const result = await query(this.lastSql());
-      const rows: ChartRow[] = result.rows.map((r) => ({
-        label: r['customer_name'] as string,
-        value: r['total_amount'] as number | null,
-      }));
-      this.step2Rows.set(rows);
+      const result = await query(this.step1CommittedSql());
+      this.step2Rows.set(
+        result.rows.map((r) => ({ label: r['customer_name'] as string, value: r['total_amount'] as number | null })),
+      );
       this.step2Done.set(true);
       setTimeout(
         () =>
@@ -234,33 +309,55 @@ export class DataContracts implements OnInit {
         0,
       );
     } catch (e) {
-      this.sqlError.set((e as Error).message);
+      this.step2Error.set((e as Error).message);
     }
   }
 
   // ── step 3 ──────────────────────────────────────────────────────────────────
 
-  onEnterStep3() {
-    const v = firstInputViolation(fctOrdersBatch2);
-    if (v) {
-      const field =
-        v.error.instancePath.replace('/', '') || (v.error.params as Record<string, string>)['missingProperty'];
-      const received = (v.row as unknown as Record<string, unknown>)[field];
-      this.inputViolation.set({
-        field,
-        constraint: `type must be ${(v.error.params as Record<string, string>)['type']}`,
-        received: received === null ? 'null' : String(received),
+  private onEnterStep3(): void {
+    this.amountRequired.set(false);
+    this.step3ValidationFeedback.set({ kind: 'none' });
+  }
+
+  restartStep3(): void {
+    this.step3ValidationFeedback.set({ kind: 'none' });
+  }
+
+  toggleAmountRequired(): void {
+    this.amountRequired.update((v) => !v);
+    this.step3ValidationFeedback.set({ kind: 'none' });
+  }
+
+  async validateStep3(): Promise<void> {
+    const required = this.amountRequired()
+      ? FCT_ORDERS_SCHEMA.required
+      : FCT_ORDERS_SCHEMA.required.filter((f) => f !== 'amount');
+    const { rows } = await query(
+      `SELECT column_name, is_nullable FROM information_schema.columns WHERE table_name = '${FCT_ORDERS}'`,
+    );
+    const violations = checkDdl(rows, required);
+    if (violations.length) {
+      this.step3ValidationFeedback.set({
+        kind: 'trace',
+        error: JSON.stringify(violations, null, 2),
       });
+    } else {
+      this.step3ValidationFeedback.set({ kind: 'correct', html: 'No violations found.' });
     }
   }
 
   // ── navigation ───────────────────────────────────────────────────────────────
 
   goNext() {
-    const next = (this.step() + 1) as 2 | 3;
+    const next = (this.step() + 1) as 2 | 3 | 4;
     if (next === 3) this.onEnterStep3();
     this.step.set(next);
     setTimeout(() => this.stepShellRef?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0);
+  }
+
+  async onDone(): Promise<void> {
+    await this.router.navigate(['/lab/workshops']);
   }
 
   async goBack() {
@@ -268,15 +365,9 @@ export class DataContracts implements OnInit {
       await this.router.navigate(['/lab/workshops']);
       return;
     }
-    const prev = (this.step() - 1) as 1 | 2;
+    const prev = (this.step() - 1) as 1 | 2 | 3;
     if (prev === 1) await this.seedBatch(1);
     this.step.set(prev);
     setTimeout(() => this.stepShellRef?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' }), 0);
   }
-
-  readonly canGoNext = computed(() => {
-    if (this.step() === 1) return this.step1Done();
-    if (this.step() === 2) return this.step2Done();
-    return false;
-  });
 }
