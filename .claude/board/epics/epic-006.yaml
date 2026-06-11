@@ -140,15 +140,15 @@ tickets:
     description: >
       Unify both workshops on a shared SubstepProgression abstraction — substeps typed as free
       (always advanceable) or gated (locked until a done signal). Remove ChallengeModal entirely;
-      challenge becomes a gated substep. Migrate the data contracts lab from its current step
-      layout to the agreed 3-step × substep structure. Make step 3 contract validation interactive.
+      challenge becomes a gated substep. Migrate the data contracts lab to a 4-step × substep
+      structure. Make step 3 contract validation interactive.
     acceptance_criteria:
       - SubstepProgression component extracted; accepts a Substeps array and manages forward/back navigation with gating
       - Substep is a discriminated union — free (forward always available) or gated (forward locked until done signal is true); content is configuration not type
       - Distributed computing lab uses SubstepProgression per step with three substeps each — viz (gated), copy (free), challenge (gated)
       - WorkshopStep refactored or replaced by SubstepProgression; ChallengeModal deleted; ChallengeController show/open/close removed; restart() and check() retained
-      - Data contracts lab restructured into 3 steps — step 1 (ss1 intro+DAG free, ss2 challenge+chart gated), step 2 (ss1 copy+run+chart gated), step 3 (ss1 silent-failure copy free, ss2 data-contracts copy free, ss3 interactive JSON validate free/terminal)
-      - Step 3 SS3 contract validation interactive — Validate button runs AJV against batch 2 data; violation displayed dynamically replacing the static block
+      - Data contracts lab restructured into 4 steps — step 1 (ss1 intro+DAG free, ss2 challenge+chart gated), step 2 (ss1 copy+run+chart gated), step 3 (ss1 silent-failure copy free, ss2 comparison chart free, ss3 data-contracts copy free, ss4 interactive DDL validate free), step 4 (ss1 conclusion free/terminal)
+      - Step 3 SS4 contract validation interactive — Validate button checks batch 2 DDL nullability against JSON schema required fields; toggle pill controls whether amount is required; violation displayed dynamically
       - Run/Submit/Reveal/Restart controls preserved in all challenge substeps
       - Substep navigation uses ← Back / Continue → / Done — Back hidden only on the very first substep of the entire workshop; Done appears only on the final substep of the final step; Continue → on all other forward actions
     notes:
