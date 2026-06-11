@@ -136,7 +136,7 @@ tickets:
   - id: T8
     title: Extract SubstepProgression; migrate both labs to substep structure
     type: feat
-    status: TESTING
+    status: DONE
     description: >
       Unify both workshops on a shared SubstepProgression abstraction — substeps typed as free
       (always advanceable) or gated (locked until a done signal). Remove ChallengeModal entirely;
